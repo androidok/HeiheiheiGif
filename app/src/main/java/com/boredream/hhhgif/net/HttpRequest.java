@@ -1,7 +1,10 @@
 package com.boredream.hhhgif.net;
 
+import android.os.AsyncTask;
+
 import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.entity.User;
+import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -49,6 +52,8 @@ public class HttpRequest {
                 return chain.proceed(request);
             }
         });
+        httpClient.networkInterceptors().add(new StethoInterceptor()); // stetho
+
         // log
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -57,9 +62,10 @@ public class HttpRequest {
         // Retrofit
         retrofit = new Retrofit.Builder()
                 .baseUrl(HOST)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create()) // gson
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create()) // rxjava
                 .client(httpClient)
+                .callbackExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
                 .build();
     }
 
