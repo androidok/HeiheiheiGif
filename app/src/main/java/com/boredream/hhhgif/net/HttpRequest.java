@@ -31,10 +31,15 @@ public class HttpRequest {
     private static final String BMOB_API_KEY = "20af8ccc5c11bd1a391723bff5fb3ad3";
 
     private static Retrofit retrofit;
+    private static OkHttpClient httpClient;
+
+    public static OkHttpClient getHttpClient() {
+        return httpClient;
+    }
 
     static {
         // OkHttpClient
-        OkHttpClient httpClient = new OkHttpClient();
+        httpClient = new OkHttpClient();
         // header
         httpClient.networkInterceptors().add(new Interceptor() {
             @Override

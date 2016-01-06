@@ -9,7 +9,7 @@ import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
-import com.boredream.hhhgif.net.SimpleObservableDecorator;
+import com.boredream.hhhgif.net.ObservableDecorator;
 
 import rx.Observable;
 import rx.functions.Action1;
@@ -49,12 +49,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         String password = et_password.getText().toString();
 
         Observable<User> observable = HttpRequest.getApiService().userLogin(username, password);
-        SimpleObservableDecorator.decorate(observable, new Action1<User>() {
-            @Override
-            public void call(User user) {
-                showToast("登录成功");
-            }
-        });
+        ObservableDecorator.decorate(observable)
+                .subscribe(new Action1<User>() {
+                    @Override
+                    public void call(User user) {
+                        showToast("登录成功");
+                    }
+                });
 
     }
 }
