@@ -25,6 +25,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         initView();
+
+        et_username.setText("bore");
+        et_password.setText("123456");
     }
 
     private void initView() {
@@ -49,11 +52,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         String password = et_password.getText().toString();
 
         Observable<User> observable = HttpRequest.getApiService().userLogin(username, password);
-        ObservableDecorator.decorate(observable)
+        ObservableDecorator.decorate(this, observable)
+                .doOnError(new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        showToast(throwable.getMessage());
+                    }
+                })
                 .subscribe(new Action1<User>() {
                     @Override
                     public void call(User user) {
-                        showToast("登录成功");
+                        intent2Activity(MainActivity.class);
                     }
                 });
 

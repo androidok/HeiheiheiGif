@@ -3,6 +3,9 @@ package com.boredream.hhhgif.net;
 import android.os.AsyncTask;
 
 import com.boredream.hhhgif.base.BaseEntity;
+import com.boredream.hhhgif.constants.CommonConstants;
+import com.boredream.hhhgif.entity.GifInfo;
+import com.boredream.hhhgif.entity.ListResponse;
 import com.boredream.hhhgif.entity.User;
 import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.squareup.okhttp.Interceptor;
@@ -40,12 +43,11 @@ public class HttpRequest {
     static {
         // OkHttpClient
         httpClient = new OkHttpClient();
-        // header
+
+        // 统一添加的Header
         httpClient.networkInterceptors().add(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
-                // 统一处理Header
-
                 // -H "X-Bmob-Application-Id: Your Application ID" \
                 // -H "X-Bmob-REST-API-Key: Your REST API Key" \
                 // -H "Content-Type: application/json" \
@@ -57,7 +59,7 @@ public class HttpRequest {
                 return chain.proceed(request);
             }
         });
-        httpClient.networkInterceptors().add(new StethoInterceptor()); // stetho
+        httpClient.networkInterceptors().add(new StethoInterceptor()); // stetho 浏览器调试工具
 
         // log
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -68,7 +70,7 @@ public class HttpRequest {
         retrofit = new Retrofit.Builder()
                 .baseUrl(HOST)
                 .addConverterFactory(GsonConverterFactory.create()) // gson
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create()) // rxjava
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create()) // rxjava 响应式编程
                 .client(httpClient)
                 .callbackExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
                 .build();
@@ -88,11 +90,27 @@ public class HttpRequest {
         // 添加数据
         @POST("/1/classes/GameScore")
         Call<BaseEntity> addGameScore(@Body Object obj);
+
+        // 分页获取动态图数据
+        @GET("/1/classes/Gif")
+        Observable<ListResponse<GifInfo>> getGifInfo(
+                @Query("limit") int perPageCount,
+                @Query("skip") int page);
     }
 
     public static BmobService getApiService() {
         BmobService service = retrofit.create(BmobService.class);
         return service;
+    }
+
+    /**
+     * 获取动态图数据,分页
+     *
+     * @param page 从1开始
+     */
+    public static Observable<ListResponse<GifInfo>> getGifInfos(int page) {
+        BmobService service = getApiService();
+        return service.getGifInfo(CommonConstants.COUNT_OF_PAGE, (page - 1) * CommonConstants.COUNT_OF_PAGE);
     }
 
 }

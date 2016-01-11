@@ -1,8 +1,5 @@
 package com.boredream.hhhgif.base;
 
-/**
- * Created by moyun on 2015/12/29.
- */
 public class BaseEntity {
 
     private String createdAt;

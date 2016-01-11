@@ -20,4 +20,8 @@ public class ToastUtils {
 		mToast.show();
 	}
 
+	public static void showToast(Context context, CharSequence text) {
+		showToast(context, text, Toast.LENGTH_SHORT);
+	}
+
 }
