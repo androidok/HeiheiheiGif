@@ -92,7 +92,7 @@ public class HttpRequest {
         Call<BaseEntity> addGameScore(@Body Object obj);
 
         // 分页获取动态图数据
-        @GET("/1/classes/Gif")
+        @GET("/1/classes/GifWithSize")
         Observable<ListResponse<GifInfo>> getGifInfo(
                 @Query("limit") int perPageCount,
                 @Query("skip") int page);

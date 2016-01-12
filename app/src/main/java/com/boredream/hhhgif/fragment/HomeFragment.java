@@ -16,7 +16,8 @@ import com.boredream.hhhgif.entity.ListResponse;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.utils.DisplayUtils;
-import com.boredream.hhhgif.widget.GridSpacingDecorator;
+import com.boredream.hhhgif.utils.TitleBuilder;
+import com.boredream.hhhgif.view.GridSpacingDecorator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +40,13 @@ public class HomeFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = View.inflate(activity, R.layout.frag_home, null);
         initView();
-        loadData(1);
+        loadData(4);
         return view;
     }
 
     private void initView() {
+        new TitleBuilder(view).setTitleText("首页");
+
         srl_home = (SwipeRefreshLayout) view.findViewById(R.id.srl_home);
         rv_home = (RecyclerView) view.findViewById(R.id.rv_home);
         initRecyclerView();
@@ -62,7 +65,7 @@ public class HomeFragment extends BaseFragment {
         final StaggeredGridLayoutManager staggeredGridLayoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         rv_home.setLayoutManager(staggeredGridLayoutManager);
-        rv_home.addItemDecoration(new GridSpacingDecorator(2, DisplayUtils.dp2px(activity, 8)));
+        rv_home.addItemDecoration(new GridSpacingDecorator(DisplayUtils.dp2px(activity, 8)));
         rv_home.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             int visibleItemCount;
