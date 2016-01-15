@@ -3,13 +3,41 @@ package com.boredream.hhhgif.entity;
 import com.boredream.hhhgif.base.BaseEntity;
 
 public class GifInfo extends BaseEntity {
+
+    /**
+     * 标题
+     */
     private String title;
-    private String thumbnailImgUrl;
-    private String imgUrl;
-    private int width;
-    private int height;
-    private int likeCount;
+
+    /**
+     * 标签
+     */
     private String tag;
+
+    /**
+     * 搜索图地址
+     */
+    private String thumbnailImgUrl;
+
+    /**
+     * 动态图地址
+     */
+    private String imgUrl;
+
+    /**
+     * 收藏数量
+     */
+    private int favCount;
+
+    /**
+     * 收藏该动态图的用户列表(多对多关系)
+     */
+    private Relation favUsers;
+
+    /**
+     * 评论数量
+     */
+    private int commentCount;
 
     public String getTitle() {
         return title;
@@ -19,28 +47,12 @@ public class GifInfo extends BaseEntity {
         this.title = title;
     }
 
-    public String getImgUrl() {
-        return imgUrl;
+    public String getTag() {
+        return tag;
     }
 
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public String getThumbnailImgUrl() {
@@ -51,19 +63,35 @@ public class GifInfo extends BaseEntity {
         this.thumbnailImgUrl = thumbnailImgUrl;
     }
 
-    public int getLikeCount() {
-        return likeCount;
+    public String getImgUrl() {
+        return imgUrl;
     }
 
-    public void setLikeCount(int likeCount) {
-        this.likeCount = likeCount;
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
-    public String getTag() {
-        return tag;
+    public int getFavCount() {
+        return favCount;
     }
 
-    public void setTag(String tag) {
-        this.tag = tag;
+    public void setFavCount(int favCount) {
+        this.favCount = favCount;
+    }
+
+    public Relation getFavUsers() {
+        return favUsers;
+    }
+
+    public void setFavUsers(Relation favUsers) {
+        this.favUsers = favUsers;
+    }
+
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
     }
 }

@@ -96,7 +96,7 @@ public class HomeFragment extends BaseFragment {
         showToast("load data ... page = " + page);
         isLoading = true;
 
-        Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifInfos(page);
+        Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifs(page);
         ObservableDecorator.decorate(activity, observable)
                 .subscribe(new Action1<ListResponse<GifInfo>>() {
                     @Override
