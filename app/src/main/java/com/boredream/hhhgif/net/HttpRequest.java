@@ -1,7 +1,7 @@
 package com.boredream.hhhgif.net;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Base64;
 
@@ -17,6 +17,7 @@ import com.boredream.hhhgif.entity.Operation;
 import com.boredream.hhhgif.entity.UpdatePswRequest;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.entity.Where;
+import com.boredream.hhhgif.utils.DisplayUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -188,6 +189,7 @@ public class HttpRequest {
         // 修改用户详情(注意, 提交什么参数修改什么参数)
         @PUT("/1/users/{objectId}")
         Observable<User> updateUserById(
+                @Path("objectId") String userId,
                 @Body Map<String, Object> updateInfo);
 
         // 上传图片接口
@@ -348,16 +350,43 @@ public class HttpRequest {
                 (page - 1) * CommonConstants.COUNT_OF_PAGE, where);
     }
 
-    public static void fileUpload(Context context, String filepath) {
-        BmobService service = getApiService();
+    public static void fileUpload(final Context context, String filepath, final Action1<User> call) {
+        final BmobService service = getApiService();
         String filename = "img" + System.currentTimeMillis();
-        filename = Base64.encodeToString(filename.getBytes(), Base64.DEFAULT);
+        final String encodeFilename = Base64.encodeToString(filename.getBytes(), Base64.DEFAULT);
 
-        Glide.with(context).load(filepath).asBitmap().into(
-                new SimpleTarget<Bitmap>() {
+        final ErrorAction1 errorAction1 = new ErrorAction1(context);
+
+        // get image from file
+        int size = DisplayUtils.dp2px(context, 56);
+        Glide.with(context).load(filepath).asBitmap().toBytes().into(
+                new SimpleTarget<byte[]>(size, size) {
             @Override
-            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+            public void onResourceReady(byte[] resource, GlideAnimation<? super byte[]> glideAnimation) {
+                // upload image byte[]
+                service.fileUpload(encodeFilename, resource)
+                        .flatMap(new Func1<FileUploadResponse, Observable<User>>() {
+                            @Override
+                            public Observable<User> call(FileUploadResponse fileUploadResponse) {
+                                // update user avatar
+                                Map<String, Object> updateMap = new HashMap<>();
+                                updateMap.put("avatar", fileUploadResponse.getUrl());
 
+                                User currentUser = UserInfoKeeper.getCurrentUser();
+                                return service.updateUserById(currentUser.getObjectId(), updateMap);
+                            }
+                        })
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnError(errorAction1)
+                        .subscribe(call);
+            }
+
+            @Override
+            public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                super.onLoadFailed(e, errorDrawable);
+                // TODO load local file exception
+                errorAction1.call(new Throwable("load local file exception"));
             }
         });
     }
