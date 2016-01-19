@@ -1,27 +1,28 @@
 package com.boredream.hhhgif.activity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
-import com.boredream.hhhgif.entity.GifInfo;
-import com.boredream.hhhgif.entity.ListResponse;
-import com.boredream.hhhgif.net.ErrorAction1;
+import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
+import com.boredream.hhhgif.net.ObservableDecorator;
 
-import rx.android.schedulers.AndroidSchedulers;
+import rx.Observable;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
     private EditText et_username;
     private EditText et_password;
     private Button btn_login;
+    private TextView tv_forget_psw;
+    private LinearLayout ll_regist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +35,37 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void initView() {
+        initBackTitle("登录");
+
         et_username = (EditText) findViewById(R.id.et_username);
         et_password = (EditText) findViewById(R.id.et_password);
         btn_login = (Button) findViewById(R.id.btn_login);
+        tv_forget_psw = (TextView) findViewById(R.id.tv_forget_psw);
+        ll_regist = (LinearLayout) findViewById(R.id.ll_regist);
 
         btn_login.setOnClickListener(this);
+        tv_forget_psw.setOnClickListener(this);
+        ll_regist.setOnClickListener(this);
+    }
+
+    private void login() {
+        String username = et_username.getText().toString();
+        String password = et_password.getText().toString();
+
+        Observable<User> observable = HttpRequest.getApiService().login(username, password);
+        ObservableDecorator.decorate(this, observable)
+                .subscribe(new Action1<User>() {
+                    @Override
+                    public void call(User user) {
+                        intent2Activity(MainActivity.class);
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        showLog("登录失败 " + throwable.getMessage());
+                        showToast("登录失败");
+                    }
+                });
     }
 
     @Override
@@ -47,50 +74,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             case R.id.btn_login:
                 login();
                 break;
+            case R.id.tv_forget_psw:
+                break;
+            case R.id.ll_regist:
+                intent2Activity(RegistActivity.class);
+                break;
         }
-    }
-
-    private void login() {
-//        User user = new User();
-//        user.setObjectId("jTDo1112");
-//        user.setUsername("bore");
-//        UserInfoKeeper.setCurrentUser(user);
-//
-//        HttpRequest.favGif(LoginActivity.this, "cb06614952",
-//                new Action1<BaseEntity>() {
-//                    @Override
-//                    public void call(BaseEntity entity) {
-//                        ToastUtils.showToast(LoginActivity.this, "success " + entity.toString());
-//                    }
-//                });
-
-        HttpRequest.getFavGifs("yPXrNNNk", 1)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new ErrorAction1(this))
-                .subscribe(new Action1<ListResponse<GifInfo>>() {
-                    @Override
-                    public void call(ListResponse<GifInfo> gifInfoListResponse) {
-                        Log.i("DDD", "size " + gifInfoListResponse.getResults().size());
-                    }
-                });
-
-//        String username = et_username.getText().toString();
-//        String password = et_password.getText().toString();
-//
-//        Observable<User> observable = HttpRequest.getApiService().login(username, password);
-//        ObservableDecorator.decorate(this, observable)
-//                .doOnError(new Action1<Throwable>() {
-//                    @Override
-//                    public void call(Throwable throwable) {
-//                        showToast(throwable.getMessage());
-//                    }
-//                })
-//                .subscribe(new Action1<User>() {
-//                    @Override
-//                    public void call(User user) {
-//                        intent2Activity(MainActivity.class);
-//                    }
-//                });
     }
 }

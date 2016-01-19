@@ -14,7 +14,6 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
     private FrameLayout fl_content;
     private RadioGroup rg_bottom_tab;
     private RadioButton rb_home;
-    private RadioButton rb_user;
 
     private FragmentController controller;
 
@@ -22,7 +21,6 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initView();
 
         controller = new FragmentController(this, R.id.fl_content);
@@ -33,7 +31,6 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         fl_content = (FrameLayout) findViewById(R.id.fl_content);
         rg_bottom_tab = (RadioGroup) findViewById(R.id.rg_bottom_tab);
         rb_home = (RadioButton) findViewById(R.id.rb_home);
-        rb_user = (RadioButton) findViewById(R.id.rb_user);
         rg_bottom_tab.setOnCheckedChangeListener(this);
     }
 
@@ -43,8 +40,14 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
             case R.id.rb_home:
                 controller.showFragment(0);
                 break;
-            case R.id.rb_user:
-
+            case R.id.rb_search:
+                controller.showFragment(1);
+                break;
+            case R.id.rb_fav:
+                controller.showFragment(2);
+                break;
+            case R.id.rb_settings:
+                controller.showFragment(3);
                 break;
         }
     }

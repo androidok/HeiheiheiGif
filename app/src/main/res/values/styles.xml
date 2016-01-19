@@ -40,9 +40,11 @@
         <item name="android:textColor">@color/txt_light_gray</item>
     </style>
 
-    <style name="EditTextSingleLine" parent="TextViewSubhead">
+    <style name="EditTextSingleLine" parent="@style/Widget.AppCompat.EditText">
         <item name="android:layout_width">match_parent</item>
         <item name="android:textColorHint">@color/txt_light_gray</item>
+        <item name="android:textColor">@color/txt_black</item>
+        <item name="android:textSize">@dimen/txtsize_subhead</item>
         <item name="android:singleLine">true</item>
     </style>
 
@@ -58,11 +60,7 @@
         <item name="android:layout_weight">1</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:padding">@dimen/margin_small</item>
         <item name="android:button">@null</item>
-        <item name="android:textSize">@dimen/txtsize_caption</item>
-        <!--<item name="android:textColor">@color/txtcolor_black2yellow_sel</item>-->
-        <!--<item name="android:background">@color/white</item>-->
         <item name="android:gravity">center</item>
     </style>
 

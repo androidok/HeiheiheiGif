@@ -49,7 +49,7 @@ public class BaseActivity extends AppCompatActivity {
     protected TitleBuilder initBackTitle(String title) {
         return new TitleBuilder(this)
                 .setTitleText(title)
-                .setLeftImage(R.mipmap.ic_chevron_left_white)
+                .setLeftImage(R.mipmap.ic_chevron_left_grey600_24dp)
                 .setLeftOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

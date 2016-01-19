@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- basic -->
     <!-- 主色调 -->
-    <color name="primary">#ffbe2a</color>
-    <color name="primary_dark">#d89803</color>
+    <color name="primary">#d50202</color>
+    <color name="primary_dark">#940203</color>
     <!-- 主体文字,标题/标签 -->
     <color name="txt_black">#404040</color>
     <!-- 内容文字,正文 -->
@@ -15,5 +16,8 @@
     <color name="brown">#d54c1c</color>
     <!-- 分割线 -->
     <color name="divider_gray">#d4d0cd</color>
+
+    <!-- other -->
+    <color name="txt_link_blue">#1ea5ff</color>
 
 </resources>

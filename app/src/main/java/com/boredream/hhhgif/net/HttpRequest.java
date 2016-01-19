@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Base64;
+import android.util.Log;
 
 import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.constants.CommonConstants;
@@ -361,34 +362,36 @@ public class HttpRequest {
         int size = DisplayUtils.dp2px(context, 56);
         Glide.with(context).load(filepath).asBitmap().toBytes().into(
                 new SimpleTarget<byte[]>(size, size) {
-            @Override
-            public void onResourceReady(byte[] resource, GlideAnimation<? super byte[]> glideAnimation) {
-                // upload image byte[]
-                service.fileUpload(encodeFilename, resource)
-                        .flatMap(new Func1<FileUploadResponse, Observable<User>>() {
-                            @Override
-                            public Observable<User> call(FileUploadResponse fileUploadResponse) {
-                                // update user avatar
-                                Map<String, Object> updateMap = new HashMap<>();
-                                updateMap.put("avatar", fileUploadResponse.getUrl());
+                    @Override
+                    public void onResourceReady(final byte[] resource, GlideAnimation<? super byte[]> glideAnimation) {
+                        // upload image byte[]
+                        service.fileUpload(encodeFilename, resource)
+                                .flatMap(new Func1<FileUploadResponse, Observable<User>>() {
+                                    @Override
+                                    public Observable<User> call(FileUploadResponse fileUploadResponse) {
+                                        Log.i("DDD", "upload image size = " + resource.length);
 
-                                User currentUser = UserInfoKeeper.getCurrentUser();
-                                return service.updateUserById(currentUser.getObjectId(), updateMap);
-                            }
-                        })
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnError(errorAction1)
-                        .subscribe(call);
-            }
+                                        // update user avatar
+                                        Map<String, Object> updateMap = new HashMap<>();
+                                        updateMap.put("avatar", fileUploadResponse.getUrl());
 
-            @Override
-            public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                super.onLoadFailed(e, errorDrawable);
-                // TODO load local file exception
-                errorAction1.call(new Throwable("load local file exception"));
-            }
-        });
+                                        User currentUser = UserInfoKeeper.getCurrentUser();
+                                        return service.updateUserById(currentUser.getObjectId(), updateMap);
+                                    }
+                                })
+                                .subscribeOn(Schedulers.newThread())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .doOnError(errorAction1)
+                                .subscribe();
+                    }
+
+                    @Override
+                    public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                        super.onLoadFailed(e, errorDrawable);
+                        // TODO load local file exception
+                        errorAction1.call(new Throwable("load local file exception"));
+                    }
+                });
     }
 
 }
