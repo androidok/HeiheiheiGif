@@ -1,18 +1,19 @@
 package com.boredream.hhhgif.activity;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
+import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.fragment.FragmentController;
+import com.boredream.hhhgif.utils.UserInfoKeeper;
 
-public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private FrameLayout fl_content;
-    private RadioGroup rg_bottom_tab;
     private RadioButton rb_home;
 
     private FragmentController controller;
@@ -29,14 +30,16 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
 
     private void initView() {
         fl_content = (FrameLayout) findViewById(R.id.fl_content);
-        rg_bottom_tab = (RadioGroup) findViewById(R.id.rg_bottom_tab);
         rb_home = (RadioButton) findViewById(R.id.rb_home);
-        rg_bottom_tab.setOnCheckedChangeListener(this);
+        rb_home.setOnClickListener(this);
+        findViewById(R.id.rb_search).setOnClickListener(this);
+        findViewById(R.id.rb_fav).setOnClickListener(this);
+        findViewById(R.id.rb_settings).setOnClickListener(this);
     }
 
     @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId) {
-        switch (checkedId) {
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.rb_home:
                 controller.showFragment(0);
                 break;
@@ -47,7 +50,13 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
                 controller.showFragment(2);
                 break;
             case R.id.rb_settings:
-                controller.showFragment(3);
+//                controller.showFragment(3);
+                User user = UserInfoKeeper.getCurrentUser();
+                if (user == null) {
+                    intent2Activity(LoginActivity.class);
+                } else {
+                    showToast(user.getUsername());
+                }
                 break;
         }
     }

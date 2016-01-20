@@ -14,6 +14,11 @@ public class User extends BaseEntity {
     private String mobilePhoneNumber;
 
     /**
+     * 密码
+     */
+    private String password;
+
+    /**
      * 手机号验证码,发送短信验证时请求使用
      */
     private String smsCode;
@@ -50,6 +55,14 @@ public class User extends BaseEntity {
 
     public void setMobilePhoneNumber(String mobilePhoneNumber) {
         this.mobilePhoneNumber = mobilePhoneNumber;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getSmsCode() {

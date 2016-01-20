@@ -2,8 +2,11 @@
 <resources>
     <!-- basic -->
     <!-- 主色调 -->
-    <color name="primary">#d50202</color>
-    <color name="primary_dark">#940203</color>
+    <color name="colorPrimary">#d50202</color>
+    <color name="colorPrimaryDark">#940203</color>
+    <color name="colorAccent">#64bc1a</color>
+    <color name="colorSecondary">#ff9900</color>
+    <color name="colorSecondaryDark">#d88200</color>
     <!-- 主体文字,标题/标签 -->
     <color name="txt_black">#404040</color>
     <!-- 内容文字,正文 -->

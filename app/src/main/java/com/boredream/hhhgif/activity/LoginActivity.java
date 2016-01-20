@@ -1,17 +1,20 @@
 package com.boredream.hhhgif.activity;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
+import com.boredream.hhhgif.utils.UserInfoKeeper;
 
 import rx.Observable;
 import rx.functions.Action1;
@@ -49,19 +52,33 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void login() {
-        String username = et_username.getText().toString();
-        String password = et_password.getText().toString();
+        // validate
+        String username = et_username.getText().toString().trim();
+        if (TextUtils.isEmpty(username)) {
+            Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        String password = et_password.getText().toString().trim();
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(this, "请输入密码", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        showProgressDialog();
         Observable<User> observable = HttpRequest.getApiService().login(username, password);
         ObservableDecorator.decorate(this, observable)
                 .subscribe(new Action1<User>() {
                     @Override
                     public void call(User user) {
+                        dismissProgressDialog();
+                        UserInfoKeeper.setCurrentUser(user);
                         intent2Activity(MainActivity.class);
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
+                        dismissProgressDialog();
                         showLog("登录失败 " + throwable.getMessage());
                         showToast("登录失败");
                     }
@@ -75,6 +92,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 login();
                 break;
             case R.id.tv_forget_psw:
+
                 break;
             case R.id.ll_regist:
                 intent2Activity(RegistActivity.class);

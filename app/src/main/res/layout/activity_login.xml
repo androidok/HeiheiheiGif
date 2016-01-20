@@ -64,19 +64,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_medium"
+            android:background="@drawable/shape_bottom_line"
             android:clickable="true"
             android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
                 style="@style/TextViewBody"
-                android:clickable="true"
                 android:text="还没有账号?  赶紧"
                 android:textColor="@color/txt_light_gray" />
 
             <TextView
                 style="@style/TextViewBody"
-                android:clickable="true"
                 android:text="注册"
                 android:textColor="@color/txt_link_blue" />
 
