@@ -90,7 +90,7 @@ public class HttpRequest {
 
         // log
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         httpClient.interceptors().add(interceptor);
 
         // Retrofit
@@ -383,7 +383,7 @@ public class HttpRequest {
                                 .subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .doOnError(errorAction1)
-                                .subscribe();
+                                .subscribe(call);
                     }
 
                     @Override
