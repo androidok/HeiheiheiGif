@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
 public class HomeFragment extends BaseFragment {
@@ -93,7 +94,7 @@ public class HomeFragment extends BaseFragment {
 
         Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifs(page);
         ObservableDecorator.decorate(activity, observable)
-                .delay(2, TimeUnit.SECONDS)
+                .delay(1, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
                 .subscribe(new Action1<ListResponse<GifInfo>>() {
                     @Override
                     public void call(ListResponse<GifInfo> gifInfos) {
