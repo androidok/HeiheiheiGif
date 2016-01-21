@@ -94,7 +94,7 @@ public class HomeFragment extends BaseFragment {
 
         Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifs(page);
         ObservableDecorator.decorate(activity, observable)
-                .delay(1, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+                .delay(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                 .subscribe(new Action1<ListResponse<GifInfo>>() {
                     @Override
                     public void call(ListResponse<GifInfo> gifInfos) {

@@ -46,13 +46,19 @@ public class GifInfoAdapter extends RecyclerView.Adapter<GifInfoAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView iv_gif;
+        public ImageView iv_del_img;
         public TextView tv_title;
+        public TextView tv_comment_count;
+        public TextView tv_fav_count;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             iv_gif = (ImageView) itemView.findViewById(R.id.iv_gif);
+            iv_del_img = (ImageView) itemView.findViewById(R.id.iv_del_img);
             tv_title = (TextView) itemView.findViewById(R.id.tv_title);
+            tv_comment_count = (TextView) itemView.findViewById(R.id.tv_comment_count);
+            tv_fav_count = (TextView) itemView.findViewById(R.id.tv_fav_count);
         }
     }
 
@@ -85,11 +91,12 @@ public class GifInfoAdapter extends RecyclerView.Adapter<GifInfoAdapter.ViewHold
 
         GifInfo gifInfo = datas.get(position);
         holder.tv_title.setText(gifInfo.getTitle());
+        holder.tv_comment_count.setText(gifInfo.getCommentCount() + "");
+        holder.tv_fav_count.setText(gifInfo.getFavCount() + "");
         Glide.with(context)
                 .load(gifInfo.getImgUrl())
                 .crossFade()
                 .centerCrop()
                 .into(holder.iv_gif);
     }
-
 }
