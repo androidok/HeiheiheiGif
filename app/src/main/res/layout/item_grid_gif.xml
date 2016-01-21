@@ -24,6 +24,7 @@
             style="@style/TextViewBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLines="4"
             android:padding="8dp" />
     </LinearLayout>
 
