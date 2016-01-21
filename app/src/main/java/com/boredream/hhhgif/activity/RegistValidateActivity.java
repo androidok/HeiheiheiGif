@@ -71,7 +71,6 @@ public class RegistValidateActivity extends BaseActivity implements View.OnClick
      * 开始倒计时
      */
     private void startCountDown() {
-        btn_next.setEnabled(false);
         tv_code_info.setText("60秒");
         tv_code_info.setTextColor(getResources().getColor(R.color.txt_gray));
 
@@ -86,7 +85,6 @@ public class RegistValidateActivity extends BaseActivity implements View.OnClick
 
             @Override
             public void onFinish() {
-                btn_next.setEnabled(true);
                 tv_code_info.setText("重新获取");
                 tv_code_info.setTextColor(getResources().getColor(R.color.txt_link_blue));
             }
@@ -106,12 +104,14 @@ public class RegistValidateActivity extends BaseActivity implements View.OnClick
         User user = new User();
         user.setMobilePhoneNumber(phone);
         user.setPassword(password);
+        user.setSmsCode(code);
         Observable<User> observable = HttpRequest.getApiService().userRegist(user);
         showProgressDialog();
         ObservableDecorator.decorate(this, observable)
                 .subscribe(new Action1<User>() {
                     @Override
                     public void call(User user) {
+                        // include token
                         dismissProgressDialog();
                         UserInfoKeeper.setCurrentUser(user);
                         showRegistSuccessDialog();

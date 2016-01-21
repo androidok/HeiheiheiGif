@@ -113,7 +113,7 @@ public class HttpRequest {
         // 手机获取验证码
         @POST("/1/requestSmsCode")
         Observable<Object> requestSmsCode(
-                @Query("mobilePhoneNumber") String mobilePhoneNumber);
+                @Body Map<String, Object> mobilePhoneNumber);
 
         // 手机验证注册
         @POST("/1/users")

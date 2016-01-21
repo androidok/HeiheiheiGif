@@ -13,6 +13,9 @@ import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import rx.Observable;
 import rx.functions.Action1;
 
@@ -55,7 +58,9 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
 
         // validate success, do something
         showProgressDialog();
-        Observable<Object> observable = HttpRequest.getApiService().requestSmsCode(username);
+        Map<String, Object> params = new HashMap<>();
+        params.put("mobilePhoneNumber", username);
+        Observable<Object> observable = HttpRequest.getApiService().requestSmsCode(params);
         ObservableDecorator.decorate(this, observable)
                 .subscribe(new Action1<Object>() {
                     @Override
