@@ -122,12 +122,13 @@ public class HttpRequest {
 
         // 忘记密码重置
         @PUT("/1/resetPasswordBySmsCode/{smsCode}")
-        Observable<User> resetPasswordBySmsCode(
-                @Path("smsCode") String smsCode);
+        Observable<Object> resetPasswordBySmsCode(
+                @Path("smsCode") String smsCode,
+                @Body Map<String, Object> password);
 
         // 旧密码修改新密码
         @POST(" /1/updateUserPassword/{objectId}")
-        Observable<User> resetPasswordBySmsCode(
+        Observable<User> updateUserPassword(
                 @Path("smsCode") String smsCode,
                 @Body UpdatePswRequest updatePswRequest);
 

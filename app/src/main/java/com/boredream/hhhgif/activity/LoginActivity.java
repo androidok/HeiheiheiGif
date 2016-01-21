@@ -92,7 +92,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 login();
                 break;
             case R.id.tv_forget_psw:
-
+                intent2Activity(ForgetPswActivity.class);
                 break;
             case R.id.ll_regist:
                 intent2Activity(RegistActivity.class);

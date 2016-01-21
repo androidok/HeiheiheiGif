@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.boredream.hhhgif.R;
+import com.boredream.hhhgif.activity.LoginActivity;
 import com.boredream.hhhgif.constants.CommonConstants;
 import com.boredream.hhhgif.utils.DialogUtils;
 import com.boredream.hhhgif.utils.TitleBuilder;
@@ -65,6 +66,12 @@ public class BaseActivity extends AppCompatActivity {
      */
     protected void intent2Activity(Class<? extends Activity> tarActivity) {
         Intent intent = new Intent(this, tarActivity);
+        startActivity(intent);
+    }
+
+    protected void clearIntent2Login() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
