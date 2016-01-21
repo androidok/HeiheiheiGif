@@ -33,8 +33,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         setContentView(R.layout.activity_login);
         initView();
 
-        et_username.setText("bore");
-        et_password.setText("123456");
+        et_username.setText("18551681236");
+        et_password.setText("123123");
     }
 
     private void initView() {
@@ -79,8 +79,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     @Override
                     public void call(Throwable throwable) {
                         dismissProgressDialog();
-                        showLog("登录失败 " + throwable.getMessage());
-                        showToast("登录失败");
                     }
                 });
     }

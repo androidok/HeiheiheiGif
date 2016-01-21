@@ -40,7 +40,7 @@ public class ObservableDecorator {
                             ErrorResponse errorResponse = new Gson().fromJson(
                                     responseBody.string(), ErrorResponse.class);
                             // TODO custom error info
-                            ToastUtils.showToast(context, errorResponse.toString());
+                            ToastUtils.showToast(context, errorResponse.getError());
                             return;
                         } catch (IOException e) {
                             e.printStackTrace();

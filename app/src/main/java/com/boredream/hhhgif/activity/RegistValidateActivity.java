@@ -120,7 +120,6 @@ public class RegistValidateActivity extends BaseActivity implements View.OnClick
                     @Override
                     public void call(Throwable throwable) {
                         dismissProgressDialog();
-                        showToast("验证失败");
                     }
                 });
 

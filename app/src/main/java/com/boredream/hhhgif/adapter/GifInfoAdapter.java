@@ -82,7 +82,7 @@ public class GifInfoAdapter extends RecyclerView.Adapter<GifInfoAdapter.ViewHold
         GifInfo gifInfo = datas.get(position);
         holder.tv_title.setText(gifInfo.getTitle());
         Glide.with(context)
-                .load(gifInfo.getThumbnailImgUrl())
+                .load(gifInfo.getImgUrl())
                 .crossFade()
                 .centerCrop()
                 .into(holder.iv_gif);

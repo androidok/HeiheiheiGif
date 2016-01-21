@@ -114,7 +114,6 @@ public class ForgetPswValidateActivity extends BaseActivity implements View.OnCl
                     @Override
                     public void call(Throwable throwable) {
                         dismissProgressDialog();
-                        showToast("验证失败");
                     }
                 });
 
