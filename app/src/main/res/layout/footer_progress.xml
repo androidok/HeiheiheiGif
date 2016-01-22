@@ -6,15 +6,8 @@
     android:orientation="horizontal">
 
     <ProgressBar
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        style="@style/TextViewSubhead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:text="加载更多..." />
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:indeterminateDrawable="@drawable/oval_progress" />
 
 </LinearLayout>

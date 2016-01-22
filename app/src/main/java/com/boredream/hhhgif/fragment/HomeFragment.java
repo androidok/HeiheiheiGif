@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.adapter.GifInfoAdapter;
+import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.constants.CommonConstants;
 import com.boredream.hhhgif.entity.GifInfo;
 import com.boredream.hhhgif.entity.ListResponse;

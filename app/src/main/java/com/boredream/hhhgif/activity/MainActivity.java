@@ -26,6 +26,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         controller = new FragmentController(this, R.id.fl_content);
         rb_home.setChecked(true);
+        controller.showFragment(0);
     }
 
     private void initView() {
@@ -34,7 +35,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         rb_home.setOnClickListener(this);
         findViewById(R.id.rb_search).setOnClickListener(this);
         findViewById(R.id.rb_fav).setOnClickListener(this);
-        findViewById(R.id.rb_settings).setOnClickListener(this);
+        findViewById(R.id.rb_more).setOnClickListener(this);
     }
 
     @Override
@@ -49,7 +50,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.rb_fav:
                 controller.showFragment(2);
                 break;
-            case R.id.rb_settings:
+            case R.id.rb_more:
 //                controller.showFragment(3);
                 User user = UserInfoKeeper.getCurrentUser();
                 if (user == null) {

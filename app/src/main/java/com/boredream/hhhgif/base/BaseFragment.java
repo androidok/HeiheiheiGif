@@ -1,4 +1,4 @@
-package com.boredream.hhhgif.fragment;
+package com.boredream.hhhgif.base;
 
 
 import android.app.Activity;
@@ -9,7 +9,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.boredream.hhhgif.activity.MainActivity;
-import com.boredream.hhhgif.base.BaseApplication;
 import com.boredream.hhhgif.utils.ToastUtils;
 
 public abstract class BaseFragment extends Fragment {
