@@ -47,7 +47,7 @@
         <com.boredream.hhhgif.view.DrawableRadioButton
             android:id="@+id/rb_more"
             style="@style/RadioButtonBottomTab"
-            android:drawableTop="@drawable/ic_settings_grey2black_sel"
+            android:drawableTop="@drawable/ic_more_grey2black_sel"
             android:paddingTop="@dimen/margin_small"
             app:drawableHeight="40dp"
             app:drawableWidth="40dp" />

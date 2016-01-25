@@ -24,22 +24,10 @@
 
         <TextView
             android:id="@+id/tv_name"
-            style="@style/TextAppearance.AppCompat.Subhead"
+            style="@style/TextViewSubhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/tv_phone"
-            style="@style/TextAppearance.AppCompat.Body1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_tiny" />
-
-        <TextView
-            android:id="@+id/tv_community"
-            style="@style/TextAppearance.AppCompat.Body1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <ImageView

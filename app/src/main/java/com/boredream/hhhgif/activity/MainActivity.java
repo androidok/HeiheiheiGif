@@ -2,18 +2,14 @@ package com.boredream.hhhgif.activity;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.RadioButton;
 
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
-import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.fragment.FragmentController;
-import com.boredream.hhhgif.utils.UserInfoKeeper;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    private FrameLayout fl_content;
     private RadioButton rb_home;
 
     private FragmentController controller;
@@ -30,7 +26,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initView() {
-        fl_content = (FrameLayout) findViewById(R.id.fl_content);
         rb_home = (RadioButton) findViewById(R.id.rb_home);
         rb_home.setOnClickListener(this);
         findViewById(R.id.rb_search).setOnClickListener(this);
@@ -51,13 +46,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 controller.showFragment(2);
                 break;
             case R.id.rb_more:
-//                controller.showFragment(3);
-                User user = UserInfoKeeper.getCurrentUser();
-                if (user == null) {
-                    intent2Activity(LoginActivity.class);
-                } else {
-                    showToast(user.getUsername());
-                }
+                controller.showFragment(3);
                 break;
         }
     }

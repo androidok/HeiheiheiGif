@@ -13,6 +13,7 @@ import com.boredream.hhhgif.adapter.MoreRecyclerAdapter;
 import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.entity.MoreItem;
 import com.boredream.hhhgif.utils.DisplayUtils;
+import com.boredream.hhhgif.utils.TitleBuilder;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.boredream.hhhgif.view.DividerItemDecoration;
 import com.boredream.hhhgif.view.EmptyItemDecoration;
@@ -33,7 +34,17 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        adapter.setUser(UserInfoKeeper.getCurrentUser());
+        adapter.notifyDataSetChanged();
+    }
+
     private void initView(View view) {
+        new TitleBuilder(view).setTitleText("更多");
+
         rv_more = (RecyclerView) view.findViewById(R.id.rv_more);
     }
 
@@ -44,7 +55,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         items.add(new MoreItem(R.mipmap.ic_settings_grey600_24dp, "设置"));
 
         adapter = new MoreRecyclerAdapter(items, this);
-        adapter.setUser(UserInfoKeeper.getCurrentUser());
         rv_more.setAdapter(adapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(

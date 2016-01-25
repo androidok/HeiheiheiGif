@@ -15,11 +15,12 @@
     <color name="txt_light_gray">#b3b3b3</color>
     <!-- 背景色 -->
     <color name="bg_gray">#f1f1f1</color>
+    <!-- 按下灰色 -->
+    <color name="bg_gray_pressed">#e8e8e8</color>
     <!-- 高亮,红棕色 -->
     <color name="brown">#d54c1c</color>
     <!-- 分割线 -->
     <color name="divider_gray">#d4d0cd</color>
-
     <!-- other -->
     <color name="txt_link_blue">#1ea5ff</color>
 
