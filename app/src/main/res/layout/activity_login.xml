@@ -43,7 +43,7 @@
                 android:clickable="true"
                 android:padding="@dimen/margin_small"
                 android:text="忘记密码?"
-                android:textColor="@color/txt_link_blue" />
+                android:textColor="@color/colorPrimary" />
         </RelativeLayout>
 
         <Button
@@ -76,7 +76,7 @@
             <TextView
                 style="@style/TextViewBody"
                 android:text="注册"
-                android:textColor="@color/txt_link_blue" />
+                android:textColor="@color/colorPrimary" />
 
         </LinearLayout>
     </LinearLayout>

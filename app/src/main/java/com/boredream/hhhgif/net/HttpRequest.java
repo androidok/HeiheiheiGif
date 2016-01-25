@@ -233,7 +233,7 @@ public class HttpRequest {
     }
 
     /**
-     * 根据昵称模糊搜索用户,分页(默认每页数量为CommonConstants.COUNT_OF_PAGE)
+     * 根据标题模糊搜索动态图,分页(默认每页数量为CommonConstants.COUNT_OF_PAGE)
      *
      * @param searchKey 搜索title
      * @param page      页数,从1开始
