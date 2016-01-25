@@ -15,7 +15,7 @@
 
     <TextView
         android:id="@+id/tv_mid"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextViewSubhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_medium"
@@ -37,12 +37,12 @@
 
     <TextView
         android:id="@+id/tv_right"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextViewBody"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_medium"
         android:layout_marginRight="@dimen/margin_small"
-        android:text=""
+        android:textColor="@color/txt_light_gray"
         android:visibility="gone" />
 
     <ImageView

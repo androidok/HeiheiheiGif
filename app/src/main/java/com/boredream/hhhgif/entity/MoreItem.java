@@ -15,6 +15,11 @@ public class MoreItem {
      */
     public String midText;
 
+    /**
+     * 右侧文字
+     */
+    public String rightText;
+
     public MoreItem() {
 
     }

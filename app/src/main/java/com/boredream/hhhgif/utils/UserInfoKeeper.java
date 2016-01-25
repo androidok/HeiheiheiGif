@@ -12,4 +12,8 @@ public class UserInfoKeeper {
     public static void setCurrentUser(User user) {
         currentUser = user;
     }
+
+    public static void logout() {
+        currentUser = null;
+    }
 }

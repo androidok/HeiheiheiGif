@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import com.boredream.hhhgif.R;
+import com.boredream.hhhgif.activity.SettingActivity;
 import com.boredream.hhhgif.adapter.MoreRecyclerAdapter;
 import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.entity.MoreItem;
@@ -73,6 +74,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         switch (position) {
             case 0:
 
+                break;
+            case 1:
+                break;
+            case 2:
+                intent2Activity(SettingActivity.class);
                 break;
         }
     }
