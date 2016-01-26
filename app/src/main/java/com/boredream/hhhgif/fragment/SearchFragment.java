@@ -3,9 +3,6 @@ package com.boredream.hhhgif.fragment;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +20,7 @@ import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.utils.DisplayUtils;
 import com.boredream.hhhgif.view.GridSpacingDecorator;
+import com.jakewharton.rxbinding.widget.RxTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 
 public class SearchFragment extends BaseFragment implements View.OnClickListener {
 
@@ -58,39 +57,43 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
         tv_clear_his = (TextView) view.findViewById(R.id.tv_clear_his);
         rv_search_his = (RecyclerView) view.findViewById(R.id.rv_search_his);
 
-        et_search.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // do nothing
-            }
+        RxTextView.textChanges(et_search)
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(new Func1<CharSequence, String>() {
+                    @Override
+                    public String call(CharSequence charSequence) {
+                        // clear after modify
+                        infos.clear();
+                        adapter.notifyDataSetChanged();
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        String search = et_search.getText().toString().trim();
+                        return search;
+                    }
+                })
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .flatMap(new Func1<String, Observable<ListResponse<GifInfo>>>() {
+                    @Override
+                    public Observable<ListResponse<GifInfo>> call(String s) {
+                        // get infos from network
+                        Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifByTitle(s, currentPage);
+                        return ObservableDecorator.decorate(activity, observable);
+                    }
+                })
+                .subscribe(new Action1<ListResponse<GifInfo>>() {
+                    @Override
+                    public void call(ListResponse<GifInfo> gifInfoListResponse) {
+                        // add infos to adapter
+                        infos.addAll(gifInfoListResponse.getResults());
+                        adapter.notifyDataSetChanged();
+                    }
+                });
 
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                // do nothing
-            }
-        });
         iv_clear.setOnClickListener(this);
         tv_clear_his.setOnClickListener(this);
 
         initRecyclerView();
         adapter = new GifInfoAdapter(activity, infos);
         rv_search_his.setAdapter(adapter);
-    }
-
-    private void search() {
-        // validate
-        String search = et_search.getText().toString().trim();
-        if (TextUtils.isEmpty(search)) {
-            return;
-        }
-
-        // validate success, do something
-
     }
 
     private void initRecyclerView() {

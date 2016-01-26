@@ -90,7 +90,7 @@ public class HttpRequest {
 
         // log
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         httpClient.interceptors().add(interceptor);
 
         // Retrofit
@@ -240,7 +240,7 @@ public class HttpRequest {
      */
     public static Observable<ListResponse<GifInfo>> getGifByTitle(String searchKey, int page) {
         BmobService service = getApiService();
-        String where = "{\"title\":{\"$regex\":\"*" + searchKey + "*\"}}";
+        String where = "{\"title\":{\"$regex\":\"" + searchKey + ".*\"}}";
         return service.getGifByTitle(CommonConstants.COUNT_OF_PAGE,
                 (page - 1) * CommonConstants.COUNT_OF_PAGE, where);
     }
