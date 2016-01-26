@@ -9,9 +9,9 @@ public class Comment extends BaseEntity {
     private String gifId;
 
     /**
-     * 发送用户id
+     * 发送用户
      */
-    private String userId;
+    private User user;
 
     /**
      * 评论内容
@@ -26,12 +26,12 @@ public class Comment extends BaseEntity {
         this.gifId = gifId;
     }
 
-    public String getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getContent() {

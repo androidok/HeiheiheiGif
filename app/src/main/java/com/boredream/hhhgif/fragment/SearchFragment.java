@@ -132,7 +132,6 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
 
         Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifs(page);
         ObservableDecorator.decorate(activity, observable)
-                .delay(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                 .subscribe(new Action1<ListResponse<GifInfo>>() {
                     @Override
                     public void call(ListResponse<GifInfo> gifInfos) {

@@ -39,7 +39,7 @@ public class ApiTest {
 
         Comment comment = new Comment();
         comment.setGifId("cb06614952");
-        comment.setUserId("jTDo1112");
+        comment.setUser("jTDo1112");
         comment.setContent("哈哈哈");
         HttpRequest.addGifComment(mActivityRule.getActivity(), comment,
                 new Action1<BaseEntity>() {

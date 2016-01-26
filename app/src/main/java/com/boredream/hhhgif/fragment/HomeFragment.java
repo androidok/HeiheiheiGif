@@ -22,10 +22,8 @@ import com.boredream.hhhgif.view.GridSpacingDecorator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
 public class HomeFragment extends BaseFragment {
@@ -95,12 +93,12 @@ public class HomeFragment extends BaseFragment {
 
         Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifs(page);
         ObservableDecorator.decorate(activity, observable)
-                .delay(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                 .subscribe(new Action1<ListResponse<GifInfo>>() {
                     @Override
                     public void call(ListResponse<GifInfo> gifInfos) {
                         isLoading = false;
                         srl_home.setRefreshing(false);
+
                         if (gifInfos.getResults().size() > 0) {
                             currentPage = page;
                             infos.addAll(gifInfos.getResults());

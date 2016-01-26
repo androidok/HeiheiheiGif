@@ -1,6 +1,8 @@
 package com.boredream.hhhgif.base;
 
-public class BaseEntity {
+import java.io.Serializable;
+
+public class BaseEntity implements Serializable {
 
     // 添加新数据时,返回为objectId + createdAt
     // 更新数据时,返回为updateAt

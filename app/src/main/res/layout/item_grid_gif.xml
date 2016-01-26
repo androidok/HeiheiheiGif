@@ -45,7 +45,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_title"
             android:layout_marginTop="-8dp"
-            android:gravity="right"
             android:orientation="horizontal"
             android:padding="@dimen/margin_small">
 

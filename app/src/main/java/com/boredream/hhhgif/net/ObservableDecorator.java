@@ -27,7 +27,7 @@ public class ObservableDecorator {
                 .doOnError(getErrorAction(context));
     }
 
-    public static Action1<Throwable> getErrorAction(final Context context) {
+    private static Action1<Throwable> getErrorAction(final Context context) {
         return new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {

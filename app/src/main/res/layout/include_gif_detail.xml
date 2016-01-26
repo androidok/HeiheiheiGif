@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/iv_gif"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:maxHeight="400dp"
+        android:scaleType="fitCenter" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/TextViewCaption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_gif"
+        android:maxLines="4"
+        android:padding="16dp"
+        android:textColor="@color/txt_gray" />
+
+    <LinearLayout
+        android:id="@+id/ll1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_title"
+        android:layout_marginLeft="@dimen/margin_medium"
+        android:layout_marginTop="-16dp"
+        android:orientation="horizontal"
+        android:padding="@dimen/margin_small">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@mipmap/ic_chat_grey600_24dp" />
+
+        <TextView
+            android:id="@+id/tv_comment_count"
+            style="@style/TextViewCaption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_tiny"
+            android:text="0" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:src="@mipmap/ic_favorite_grey600_24dp" />
+
+        <TextView
+            android:id="@+id/tv_fav_count"
+            style="@style/TextViewCaption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_tiny"
+            android:ellipsize="end"
+            android:text="0" />
+
+    </LinearLayout>
+
+    <TextView
+        style="@style/TextViewBody"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_below="@+id/ll1"
+        android:background="@color/bg_gray_pressed"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/margin_medium"
+        android:text="搜索结果"
+        android:textColor="@color/txt_gray" />
+</RelativeLayout>
