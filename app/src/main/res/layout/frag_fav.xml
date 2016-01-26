@@ -7,4 +7,18 @@
 
     <include layout="@layout/include_titlebar" />
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srl_fav"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_fav"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/margin_tiny"
+            android:paddingRight="@dimen/margin_tiny" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 </LinearLayout>

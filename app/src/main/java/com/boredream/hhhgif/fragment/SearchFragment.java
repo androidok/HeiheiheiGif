@@ -3,12 +3,12 @@ package com.boredream.hhhgif.fragment;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.adapter.GifInfoAdapter;
@@ -35,7 +35,6 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
 
     private EditText et_search;
     private ImageView iv_clear;
-    private TextView tv_clear_his;
     private RecyclerView rv_search_his;
 
     private GifInfoAdapter adapter;
@@ -54,7 +53,6 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
     private void initView(View view) {
         et_search = (EditText) view.findViewById(R.id.et_search);
         iv_clear = (ImageView) view.findViewById(R.id.iv_clear);
-        tv_clear_his = (TextView) view.findViewById(R.id.tv_clear_his);
         rv_search_his = (RecyclerView) view.findViewById(R.id.rv_search_his);
 
         RxTextView.textChanges(et_search)
@@ -68,6 +66,13 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
 
                         String search = et_search.getText().toString().trim();
                         return search;
+                    }
+                })
+                .filter(new Func1<String, Boolean>() {
+                    @Override
+                    public Boolean call(String s) {
+                        // validate empty
+                        return !TextUtils.isEmpty(s);
                     }
                 })
                 .debounce(500, TimeUnit.MILLISECONDS)
@@ -89,7 +94,6 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
                 });
 
         iv_clear.setOnClickListener(this);
-        tv_clear_his.setOnClickListener(this);
 
         initRecyclerView();
         adapter = new GifInfoAdapter(activity, infos);
@@ -154,9 +158,6 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
         switch (v.getId()) {
             case R.id.iv_clear:
                 et_search.setText("");
-                break;
-            case R.id.tv_clear_his:
-
                 break;
         }
     }
