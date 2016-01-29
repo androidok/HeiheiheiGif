@@ -7,7 +7,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 /**
  * Glide装饰器
  */
-public class SimpleGlideDecorator {
+public class GlideUtils {
 
     /**
      * 为Glide装饰添加默认设置

@@ -14,7 +14,6 @@ import com.boredream.hhhgif.entity.MoreItem;
 import com.boredream.hhhgif.utils.AppUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.boredream.hhhgif.view.DividerItemDecoration;
-import com.boredream.hhhgif.view.WrapHeightLinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +53,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         adapter = new SettingRecyclerAdapter(items, this);
         rv_setting.setAdapter(adapter);
 
-        WrapHeightLinearLayoutManager linearLayoutManager = new WrapHeightLinearLayoutManager(
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
                 this, LinearLayoutManager.VERTICAL, false);
         rv_setting.setLayoutManager(linearLayoutManager);
         // 每个item之间的divder线

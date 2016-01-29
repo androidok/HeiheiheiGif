@@ -49,12 +49,12 @@ public class GifDetailActivity extends BaseActivity {
     }
 
     private void initView() {
-        new TitleBuilder(this).setTitleText("更多");
+        new TitleBuilder(this).setTitleText("动态图详情");
 
         srl_gifdetail = (SwipeRefreshLayout) findViewById(R.id.srl_gifdetail);
         rv_gifdetail = (RecyclerView) findViewById(R.id.rv_gifdetail);
 
-        GifDetailAdapter gifDetailAdapter = new GifDetailAdapter(infos);
+        GifDetailAdapter gifDetailAdapter = new GifDetailAdapter(this, infos);
         gifDetailAdapter.setGifInfo(gif);
         adapter = new LoadMoreAdapter(rv_gifdetail, gifDetailAdapter,
                 new LoadMoreAdapter.OnLoadMoreListener() {

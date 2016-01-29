@@ -8,9 +8,8 @@
     <ImageView
         android:id="@+id/iv_gif"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:layout_margin="@dimen/margin_medium"
-        android:maxHeight="400dp"
         android:scaleType="fitCenter" />
 
     <TextView

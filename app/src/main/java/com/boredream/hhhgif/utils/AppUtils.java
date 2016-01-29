@@ -8,9 +8,6 @@ import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-/**
- * Created by root on 2015/10/19.
- */
 public class AppUtils {
     public static String getAppVersionName(Context context) {
         String versionName = "";

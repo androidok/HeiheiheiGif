@@ -15,7 +15,7 @@ import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.activity.LoginActivity;
 import com.boredream.hhhgif.entity.MoreItem;
 import com.boredream.hhhgif.entity.User;
-import com.boredream.hhhgif.net.SimpleGlideDecorator;
+import com.boredream.hhhgif.net.GlideUtils;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
@@ -97,7 +97,7 @@ public class MoreRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 viewHolderHeader.include_more_header.setVisibility(View.VISIBLE);
                 viewHolderHeader.include_more_no_header.setVisibility(View.GONE);
 
-                SimpleGlideDecorator
+                GlideUtils
                         .decorator(Glide.with(viewHolderHeader.itemView.getContext()).load(user.getAvatar()))
                         .placeholder(R.mipmap.ic_account_circle_grey600_24dp)
                         .into(viewHolderHeader.iv_avatar);

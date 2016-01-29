@@ -1,6 +1,7 @@
 package com.boredream.hhhgif.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -10,8 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.boredream.hhhgif.R;
+import com.boredream.hhhgif.activity.GifDetailActivity;
 import com.boredream.hhhgif.entity.GifInfo;
-import com.boredream.hhhgif.net.SimpleGlideDecorator;
+import com.boredream.hhhgif.net.GlideUtils;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
@@ -90,12 +92,21 @@ public class GifInfoAdapter extends RecyclerView.Adapter<GifInfoAdapter.ViewHold
             return;
         }
 
-        GifInfo gifInfo = datas.get(position);
+        final GifInfo gifInfo = datas.get(position);
         holder.tv_title.setText(gifInfo.getTitle());
         holder.tv_comment_count.setText(gifInfo.getCommentCount() + "");
         holder.tv_fav_count.setText(gifInfo.getFavCount() + "");
-        SimpleGlideDecorator
+        GlideUtils
                 .decorator(Glide.with(context).load(gifInfo.getImgUrl()))
                 .into(holder.iv_gif);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), GifDetailActivity.class);
+                intent.putExtra("gif", gifInfo);
+                v.getContext().startActivity(intent);
+            }
+        });
     }
 }
