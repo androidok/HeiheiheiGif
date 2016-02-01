@@ -31,6 +31,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.functions.Func2;
 
 public class SearchFragment extends BaseFragment implements View.OnClickListener {
 
@@ -41,6 +42,7 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
     private LoadMoreAdapter adapter;
     private List<GifInfo> infos = new ArrayList<>();
 
+    private String searchKey;
     private int currentPage = 1;
 
     @Override
@@ -55,45 +57,7 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
         iv_clear = (ImageView) view.findViewById(R.id.iv_clear);
         rv_search_his = (RecyclerView) view.findViewById(R.id.rv_search_his);
 
-        RxTextView.textChanges(et_search)
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(new Func1<CharSequence, String>() {
-                    @Override
-                    public String call(CharSequence charSequence) {
-                        // clear after modify
-                        infos.clear();
-                        adapter.notifyDataSetChanged();
-
-                        currentPage = 1;
-
-                        String search = et_search.getText().toString().trim();
-                        return search;
-                    }
-                })
-                .filter(new Func1<String, Boolean>() {
-                    @Override
-                    public Boolean call(String s) {
-                        // validate empty
-                        return !TextUtils.isEmpty(s);
-                    }
-                })
-                .debounce(500, TimeUnit.MILLISECONDS)
-                .flatMap(new Func1<String, Observable<ListResponse<GifInfo>>>() {
-                    @Override
-                    public Observable<ListResponse<GifInfo>> call(String s) {
-                        // get infos from network
-                        Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifByTitle(s, currentPage);
-                        return ObservableDecorator.decorate(activity, observable);
-                    }
-                })
-                .subscribe(new Action1<ListResponse<GifInfo>>() {
-                    @Override
-                    public void call(ListResponse<GifInfo> gifInfoListResponse) {
-                        // add infos to adapter
-                        infos.addAll(gifInfoListResponse.getResults());
-                        adapter.notifyDataSetChanged();
-                    }
-                });
+        initTextChangeListener();
 
         iv_clear.setOnClickListener(this);
 
@@ -108,6 +72,66 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
         rv_search_his.setAdapter(adapter);
     }
 
+    private void initTextChangeListener() {
+        RxTextView.textChanges(et_search)
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(new Func1<CharSequence, String>() {
+                    @Override
+                    public String call(CharSequence charSequence) {
+                        // clear after modify
+                        infos.clear();
+                        adapter.notifyDataSetChanged();
+
+                        // init search info
+                        currentPage = 1;
+                        String key = et_search.getText().toString().trim();
+                        return key;
+                    }
+                })
+                .filter(new Func1<String, Boolean>() {
+                    @Override
+                    public Boolean call(String s) {
+                        // validate empty
+                        return !TextUtils.isEmpty(s);
+                    }
+                })
+                .debounce(500, TimeUnit.MILLISECONDS)
+//                .subscribe(new Action1<String>() {
+//                    @Override
+//                    public void call(String s) {
+//                        sendSearchRequest(s);
+//                    }
+//                })
+                .flatMap(new Func1<String, Observable<ListResponse<GifInfo>>>() {
+                    @Override
+                    public Observable<ListResponse<GifInfo>> call(final String s) {
+                        searchKey = s;
+                        // send request
+                        Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifByTitle(searchKey, currentPage);
+                        Observable<String> searchKey = Observable.just(s);
+                        Observable.zip(observable, searchKey, new Func2<ListResponse<GifInfo>, String, Object>() {
+                            @Override
+                            public Object call(ListResponse<GifInfo> gifInfoListResponse, String s) {
+                                return null;
+                            }
+                        });
+                        return ObservableDecorator.decorate(activity, observable);
+                    }
+                })
+                .subscribe(new Action1<ListResponse<GifInfo>>() {
+                    @Override
+                    public void call(ListResponse<GifInfo> gifInfoListResponse) {
+                        // receive response, set data
+                        infos.addAll(gifInfoListResponse.getResults());
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+    }
+
+    private void sendSearchRequest(String s) {
+
+    }
+
     private void initRecyclerView() {
         final StaggeredGridLayoutManager staggeredGridLayoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
@@ -118,7 +142,7 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
     private void loadData(final int page) {
         showToast("load data ... page = " + page);
 
-        Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifs(page);
+        Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifByTitle(searchKey, currentPage);
         ObservableDecorator.decorate(activity, observable)
                 .subscribe(new Action1<ListResponse<GifInfo>>() {
                     @Override
@@ -130,7 +154,7 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
 
                         adapter.setStatus(gifInfos.getResults().size() == CommonConstants.COUNT_OF_PAGE
                                 ? LoadMoreAdapter.STATUS_HAVE_MORE : LoadMoreAdapter.STATUS_LOADED_ALL);
-                        if(infos.size() == 0) {
+                        if (infos.size() == 0) {
                             adapter.setStatus(LoadMoreAdapter.STATUS_NONE);
                         }
 

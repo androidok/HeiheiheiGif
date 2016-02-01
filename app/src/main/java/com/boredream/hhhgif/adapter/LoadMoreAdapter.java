@@ -95,14 +95,10 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
         // check status
         switch (status) {
             case 1:
-                holder.itemView.setVisibility(View.VISIBLE);
-
                 holder.tv_footer_progress.setVisibility(View.GONE);
                 holder.pb_footer_progress.setVisibility(View.VISIBLE);
                 break;
             case 2:
-                holder.itemView.setVisibility(View.VISIBLE);
-
                 holder.tv_footer_progress.setVisibility(View.VISIBLE);
                 holder.pb_footer_progress.setVisibility(View.GONE);
                 break;
@@ -150,6 +146,11 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
     private synchronized void triggerLoadMore() {
         // block duplicate
         if(isLoading) {
+            return;
+        }
+
+        // check status
+        if(status != STATUS_HAVE_MORE) {
             return;
         }
 
