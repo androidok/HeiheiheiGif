@@ -1,8 +1,10 @@
 package com.boredream.hhhgif.adapter;
 
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +16,13 @@ import com.boredream.hhhgif.R;
 /**
  * 加载更多
  */
-public class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private boolean havaMore = true;
+public class LoadMoreAdapter extends RecyclerView.Adapter {
+    public static final int STATUS_NONE = 0;
+    public static final int STATUS_HAVE_MORE = 1;
+    public static final int STATUS_LOADED_ALL = 2;
+    private int status = STATUS_NONE;
+
+    private boolean isLoading = false;
 
     private OnLoadMoreListener mOnLoadMoreListener;
     private RecyclerView mRecyclerView;
@@ -23,19 +30,24 @@ public class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private RecyclerView.Adapter mAdapter;
     private int TYPE_FOOTER = 110119120;
 
-    public LoadMoreAdapter(RecyclerView recyclerView, RecyclerView.Adapter<RecyclerView.ViewHolder> adapter, OnLoadMoreListener onLoadMoreListener) {
+    public LoadMoreAdapter(RecyclerView recyclerView, RecyclerView.Adapter adapter, OnLoadMoreListener onLoadMoreListener) {
         mRecyclerView = recyclerView;
         mAdapter = adapter;
         mOnLoadMoreListener = onLoadMoreListener;
         setScrollListener();
     }
 
-    public boolean isHavaMore() {
-        return havaMore;
+    public RecyclerView.Adapter getSrcAdapter() {
+        return mAdapter;
     }
 
-    public void setHavaMore(boolean havaMore) {
-        this.havaMore = havaMore;
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        isLoading = false;
+        this.status = status;
     }
 
     @Override
@@ -60,12 +72,44 @@ public class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private void handleFooter(final LoadMoreViewHolder holder) {
-        if (havaMore) {
-            holder.tv_footer_progress.setVisibility(View.GONE);
-            holder.pb_footer_progress.setVisibility(View.VISIBLE);
-        } else {
-            holder.tv_footer_progress.setVisibility(View.VISIBLE);
-            holder.pb_footer_progress.setVisibility(View.GONE);
+        // set footer full span
+        RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
+        if (layoutManager instanceof StaggeredGridLayoutManager) {
+            StaggeredGridLayoutManager.LayoutParams layoutParams =
+                    (StaggeredGridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
+            layoutParams.setFullSpan(true);
+        } else if (layoutManager instanceof GridLayoutManager) {
+            final GridLayoutManager manager = (GridLayoutManager) layoutManager;
+            manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    int spanSize = 1;
+                    if (mAdapter.getItemViewType(position) == TYPE_FOOTER) {
+                        spanSize = manager.getSpanCount();
+                    }
+                    return spanSize;
+                }
+            });
+        }
+
+        // check status
+        switch (status) {
+            case 1:
+                holder.itemView.setVisibility(View.VISIBLE);
+
+                holder.tv_footer_progress.setVisibility(View.GONE);
+                holder.pb_footer_progress.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                holder.itemView.setVisibility(View.VISIBLE);
+
+                holder.tv_footer_progress.setVisibility(View.VISIBLE);
+                holder.pb_footer_progress.setVisibility(View.GONE);
+                break;
+            case 0:
+            default:
+                holder.itemView.setVisibility(View.GONE);
+                break;
         }
     }
 
@@ -86,7 +130,7 @@ public class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     }
 
                     if (visibleItemCount + pastVisibleItems >= totalItemCount) {
-                        mOnLoadMoreListener.onLoadMore();
+                        triggerLoadMore();
                     }
                 } else if (layoutManager instanceof LinearLayoutManager) {
                     // LinearLayoutManager and GridLayoutManager
@@ -96,11 +140,23 @@ public class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
 
                     if (visibleItemCount + firstVisibleItemPosition >= totalItemCount) {
-                        mOnLoadMoreListener.onLoadMore();
+                        triggerLoadMore();
                     }
                 }
             }
         });
+    }
+
+    private synchronized void triggerLoadMore() {
+        // block duplicate
+        if(isLoading) {
+            return;
+        }
+
+        Log.i("DDD", "load more");
+
+        isLoading = true;
+        mOnLoadMoreListener.onLoadMore();
     }
 
     @Override

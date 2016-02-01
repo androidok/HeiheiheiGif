@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.adapter.GifInfoAdapter;
+import com.boredream.hhhgif.adapter.LoadMoreAdapter;
 import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.constants.CommonConstants;
 import com.boredream.hhhgif.entity.GifInfo;
@@ -31,7 +32,7 @@ public class FavFragment extends BaseFragment {
     private SwipeRefreshLayout srl_fav;
     private RecyclerView rv_fav;
 
-    private GifInfoAdapter adapter;
+    private LoadMoreAdapter adapter;
     private List<GifInfo> infos = new ArrayList<>();
 
     private int currentPage = 1;
@@ -51,7 +52,13 @@ public class FavFragment extends BaseFragment {
         srl_fav = (SwipeRefreshLayout) view.findViewById(R.id.srl_fav);
         rv_fav = (RecyclerView) view.findViewById(R.id.rv_fav);
         initRecyclerView();
-        adapter = new GifInfoAdapter(activity, infos);
+        GifInfoAdapter gifInfoAdapter = new GifInfoAdapter(activity, infos);
+        adapter = new LoadMoreAdapter(rv_fav, gifInfoAdapter, new LoadMoreAdapter.OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                loadData(currentPage + 1);
+            }
+        });
         rv_fav.setAdapter(adapter);
         srl_fav.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -66,25 +73,6 @@ public class FavFragment extends BaseFragment {
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         rv_fav.setLayoutManager(staggeredGridLayoutManager);
         rv_fav.addItemDecoration(new GridSpacingDecorator(DisplayUtils.dp2px(activity, 8)));
-        rv_fav.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                int pastVisibleItems = -1;
-                int visibleItemCount = staggeredGridLayoutManager.getChildCount();
-                int totalItemCount = staggeredGridLayoutManager.getItemCount();
-                int[] firstVisibleItems = null;
-                firstVisibleItems = staggeredGridLayoutManager.findFirstVisibleItemPositions(firstVisibleItems);
-                if (firstVisibleItems != null && firstVisibleItems.length > 0) {
-                    pastVisibleItems = firstVisibleItems[0];
-                }
-
-                if (!isLoading && (visibleItemCount + pastVisibleItems) >= totalItemCount) {
-                    loadData(currentPage + 1);
-                }
-            }
-        });
     }
 
     private void loadData(final int page) {
@@ -103,7 +91,12 @@ public class FavFragment extends BaseFragment {
                             infos.addAll(gifInfos.getResults());
                         }
 
-                        adapter.setHaveMore(gifInfos.getResults().size() == CommonConstants.COUNT_OF_PAGE);
+                        adapter.setStatus(gifInfos.getResults().size() == CommonConstants.COUNT_OF_PAGE
+                                ? LoadMoreAdapter.STATUS_HAVE_MORE : LoadMoreAdapter.STATUS_LOADED_ALL);
+                        if(infos.size() == 0) {
+                            adapter.setStatus(LoadMoreAdapter.STATUS_NONE);
+                        }
+
                         adapter.notifyDataSetChanged();
                     }
                 }, new Action1<Throwable>() {

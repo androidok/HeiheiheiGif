@@ -9,6 +9,7 @@ import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import retrofit.HttpException;
 import rx.Observable;
@@ -23,6 +24,7 @@ public class ObservableDecorator {
 
     public static <T> Observable<T> decorate(final Context context, Observable<T> observable) {
         return observable.subscribeOn(Schedulers.newThread())
+                .delay(1, TimeUnit.SECONDS, AndroidSchedulers.mainThread()) // FIXME temp for debug
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(getErrorAction(context));
     }

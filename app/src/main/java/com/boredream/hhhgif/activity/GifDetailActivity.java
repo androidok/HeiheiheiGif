@@ -93,7 +93,12 @@ public class GifDetailActivity extends BaseActivity {
                             infos.addAll(gifInfos.getResults());
                         }
 
-                        adapter.setHavaMore(gifInfos.getResults().size() == CommonConstants.COUNT_OF_PAGE);
+                        adapter.setStatus(gifInfos.getResults().size() == CommonConstants.COUNT_OF_PAGE
+                                ? LoadMoreAdapter.STATUS_HAVE_MORE : LoadMoreAdapter.STATUS_LOADED_ALL);
+                        if(infos.size() == 0) {
+                            adapter.setStatus(LoadMoreAdapter.STATUS_NONE);
+                        }
+
                         adapter.notifyDataSetChanged();
                     }
                 }, new Action1<Throwable>() {
