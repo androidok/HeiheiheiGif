@@ -170,7 +170,7 @@ public class HttpRequest {
                 @Body Map<String, Operation> option);
 
         // 收藏动态图
-        @POST("/1/classes/Gif/{objectId}")
+        @PUT("/1/classes/Gif/{objectId}")
         Observable<BaseEntity> favGif(
                 @Path("objectId") String gifId,
                 @Body Map<String, Relation> relation);
