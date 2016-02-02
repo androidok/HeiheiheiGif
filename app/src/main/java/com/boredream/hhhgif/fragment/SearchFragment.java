@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,10 +29,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.functions.Func2;
 
 public class SearchFragment extends BaseFragment implements View.OnClickListener {
 
@@ -72,6 +73,25 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
         rv_search_his.setAdapter(adapter);
     }
 
+    private Subscription subscription;
+    private void sendSearchRequest(final String s) {
+        searchKey = s;
+
+        // send request
+        Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifByTitle(searchKey, currentPage);
+        subscription = ObservableDecorator.decorate(activity, observable)
+                .subscribe(new Action1<ListResponse<GifInfo>>() {
+                    @Override
+                    public void call(ListResponse<GifInfo> gifInfoListResponse) {
+                        Log.i("DDD", "gifInfoListResponse " + gifInfoListResponse.getResults().size());
+
+                        // receive response, set data
+                        infos.addAll(gifInfoListResponse.getResults());
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+    }
+
     private void initTextChangeListener() {
         RxTextView.textChanges(et_search)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -81,6 +101,11 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
                         // clear after modify
                         infos.clear();
                         adapter.notifyDataSetChanged();
+
+                        // cancel last request
+                        if (subscription != null) {
+                            subscription.unsubscribe();
+                        }
 
                         // init search info
                         currentPage = 1;
@@ -96,40 +121,12 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
                     }
                 })
                 .debounce(500, TimeUnit.MILLISECONDS)
-//                .subscribe(new Action1<String>() {
-//                    @Override
-//                    public void call(String s) {
-//                        sendSearchRequest(s);
-//                    }
-//                })
-                .flatMap(new Func1<String, Observable<ListResponse<GifInfo>>>() {
+                .subscribe(new Action1<String>() {
                     @Override
-                    public Observable<ListResponse<GifInfo>> call(final String s) {
-                        searchKey = s;
-                        // send request
-                        Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifByTitle(searchKey, currentPage);
-                        Observable<String> searchKey = Observable.just(s);
-                        Observable.zip(observable, searchKey, new Func2<ListResponse<GifInfo>, String, Object>() {
-                            @Override
-                            public Object call(ListResponse<GifInfo> gifInfoListResponse, String s) {
-                                return null;
-                            }
-                        });
-                        return ObservableDecorator.decorate(activity, observable);
-                    }
-                })
-                .subscribe(new Action1<ListResponse<GifInfo>>() {
-                    @Override
-                    public void call(ListResponse<GifInfo> gifInfoListResponse) {
-                        // receive response, set data
-                        infos.addAll(gifInfoListResponse.getResults());
-                        adapter.notifyDataSetChanged();
+                    public void call(String s) {
+                        sendSearchRequest(s);
                     }
                 });
-    }
-
-    private void sendSearchRequest(String s) {
-
     }
 
     private void initRecyclerView() {
