@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.boredream.hhhgif.R;
-import com.boredream.hhhgif.adapter.GifInfoAdapter;
+import com.boredream.hhhgif.adapter.FavGifInfoAdapter;
 import com.boredream.hhhgif.adapter.LoadMoreAdapter;
 import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.constants.CommonConstants;
@@ -58,7 +58,12 @@ public class FavFragment extends BaseFragment {
         srl_fav.setVisibility(currentUser == null ? View.GONE : View.VISIBLE);
 
         if(currentUser != null && infos.size() == 0 && !srl_fav.isRefreshing()) {
-            srl_fav.setRefreshing(true);
+            srl_fav.post(new Runnable() {
+                @Override
+                public void run() {
+                    srl_fav.setRefreshing(true);
+                }
+            });
             loadData(1);
         }
     }
@@ -81,7 +86,7 @@ public class FavFragment extends BaseFragment {
     }
 
     private void initRecyclerView() {
-        GifInfoAdapter gifInfoAdapter = new GifInfoAdapter(activity, infos);
+        FavGifInfoAdapter gifInfoAdapter = new FavGifInfoAdapter(activity, infos);
         adapter = new LoadMoreAdapter(rv_fav, gifInfoAdapter, new LoadMoreAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {

@@ -3,10 +3,9 @@ package com.boredream.hhhgif.utils;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 
-/**
- * Created by moyun on 2015/11/11.
- */
 public class DialogUtils {
 
     public static Dialog createProgressDialog(Context context) {
@@ -18,6 +17,14 @@ public class DialogUtils {
         dialog.setCancelable(needCancle);
         dialog.setCanceledOnTouchOutside(false);
         return dialog;
+    }
+
+    public static Dialog showConfirmDialog(Context context, String message,
+                                         DialogInterface.OnClickListener listener) {
+        return new AlertDialog.Builder(context)
+                .setMessage(message)
+                .setPositiveButton("确定", listener)
+                .show();
     }
 
 }

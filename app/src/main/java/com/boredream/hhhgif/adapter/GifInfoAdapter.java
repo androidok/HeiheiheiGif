@@ -18,8 +18,8 @@ import java.util.List;
 
 public class GifInfoAdapter extends RecyclerView.Adapter<GifInfoAdapter.ViewHolder> {
 
-    private Context context;
-    private List<GifInfo> datas;
+    protected Context context;
+    protected List<GifInfo> datas;
 
     public GifInfoAdapter(Context context, List<GifInfo> datas) {
         this.context = context;
