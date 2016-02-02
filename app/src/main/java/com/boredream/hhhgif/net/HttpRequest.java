@@ -8,13 +8,14 @@ import android.util.Log;
 
 import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.constants.CommonConstants;
-import com.boredream.hhhgif.entity.AddRelationOperation;
 import com.boredream.hhhgif.entity.Comment;
 import com.boredream.hhhgif.entity.FileUploadResponse;
 import com.boredream.hhhgif.entity.GifInfo;
 import com.boredream.hhhgif.entity.IncrementOption;
 import com.boredream.hhhgif.entity.ListResponse;
 import com.boredream.hhhgif.entity.Operation;
+import com.boredream.hhhgif.entity.Pointer;
+import com.boredream.hhhgif.entity.Relation;
 import com.boredream.hhhgif.entity.UpdatePswRequest;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.entity.Where;
@@ -32,9 +33,7 @@ import com.squareup.okhttp.Response;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import retrofit.GsonConverterFactory;
@@ -174,7 +173,7 @@ public class HttpRequest {
         @POST("/1/classes/Gif/{objectId}")
         Observable<BaseEntity> favGif(
                 @Path("objectId") String gifId,
-                @Body Map<String, Operation> option);
+                @Body Map<String, Relation> relation);
 
         // 用户收藏列表
         @GET("/1/classes/Gif")
@@ -290,26 +289,19 @@ public class HttpRequest {
      *
      * @param gifId 动态图id
      */
-    public static void favGif(final Context context, final String gifId,
-                              Action1<BaseEntity> call) {
+    public static Observable<BaseEntity> favGif(final Context context, final String gifId) {
         final BmobService service = getApiService();
 
         User currentUser = UserInfoKeeper.getCurrentUser();
 
-        List<AddRelationOperation.RelationObj> relationObjs = new ArrayList<>();
-        AddRelationOperation.RelationObj relationObj = new AddRelationOperation.RelationObj();
-        relationObj.set__type(AddRelationOperation.RelationObj.POINTER);
-        relationObj.setClassName("_USER");
-        relationObj.setObjectId(currentUser.getObjectId());
-        relationObjs.add(relationObj);
+        Pointer user = new Pointer("_User", currentUser.getObjectId());
+        Relation userRelation = new Relation(user);
 
-        AddRelationOperation addRelationOperation = new AddRelationOperation();
-        addRelationOperation.setObjects(relationObjs);
+        Map<String, Relation> relation = new HashMap<>();
+        relation.put("favUsers", userRelation);
+        Log.i("DDD", new Gson().toJson(relation));
 
-        Map<String, Operation> option = new HashMap<>();
-        option.put("favUsers", addRelationOperation);
-
-        service.favGif(gifId, option)
+        return service.favGif(gifId, relation)
                 .flatMap(new Func1<BaseEntity, Observable<BaseEntity>>() {
                     @Override
                     public Observable<BaseEntity> call(BaseEntity entity) {
@@ -322,8 +314,7 @@ public class HttpRequest {
                 })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new ErrorAction1(context))
-                .subscribe(call);
+                .doOnError(new ErrorAction1(context));
     }
 
     /**

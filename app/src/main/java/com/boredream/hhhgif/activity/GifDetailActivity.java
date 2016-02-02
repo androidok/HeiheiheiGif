@@ -4,11 +4,14 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.adapter.GifDetailAdapter;
 import com.boredream.hhhgif.adapter.LoadMoreAdapter;
 import com.boredream.hhhgif.base.BaseActivity;
+import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.constants.CommonConstants;
 import com.boredream.hhhgif.entity.Comment;
 import com.boredream.hhhgif.entity.GifInfo;
@@ -24,10 +27,14 @@ import java.util.List;
 import rx.Observable;
 import rx.functions.Action1;
 
-public class GifDetailActivity extends BaseActivity {
+public class GifDetailActivity extends BaseActivity implements View.OnClickListener {
 
     private SwipeRefreshLayout srl_gifdetail;
     private RecyclerView rv_gifdetail;
+    private LinearLayout ll_comment;
+    private LinearLayout ll_fav;
+    private LinearLayout ll_download;
+
     private LoadMoreAdapter adapter;
     private List<Comment> infos = new ArrayList<>();
     private GifInfo gif;
@@ -38,7 +45,6 @@ public class GifDetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gif_detail);
-
         initExtras();
         initView();
         loadData(1);
@@ -53,16 +59,23 @@ public class GifDetailActivity extends BaseActivity {
 
         srl_gifdetail = (SwipeRefreshLayout) findViewById(R.id.srl_gifdetail);
         rv_gifdetail = (RecyclerView) findViewById(R.id.rv_gifdetail);
+        ll_comment = (LinearLayout) findViewById(R.id.ll_comment);
+        ll_fav = (LinearLayout) findViewById(R.id.ll_fav);
+        ll_download = (LinearLayout) findViewById(R.id.ll_download);
+
+        ll_comment.setOnClickListener(this);
+        ll_fav.setOnClickListener(this);
+        ll_download.setOnClickListener(this);
 
         GifDetailAdapter gifDetailAdapter = new GifDetailAdapter(this, infos);
         gifDetailAdapter.setGifInfo(gif);
         adapter = new LoadMoreAdapter(rv_gifdetail, gifDetailAdapter,
                 new LoadMoreAdapter.OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                loadData(currentPage + 1);
-            }
-        });
+                    @Override
+                    public void onLoadMore() {
+                        loadData(currentPage + 1);
+                    }
+                });
         rv_gifdetail.setAdapter(adapter);
 
         srl_gifdetail.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -95,9 +108,6 @@ public class GifDetailActivity extends BaseActivity {
 
                         adapter.setStatus(gifInfos.getResults().size() == CommonConstants.COUNT_OF_PAGE
                                 ? LoadMoreAdapter.STATUS_HAVE_MORE : LoadMoreAdapter.STATUS_LOADED_ALL);
-                        if(infos.size() == 0) {
-                            adapter.setStatus(LoadMoreAdapter.STATUS_NONE);
-                        }
 
                         adapter.notifyDataSetChanged();
                     }
@@ -108,4 +118,40 @@ public class GifDetailActivity extends BaseActivity {
                     }
                 });
     }
+
+    private void favGif() {
+        showProgressDialog();
+        HttpRequest.favGif(this, gif.getObjectId())
+                .subscribe(new Action1<BaseEntity>() {
+                    @Override
+                    public void call(BaseEntity entity) {
+                        dismissProgressDialog();
+
+                        showToast("收藏成功");
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        dismissProgressDialog();
+
+                        showToast("收藏失败");
+                    }
+                });
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.ll_comment:
+
+                break;
+            case R.id.ll_fav:
+                favGif();
+                break;
+            case R.id.ll_download:
+
+                break;
+        }
+    }
+
 }

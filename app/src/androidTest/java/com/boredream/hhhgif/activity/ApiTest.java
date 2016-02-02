@@ -3,6 +3,7 @@ package com.boredream.hhhgif.activity;
 import android.content.Intent;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.entity.Comment;
@@ -58,26 +59,23 @@ public class ApiTest {
 
     @Test
     public void testFavGif() throws InterruptedException {
-        Intent intent = new Intent();
-        mActivityRule.launchActivity(intent);
-
         User user = new User();
         user.setObjectId("jTDo1112");
         user.setUsername("bore");
         UserInfoKeeper.setCurrentUser(user);
 
-        HttpRequest.favGif(mActivityRule.getActivity(), "cb06614952",
-                new Action1<BaseEntity>() {
-                    @Override
-                    public void call(BaseEntity entity) {
-                        ToastUtils.showToast(mActivityRule.getActivity(), "success " + entity.toString());
-
-                        // assertions
-                        onView(withId(android.R.id.message))
-                                .inRoot(withDecorView(not(is(mActivityRule.getActivity().getWindow().getDecorView()))))
-                                .check(matches(withText(startsWith("success"))));
-                    }
-                });
+        HttpRequest.favGif(mActivityRule.getActivity(), "aafc3b1247")
+            .subscribe(new Action1<BaseEntity>() {
+                @Override
+                public void call(BaseEntity entity) {
+                    Log.i("DDD", entity.toString());
+                }
+            }, new Action1<Throwable>() {
+                @Override
+                public void call(Throwable throwable) {
+                    Log.i("DDD", throwable.toString());
+                }
+            });
 
 
     }

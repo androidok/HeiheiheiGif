@@ -1,22 +1,39 @@
 package com.boredream.hhhgif.entity;
 
-public class Relation {
-    private String __type;
-    private String className;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-    public String get__type() {
-        return __type;
+public class Relation implements Serializable {
+    private static final long serialVersionUID = 7419229244419967901L;
+    private String __op = "AddRelation";
+    private List<Pointer> objects = new ArrayList();
+
+    public Relation(Pointer pointer) {
+        this.objects.add(pointer);
     }
 
-    public void set__type(String __type) {
-        this.__type = __type;
+    public Relation() {
     }
 
-    public String getClassName() {
-        return className;
+    public void add(Pointer pointer) {
+        this.objects.add(pointer);
     }
 
-    public void setClassName(String className) {
-        this.className = className;
+    public void remove(Pointer pointer) {
+        this.__op = "RemoveRelation";
+        this.objects.add(pointer);
+    }
+
+    public String get__op() {
+        return this.__op;
+    }
+
+    public List<Pointer> getObjects() {
+        return this.objects;
+    }
+
+    public void setObjects(List<Pointer> objects) {
+        this.objects = objects;
     }
 }
