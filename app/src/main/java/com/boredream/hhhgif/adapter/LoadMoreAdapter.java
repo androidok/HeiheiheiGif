@@ -95,10 +95,14 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
         // check status
         switch (status) {
             case STATUS_HAVE_MORE:
+                holder.itemView.setVisibility(View.VISIBLE);
+
                 holder.tv_footer_progress.setVisibility(View.GONE);
                 holder.pb_footer_progress.setVisibility(View.VISIBLE);
                 break;
             case STATUS_LOADED_ALL:
+                holder.itemView.setVisibility(View.VISIBLE);
+
                 holder.tv_footer_progress.setVisibility(View.VISIBLE);
                 holder.pb_footer_progress.setVisibility(View.GONE);
                 break;

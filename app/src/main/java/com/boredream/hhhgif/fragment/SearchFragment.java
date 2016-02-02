@@ -137,8 +137,6 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
     }
 
     private void loadData(final int page) {
-        showToast("load data ... page = " + page);
-
         Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifByTitle(searchKey, currentPage);
         ObservableDecorator.decorate(activity, observable)
                 .subscribe(new Action1<ListResponse<GifInfo>>() {
@@ -151,9 +149,6 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
 
                         adapter.setStatus(gifInfos.getResults().size() == CommonConstants.COUNT_OF_PAGE
                                 ? LoadMoreAdapter.STATUS_HAVE_MORE : LoadMoreAdapter.STATUS_LOADED_ALL);
-                        if (infos.size() == 0) {
-                            adapter.setStatus(LoadMoreAdapter.STATUS_NONE);
-                        }
 
                         adapter.notifyDataSetChanged();
                     }

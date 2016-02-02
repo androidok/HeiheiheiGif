@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
     android:background="#999"
+    android:gravity="center"
     android:orientation="horizontal"
     android:padding="@dimen/margin_medium">
 
@@ -11,7 +11,8 @@
         android:id="@+id/pb_footer_progress"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:indeterminateDrawable="@drawable/oval_progress" />
+        android:indeterminateDrawable="@drawable/oval_progress"
+        android:indeterminateDuration="700" />
 
     <TextView
         android:id="@+id/tv_footer_progress"

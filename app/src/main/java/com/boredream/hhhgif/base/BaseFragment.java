@@ -40,5 +40,4 @@ public abstract class BaseFragment extends Fragment {
     protected void showLog(String msg) {
         Log.i(TAG, msg);
     }
-
 }

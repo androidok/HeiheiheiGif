@@ -262,11 +262,10 @@ public class HttpRequest {
      *
      * @param comment 评论
      */
-    public static void addGifComment(final Context context, final Comment comment,
-                                     Action1<BaseEntity> call) {
+    public static Observable<BaseEntity> addGifComment(final Context context, final Comment comment) {
         final BmobService service = getApiService();
         // 顺序调用,先添加评论数据
-        service.addGifComment(comment)
+        return service.addGifComment(comment)
                 .flatMap(new Func1<BaseEntity, Observable<BaseEntity>>() {
                     @Override
                     public Observable<BaseEntity> call(BaseEntity entity) {
@@ -280,8 +279,7 @@ public class HttpRequest {
                 })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new ErrorAction1(context))
-                .subscribe(call);
+                .doOnError(new ErrorAction1(context));
     }
 
     /**
@@ -297,11 +295,10 @@ public class HttpRequest {
         Pointer user = new Pointer("_User", currentUser.getObjectId());
         Relation userRelation = new Relation(user);
 
-        Map<String, Relation> relation = new HashMap<>();
-        relation.put("favUsers", userRelation);
-        Log.i("DDD", new Gson().toJson(relation));
+        Map<String, Relation> favUsersRelation = new HashMap<>();
+        favUsersRelation.put("favUsers", userRelation);
 
-        return service.favGif(gifId, relation)
+        return service.favGif(gifId, favUsersRelation)
                 .flatMap(new Func1<BaseEntity, Observable<BaseEntity>>() {
                     @Override
                     public Observable<BaseEntity> call(BaseEntity entity) {

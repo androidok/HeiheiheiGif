@@ -76,14 +76,16 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void loadData(final int page) {
-        showToast("load data ... page = " + page);
-
         Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifs(page);
         ObservableDecorator.decorate(activity, observable)
                 .subscribe(new Action1<ListResponse<GifInfo>>() {
                     @Override
                     public void call(ListResponse<GifInfo> gifInfos) {
                         srl_home.setRefreshing(false);
+
+                        if(page == 1) {
+                            infos.clear();
+                        }
 
                         if (gifInfos.getResults().size() > 0) {
                             currentPage = page;

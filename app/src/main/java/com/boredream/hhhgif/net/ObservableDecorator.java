@@ -2,19 +2,10 @@ package com.boredream.hhhgif.net;
 
 import android.content.Context;
 
-import com.boredream.hhhgif.entity.ErrorResponse;
-import com.boredream.hhhgif.utils.ToastUtils;
-import com.google.gson.Gson;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.ResponseBody;
-
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import retrofit.HttpException;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -26,31 +17,6 @@ public class ObservableDecorator {
         return observable.subscribeOn(Schedulers.newThread())
                 .delay(1, TimeUnit.SECONDS, AndroidSchedulers.mainThread()) // FIXME temp for debug
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(getErrorAction(context));
-    }
-
-    private static Action1<Throwable> getErrorAction(final Context context) {
-        return new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                if (throwable instanceof HttpException) {
-                    HttpException exception = (HttpException) throwable;
-                    ResponseBody responseBody = exception.response().errorBody();
-                    MediaType type = responseBody.contentType();
-                    if (type.type().equals("application") && type.subtype().equals("json")) {
-                        try {
-                            ErrorResponse errorResponse = new Gson().fromJson(
-                                    responseBody.string(), ErrorResponse.class);
-                            // TODO custom error info
-                            ToastUtils.showToast(context, errorResponse.getError());
-                            return;
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                ToastUtils.showToast(context, "网络错误");
-            }
-        };
+                .doOnError(new ErrorAction1(context));
     }
 }

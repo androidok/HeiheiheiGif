@@ -1,5 +1,6 @@
 package com.boredream.hhhgif.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,6 +29,8 @@ import rx.Observable;
 import rx.functions.Action1;
 
 public class GifDetailActivity extends BaseActivity implements View.OnClickListener {
+
+    private static final int REQUEST_CODE_WRITE_COMMENT = 110;
 
     private SwipeRefreshLayout srl_gifdetail;
     private RecyclerView rv_gifdetail;
@@ -92,8 +95,6 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void loadData(final int page) {
-        showToast("load data ... page = " + page);
-
         Observable<ListResponse<Comment>> observable = HttpRequest.getGifComments(gif.getObjectId(), page);
         ObservableDecorator.decorate(this, observable)
                 .subscribe(new Action1<ListResponse<Comment>>() {
@@ -143,7 +144,9 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ll_comment:
-
+                Intent intent = new Intent(this, WriteCommentActivity.class);
+                intent.putExtra("gif", gif);
+                startActivityForResult(intent, REQUEST_CODE_WRITE_COMMENT);
                 break;
             case R.id.ll_fav:
                 favGif();
@@ -153,5 +156,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                 break;
         }
     }
+
+
 
 }

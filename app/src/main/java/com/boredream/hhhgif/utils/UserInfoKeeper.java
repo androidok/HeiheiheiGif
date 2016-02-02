@@ -1,5 +1,9 @@
 package com.boredream.hhhgif.utils;
 
+import android.content.Context;
+import android.content.Intent;
+
+import com.boredream.hhhgif.activity.LoginActivity;
 import com.boredream.hhhgif.entity.User;
 
 public class UserInfoKeeper {
@@ -15,5 +19,14 @@ public class UserInfoKeeper {
 
     public static void logout() {
         currentUser = null;
+    }
+
+    public static boolean checkLogin(Context context) {
+        if (currentUser == null) {
+            Intent intent = new Intent(context, LoginActivity.class);
+            context.startActivity(intent);
+            return false;
+        }
+        return true;
     }
 }

@@ -3,7 +3,11 @@ package com.boredream.hhhgif.net;
 import android.content.Context;
 import android.util.Log;
 
+import com.boredream.hhhgif.entity.ErrorResponse;
 import com.boredream.hhhgif.utils.ToastUtils;
+import com.google.gson.Gson;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 
@@ -25,16 +29,22 @@ public class ErrorAction1 implements Action1<Throwable> {
         if (throwable instanceof HttpException) {
             // show error toast
             HttpException exception = (HttpException) throwable;
-            // log detail
-            try {
-                String errorContent = exception.response().errorBody().string();
-                Log.i("DDD", "on retrofit HttpError ... " + errorContent);
-            } catch (IOException e) {
-                e.printStackTrace();
+            ResponseBody responseBody = exception.response().errorBody();
+            MediaType type = responseBody.contentType();
+            if (type.type().equals("application") && type.subtype().equals("json")) {
+                try {
+                    ErrorResponse errorResponse = new Gson().fromJson(
+                            responseBody.string(), ErrorResponse.class);
+                    // TODO custom error info
+                    ToastUtils.showToast(context, errorResponse.getError());
+                    return;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             Log.i("DDD", throwable.getMessage());
-            ToastUtils.showToast(context, "服务器忙,");
+            ToastUtils.showToast(context, "网络错误");
         }
     }
 }
