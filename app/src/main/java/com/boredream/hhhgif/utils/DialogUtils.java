@@ -19,6 +19,15 @@ public class DialogUtils {
         return dialog;
     }
 
+    public static Dialog showCommonDialog(Context context, String message,
+                                         DialogInterface.OnClickListener listener) {
+        return new AlertDialog.Builder(context)
+                .setMessage(message)
+                .setPositiveButton("确定", listener)
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
     public static Dialog showConfirmDialog(Context context, String message,
                                          DialogInterface.OnClickListener listener) {
         return new AlertDialog.Builder(context)

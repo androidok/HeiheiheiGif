@@ -20,6 +20,7 @@ import com.boredream.hhhgif.entity.ListResponse;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.utils.TitleBuilder;
+import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.boredream.hhhgif.view.DividerItemDecoration;
 
 import java.util.ArrayList;
@@ -144,12 +145,16 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ll_comment:
-                Intent intent = new Intent(this, WriteCommentActivity.class);
-                intent.putExtra("gif", gif);
-                startActivityForResult(intent, REQUEST_CODE_WRITE_COMMENT);
+                if(UserInfoKeeper.checkLogin(this)) {
+                    Intent intent = new Intent(this, WriteCommentActivity.class);
+                    intent.putExtra("gif", gif);
+                    startActivityForResult(intent, REQUEST_CODE_WRITE_COMMENT);
+                }
                 break;
             case R.id.ll_fav:
-                favGif();
+                if(UserInfoKeeper.checkLogin(this)) {
+                    favGif();
+                }
                 break;
             case R.id.ll_download:
 

@@ -156,7 +156,8 @@ public class HttpRequest {
         Observable<ListResponse<Comment>> getGifComments(
                 @Query("limit") int perPageCount,
                 @Query("skip") int page,
-                @Query("where") String where);
+                @Query("where") String where,
+                @Query("include") String include);
 
         // 发送动态图评论
         @POST("/1/classes/Comment")
@@ -254,7 +255,7 @@ public class HttpRequest {
         BmobService service = getApiService();
         String where = "{\"gifId\":\"" + gifId + "\"}";
         return service.getGifComments(CommonConstants.COUNT_OF_PAGE,
-                (page - 1) * CommonConstants.COUNT_OF_PAGE, where);
+                (page - 1) * CommonConstants.COUNT_OF_PAGE, where, "user");
     }
 
     /**

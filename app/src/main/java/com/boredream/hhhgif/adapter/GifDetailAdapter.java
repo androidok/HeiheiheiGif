@@ -119,25 +119,22 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         }
                     })
                     .into(iv_gif);
-        } else {
+        } else if(itemViewType == ITEM_VIEW_TYPE_LIST) {
             ViewHolderList viewHolderList = (ViewHolderList) holder;
-            Comment data = datas.get(position - 1);
+            Comment data = datas.get(position);
 
-            User user = data.getUser();
+            User user = data.getUser().parseToObject(User.class);
             GlideUtils
                     .decorator(Glide.with(context).load(user.getAvatar()))
                     .placeholder(R.mipmap.ic_account_circle_grey600_24dp)
                     .into(viewHolderList.iv_avatar);
             viewHolderList.tv_username.setText(user.getUsername());
             viewHolderList.tv_content.setText(data.getContent());
-
         }
-
     }
 
     @Override
     public int getItemCount() {
-        // header + 1
-        return datas.size() + 1;
+        return datas.size();
     }
 }

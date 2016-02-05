@@ -149,12 +149,12 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
 
     private synchronized void triggerLoadMore() {
         // block duplicate
-        if(isLoading) {
+        if (isLoading) {
             return;
         }
 
         // check status
-        if(status != STATUS_HAVE_MORE) {
+        if (status != STATUS_HAVE_MORE) {
             return;
         }
 
@@ -171,6 +171,10 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
         } else {
             return mAdapter.getItemViewType(position);
         }
+    }
+
+    public void notifyFooterChanged() {
+        notifyItemChanged(getItemCount() - 1);
     }
 
     @Override

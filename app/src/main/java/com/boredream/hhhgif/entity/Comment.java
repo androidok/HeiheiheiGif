@@ -11,7 +11,7 @@ public class Comment extends BaseEntity {
     /**
      * 发送用户
      */
-    private User user;
+    private Pointer user;
 
     /**
      * 评论内容
@@ -26,11 +26,11 @@ public class Comment extends BaseEntity {
         this.gifId = gifId;
     }
 
-    public User getUser() {
+    public Pointer getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Pointer user) {
         this.user = user;
     }
 
