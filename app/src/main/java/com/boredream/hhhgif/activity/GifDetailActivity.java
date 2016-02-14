@@ -13,14 +13,15 @@ import com.boredream.hhhgif.adapter.GifDetailAdapter;
 import com.boredream.hhhgif.adapter.LoadMoreAdapter;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.base.BaseEntity;
-import com.boredream.hhhgif.constants.CommonConstants;
 import com.boredream.hhhgif.entity.Comment;
 import com.boredream.hhhgif.entity.GifInfo;
 import com.boredream.hhhgif.entity.ListResponse;
+import com.boredream.hhhgif.entity.PageIndex;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.utils.TitleBuilder;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
+import com.boredream.hhhgif.utils.ViewUtils;
 import com.boredream.hhhgif.view.DividerItemDecoration;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     private List<Comment> infos = new ArrayList<>();
     private GifInfo gif;
 
-    private int currentPage = 1;
+    private PageIndex pageIndex = new PageIndex(1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,8 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
         setContentView(R.layout.activity_gif_detail);
         initExtras();
         initView();
-        loadData(1);
+
+        loadData(pageIndex.startPageIndex);
     }
 
     private void initExtras() {
@@ -77,7 +79,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                 new LoadMoreAdapter.OnLoadMoreListener() {
                     @Override
                     public void onLoadMore() {
-                        loadData(currentPage + 1);
+                        loadData(pageIndex.getNext());
                     }
                 });
         rv_gifdetail.setAdapter(adapter);
@@ -103,15 +105,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                     public void call(ListResponse<Comment> gifInfos) {
                         srl_gifdetail.setRefreshing(false);
 
-                        if (gifInfos.getResults().size() > 0) {
-                            currentPage = page;
-                            infos.addAll(gifInfos.getResults());
-                        }
-
-                        adapter.setStatus(gifInfos.getResults().size() == CommonConstants.COUNT_OF_PAGE
-                                ? LoadMoreAdapter.STATUS_HAVE_MORE : LoadMoreAdapter.STATUS_LOADED_ALL);
-
-                        adapter.notifyDataSetChanged();
+                        ViewUtils.setResponse(adapter, pageIndex, infos, gifInfos.getResults());
                     }
                 }, new Action1<Throwable>() {
                     @Override

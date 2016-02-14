@@ -127,6 +127,7 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
                         sendSearchRequest(s);
                     }
                 });
+
     }
 
     private void initRecyclerView() {

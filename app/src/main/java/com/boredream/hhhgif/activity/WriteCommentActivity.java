@@ -12,6 +12,7 @@ import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.entity.Comment;
 import com.boredream.hhhgif.entity.GifInfo;
+import com.boredream.hhhgif.entity.Pointer;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
@@ -59,9 +60,11 @@ public class WriteCommentActivity extends BaseActivity {
         }
 
         User currentUser = UserInfoKeeper.getCurrentUser();
+        Pointer userPointer = new Pointer("_User", currentUser.getObjectId());
+
         Comment comment = new Comment();
-        comment.setGifId(gif.getObjectId() + "1111");
-        comment.setUser(currentUser);
+        comment.setGifId(gif.getObjectId());
+        comment.setUser(userPointer);
         comment.setContent(content);
 
         showProgressDialog();
