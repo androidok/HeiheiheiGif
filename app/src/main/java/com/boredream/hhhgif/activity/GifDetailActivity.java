@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.adapter.GifDetailAdapter;
@@ -17,6 +18,7 @@ import com.boredream.hhhgif.entity.Comment;
 import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.ListResponse;
 import com.boredream.hhhgif.entity.PageIndex;
+import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.utils.TitleBuilder;
@@ -37,11 +39,13 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     private RecyclerView rv_gifdetail;
     private LinearLayout ll_comment;
     private LinearLayout ll_fav;
+    private TextView tv_fav;
     private LinearLayout ll_download;
 
     private LoadMoreAdapter adapter;
     private List<Comment> infos = new ArrayList<>();
     private Gif gif;
+    private boolean isFaved;
 
     private PageIndex pageIndex = new PageIndex(1);
 
@@ -67,6 +71,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
         rv_gifdetail = (RecyclerView) findViewById(R.id.rv_gifdetail);
         ll_comment = (LinearLayout) findViewById(R.id.ll_comment);
         ll_fav = (LinearLayout) findViewById(R.id.ll_fav);
+        tv_fav = (TextView) findViewById(R.id.tv_fav);
         ll_download = (LinearLayout) findViewById(R.id.ll_download);
 
         ll_comment.setOnClickListener(this);
@@ -117,7 +122,33 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                 });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(UserInfoKeeper.getCurrentUser() != null) {
+            getFavStatus();
+        }
+    }
+
+    private void getFavStatus() {
+        Observable<ListResponse<User>> observable = HttpRequest.getGifFavUsers(gif.getObjectId());
+        ObservableDecorator.decorate(this, observable)
+                .subscribe(new Action1<ListResponse<User>>() {
+                    @Override
+                    public void call(ListResponse<User> userListResponse) {
+                        isFaved = userListResponse.getResults().contains(UserInfoKeeper.getCurrentUser());
+                        tv_fav.setText(isFaved ? "已收藏" : "收藏");
+                    }
+                });
+    }
+
     private void favGif() {
+        if(isFaved) {
+            showToast("已收藏过该动态图");
+            return;
+        }
+
         showProgressDialog();
         HttpRequest.favGif(this, gif.getObjectId())
                 .subscribe(new Action1<BaseEntity>() {

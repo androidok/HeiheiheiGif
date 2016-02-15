@@ -360,7 +360,10 @@ public class HttpRequest {
         Pointer gifPointer = new Pointer("Gif", gifId);
         relationTo.setObject(gifPointer);
 
-        String where = new Gson().toJson(relationTo);
+        Map<String, RelationTo> relationToMap = new HashMap<>();
+        relationToMap.put(RelationTo.OP_RELATEDTO, relationTo);
+
+        String where = new Gson().toJson(relationToMap);
         return service.getGifFavUsers(where);
     }
 

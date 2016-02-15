@@ -1,0 +1,59 @@
+package com.boredream.hhhgif.activity;
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.view.View;
+import android.widget.TextView;
+
+import com.boredream.hhhgif.R;
+import com.boredream.hhhgif.base.BaseActivity;
+import com.boredream.hhhgif.utils.AppUtils;
+import com.boredream.hhhgif.utils.StringUtils;
+
+public class AboutActivity extends BaseActivity {
+
+    private TextView tv_version;
+    private TextView tv_about;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_about);
+        initView();
+    }
+
+    private void initView() {
+        initBackTitle("关于我");
+
+        tv_version = (TextView) findViewById(R.id.tv_version);
+        tv_about = (TextView) findViewById(R.id.tv_about);
+
+        tv_version.setText("Version " + AppUtils.getAppVersionName(this));
+
+        SpannableString ss = getAboutString();
+        tv_about.setMovementMethod(LinkMovementMethod.getInstance());
+        tv_about.setText(ss);
+    }
+
+    @NonNull
+    private SpannableString getAboutString() {
+        final String githubLink = getString(R.string.github);
+        String format = String.format(getString(R.string.about), githubLink);
+        SpannableString ss = new SpannableString(format);
+        StringUtils.PrimaryClickableSpan span = new StringUtils.PrimaryClickableSpan(this) {
+            @Override
+            public void onClick(View widget) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(githubLink));
+                startActivity(intent);
+            }
+        };
+        int start = format.indexOf(githubLink);
+        ss.setSpan(span, start, start + githubLink.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return ss;
+    }
+}
