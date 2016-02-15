@@ -13,7 +13,7 @@ import com.boredream.hhhgif.adapter.GifInfoAdapter;
 import com.boredream.hhhgif.adapter.LoadMoreAdapter;
 import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.constants.CommonConstants;
-import com.boredream.hhhgif.entity.GifInfo;
+import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.ListResponse;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
@@ -33,7 +33,7 @@ public class HomeFragment extends BaseFragment {
     private RecyclerView rv_home;
 
     private LoadMoreAdapter adapter;
-    private List<GifInfo> infos = new ArrayList<>();
+    private List<Gif> infos = new ArrayList<>();
 
     private int currentPage = 1;
 
@@ -76,11 +76,11 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void loadData(final int page) {
-        Observable<ListResponse<GifInfo>> observable = HttpRequest.getGifs(page);
+        Observable<ListResponse<Gif>> observable = HttpRequest.getGifs(page);
         ObservableDecorator.decorate(activity, observable)
-                .subscribe(new Action1<ListResponse<GifInfo>>() {
+                .subscribe(new Action1<ListResponse<Gif>>() {
                     @Override
-                    public void call(ListResponse<GifInfo> gifInfos) {
+                    public void call(ListResponse<Gif> gifInfos) {
                         srl_home.setRefreshing(false);
 
                         if(page == 1) {

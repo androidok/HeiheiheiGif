@@ -10,12 +10,13 @@ import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.constants.CommonConstants;
 import com.boredream.hhhgif.entity.Comment;
 import com.boredream.hhhgif.entity.FileUploadResponse;
-import com.boredream.hhhgif.entity.GifInfo;
+import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.IncrementOption;
 import com.boredream.hhhgif.entity.ListResponse;
 import com.boredream.hhhgif.entity.Operation;
 import com.boredream.hhhgif.entity.Pointer;
 import com.boredream.hhhgif.entity.Relation;
+import com.boredream.hhhgif.entity.RelationTo;
 import com.boredream.hhhgif.entity.UpdatePswRequest;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.entity.Where;
@@ -133,7 +134,7 @@ public class HttpRequest {
 
         // 分页获取动态图数据
         @GET("/1/classes/Gif")
-        Observable<ListResponse<GifInfo>> getGifs(
+        Observable<ListResponse<Gif>> getGifs(
                 @Query("limit") int perPageCount,
                 @Query("skip") int page);
 
@@ -146,7 +147,7 @@ public class HttpRequest {
 
         // 根据标题搜索动态图
         @GET("/1/classes/Gif")
-        Observable<ListResponse<GifInfo>> getGifByTitle(
+        Observable<ListResponse<Gif>> getGifByTitle(
                 @Query("limit") int perPageCount,
                 @Query("skip") int page,
                 @Query("where") String where);
@@ -178,9 +179,14 @@ public class HttpRequest {
 
         // 用户收藏列表
         @GET("/1/classes/Gif")
-        Observable<ListResponse<GifInfo>> getFavGifs(
+        Observable<ListResponse<Gif>> getFavGifs(
                 @Query("limit") int perPageCount,
                 @Query("skip") int page,
+                @Query("where") String where);
+
+        // 动态图收藏用户列表
+        @GET("/1/classes/_User")
+        Observable<ListResponse<User>> getGifFavUsers(
                 @Query("where") String where);
 
         // 获取用户详情
@@ -213,7 +219,7 @@ public class HttpRequest {
      *
      * @param page 从1开始
      */
-    public static Observable<ListResponse<GifInfo>> getGifs(int page) {
+    public static Observable<ListResponse<Gif>> getGifs(int page) {
         BmobService service = getApiService();
         return service.getGifs(CommonConstants.COUNT_OF_PAGE,
                 (page - 1) * CommonConstants.COUNT_OF_PAGE);
@@ -238,7 +244,7 @@ public class HttpRequest {
      * @param searchKey 搜索title
      * @param page      页数,从1开始
      */
-    public static Observable<ListResponse<GifInfo>> getGifByTitle(String searchKey, int page) {
+    public static Observable<ListResponse<Gif>> getGifByTitle(String searchKey, int page) {
         BmobService service = getApiService();
         String where = "{\"title\":{\"$regex\":\"" + searchKey + ".*\"}}";
         return service.getGifByTitle(CommonConstants.COUNT_OF_PAGE,
@@ -321,7 +327,7 @@ public class HttpRequest {
      * @param userId
      * @param page   页数,从1开始
      */
-    public static Observable<ListResponse<GifInfo>> getFavGifs(String userId, int page) {
+    public static Observable<ListResponse<Gif>> getFavGifs(String userId, int page) {
         BmobService service = getApiService();
 
         Where userIdEqaulWhere = new Where();
@@ -339,6 +345,23 @@ public class HttpRequest {
         String where = new Gson().toJson(whereMap);
         return service.getFavGifs(CommonConstants.COUNT_OF_PAGE,
                 (page - 1) * CommonConstants.COUNT_OF_PAGE, where);
+    }
+
+    /**
+     * 动态图收藏用户列表,分页(默认每页数量为CommonConstants.COUNT_OF_PAGE)
+     *
+     * @param gifId
+     */
+    public static Observable<ListResponse<User>> getGifFavUsers(String gifId) {
+        BmobService service = getApiService();
+
+        RelationTo relationTo = new RelationTo();
+        relationTo.setKey("favUsers");
+        Pointer gifPointer = new Pointer("Gif", gifId);
+        relationTo.setObject(gifPointer);
+
+        String where = new Gson().toJson(relationTo);
+        return service.getGifFavUsers(where);
     }
 
     public static void fileUpload(final Context context, String filepath, final Action1<User> call) {

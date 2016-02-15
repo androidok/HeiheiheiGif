@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.activity.GifDetailActivity;
-import com.boredream.hhhgif.entity.GifInfo;
+import com.boredream.hhhgif.entity.Gif;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
@@ -19,9 +19,9 @@ import java.util.List;
 public class GifInfoAdapter extends RecyclerView.Adapter<GifInfoAdapter.ViewHolder> {
 
     protected Context context;
-    protected List<GifInfo> datas;
+    protected List<Gif> datas;
 
-    public GifInfoAdapter(Context context, List<GifInfo> datas) {
+    public GifInfoAdapter(Context context, List<Gif> datas) {
         this.context = context;
         this.datas = datas;
     }
@@ -58,7 +58,7 @@ public class GifInfoAdapter extends RecyclerView.Adapter<GifInfoAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final GifInfo gifInfo = datas.get(position);
+        final Gif gifInfo = datas.get(position);
         holder.tv_title.setText(gifInfo.getTitle());
         holder.tv_comment_count.setText(gifInfo.getCommentCount() + "");
         holder.tv_fav_count.setText(gifInfo.getFavCount() + "");

@@ -14,7 +14,7 @@ import com.boredream.hhhgif.adapter.FavGifInfoAdapter;
 import com.boredream.hhhgif.adapter.LoadMoreAdapter;
 import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.constants.CommonConstants;
-import com.boredream.hhhgif.entity.GifInfo;
+import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.ListResponse;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
@@ -38,7 +38,7 @@ public class FavFragment extends BaseFragment {
     private Button btn_login;
 
     private LoadMoreAdapter adapter;
-    private List<GifInfo> infos = new ArrayList<>();
+    private List<Gif> infos = new ArrayList<>();
 
     private int currentPage = 1;
     private User currentUser;
@@ -108,11 +108,11 @@ public class FavFragment extends BaseFragment {
     }
 
     private void loadData(final int page) {
-        Observable<ListResponse<GifInfo>> observable = HttpRequest.getFavGifs(currentUser.getObjectId(), currentPage);
+        Observable<ListResponse<Gif>> observable = HttpRequest.getFavGifs(currentUser.getObjectId(), currentPage);
         ObservableDecorator.decorate(activity, observable)
-                .subscribe(new Action1<ListResponse<GifInfo>>() {
+                .subscribe(new Action1<ListResponse<Gif>>() {
                     @Override
-                    public void call(ListResponse<GifInfo> gifInfos) {
+                    public void call(ListResponse<Gif> gifInfos) {
                         srl_fav.setRefreshing(false);
 
                         if(page == 1) {

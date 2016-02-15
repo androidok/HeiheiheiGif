@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.entity.Comment;
-import com.boredream.hhhgif.entity.GifInfo;
+import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.GlideUtils;
 import com.bumptech.glide.Glide;
@@ -26,7 +26,7 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final int ITEM_VIEW_TYPE_LIST = 1;
 
     private Activity context;
-    private GifInfo gifInfo;
+    private Gif gifInfo;
     private List<Comment> datas;
 
     public GifDetailAdapter(Activity context, List<Comment> datas) {
@@ -34,7 +34,7 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.datas = datas;
     }
 
-    public void setGifInfo(GifInfo gifInfo) {
+    public void setGifInfo(Gif gifInfo) {
         this.gifInfo = gifInfo;
     }
 
@@ -120,13 +120,12 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     })
                     .into(iv_gif);
 
-        } else if(itemViewType == ITEM_VIEW_TYPE_LIST) {
+        } else if (itemViewType == ITEM_VIEW_TYPE_LIST) {
             ViewHolderList viewHolderList = (ViewHolderList) holder;
             Comment data = datas.get(position);
             User user = data.getUser();
 
-            GlideUtils
-                    .decorator(Glide.with(context).load(user.getAvatar()))
+            GlideUtils.decorator(Glide.with(context).load(user.getAvatar()))
                     .placeholder(R.mipmap.ic_account_circle_grey600_24dp)
                     .into(viewHolderList.iv_avatar);
             viewHolderList.tv_username.setText(user.getUsername());

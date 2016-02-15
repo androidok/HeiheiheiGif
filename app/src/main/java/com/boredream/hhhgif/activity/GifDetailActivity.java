@@ -14,7 +14,7 @@ import com.boredream.hhhgif.adapter.LoadMoreAdapter;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.entity.Comment;
-import com.boredream.hhhgif.entity.GifInfo;
+import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.ListResponse;
 import com.boredream.hhhgif.entity.PageIndex;
 import com.boredream.hhhgif.net.HttpRequest;
@@ -41,7 +41,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
 
     private LoadMoreAdapter adapter;
     private List<Comment> infos = new ArrayList<>();
-    private GifInfo gif;
+    private Gif gif;
 
     private PageIndex pageIndex = new PageIndex(1);
 
@@ -57,7 +57,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void initExtras() {
-        gif = (GifInfo) getIntent().getSerializableExtra("gif");
+        gif = (Gif) getIntent().getSerializableExtra("gif");
     }
 
     private void initView() {

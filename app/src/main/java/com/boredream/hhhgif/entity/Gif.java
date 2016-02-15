@@ -2,7 +2,7 @@ package com.boredream.hhhgif.entity;
 
 import com.boredream.hhhgif.base.BaseEntity;
 
-public class GifInfo extends BaseEntity {
+public class Gif extends BaseEntity {
 
     /**
      * 标题

@@ -36,6 +36,15 @@ public class BaseEntity implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if(o instanceof BaseEntity) {
+            BaseEntity oEntity = (BaseEntity) o;
+            return this.objectId.equals(oEntity.objectId);
+        }
+        return super.equals(o);
+    }
+
+    @Override
     public String toString() {
         return "BaseEntity{" +
                 "objectId='" + objectId + '\'' +

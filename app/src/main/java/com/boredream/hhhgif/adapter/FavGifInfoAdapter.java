@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
 
-import com.boredream.hhhgif.entity.GifInfo;
+import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.utils.DialogUtils;
 import com.boredream.hhhgif.utils.ToastUtils;
 
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class FavGifInfoAdapter extends GifInfoAdapter {
 
-    public FavGifInfoAdapter(Context context, List<GifInfo> datas) {
+    public FavGifInfoAdapter(Context context, List<Gif> datas) {
         super(context, datas);
     }
 
@@ -20,7 +20,7 @@ public class FavGifInfoAdapter extends GifInfoAdapter {
     public void onBindViewHolder(ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
 
-        final GifInfo gifInfo = datas.get(position);
+        final Gif gifInfo = datas.get(position);
         holder.iv_del_img.setVisibility(View.VISIBLE);
         holder.iv_del_img.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -30,7 +30,7 @@ public class FavGifInfoAdapter extends GifInfoAdapter {
         });
     }
 
-    private void removeFavGif(GifInfo gifInfo) {
+    private void removeFavGif(Gif gifInfo) {
         DialogUtils.showConfirmDialog(context, "确认删除该收藏动态图？",
                 new DialogInterface.OnClickListener(){
                     @Override

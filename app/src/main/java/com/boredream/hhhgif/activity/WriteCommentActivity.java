@@ -10,7 +10,7 @@ import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.entity.Comment;
-import com.boredream.hhhgif.entity.GifInfo;
+import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.Pointer;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
@@ -22,7 +22,7 @@ import rx.functions.Action1;
 
 public class WriteCommentActivity extends BaseActivity {
 
-    private GifInfo gif;
+    private Gif gif;
     private EditText et_content;
 
     @Override
@@ -34,7 +34,7 @@ public class WriteCommentActivity extends BaseActivity {
     }
 
     private void initExtras() {
-        gif = (GifInfo) getIntent().getSerializableExtra("gif");
+        gif = (Gif) getIntent().getSerializableExtra("gif");
     }
 
     private void initView() {
