@@ -4,12 +4,6 @@ import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-import com.boredream.hhhgif.adapter.LoadMoreAdapter;
-import com.boredream.hhhgif.constants.CommonConstants;
-import com.boredream.hhhgif.entity.PageIndex;
-
-import java.util.List;
-
 public class ViewUtils {
 
 //    public static void setIndicator(Context context, final int size,
@@ -84,21 +78,5 @@ public class ViewUtils {
         InputMethodManager inputManager = (InputMethodManager) editText
                 .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputManager.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
-    }
-
-    public static <T> void setResponse(LoadMoreAdapter adapter, PageIndex pageIndex,
-                                       List<T> currentList, List<T> newList) {
-        pageIndex.success();
-
-        if(pageIndex.newPage == 1) {
-            currentList.clear();
-        }
-
-        currentList.addAll(newList);
-
-        adapter.setStatus(newList.size() == CommonConstants.COUNT_OF_PAGE
-                ? LoadMoreAdapter.STATUS_HAVE_MORE : LoadMoreAdapter.STATUS_LOADED_ALL);
-
-        adapter.notifyDataSetChanged();
     }
 }

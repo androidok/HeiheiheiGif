@@ -24,6 +24,7 @@ public class UserInfoKeeper {
     public static boolean checkLogin(Context context) {
         if (currentUser == null) {
             Intent intent = new Intent(context, LoginActivity.class);
+            intent.putExtra("checkLogin", true);
             context.startActivity(intent);
             return false;
         }

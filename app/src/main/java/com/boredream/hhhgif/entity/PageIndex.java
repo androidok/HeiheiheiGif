@@ -1,49 +1,102 @@
 package com.boredream.hhhgif.entity;
 
+import com.boredream.hhhgif.adapter.LoadMoreAdapter;
+import com.boredream.hhhgif.constants.CommonConstants;
+
+import java.util.List;
+
 /**
- * page no. for multi page load index
+ * 页数索引, 多页加载时使用
  */
 public class PageIndex {
 
     /**
-     * PageIndex
-     *
-     * @param startPageIndex usually 0 or 1
+     * 起始页
      */
-    public PageIndex(int startPageIndex) {
-        this.startPageIndex = startPageIndex;
-        this.currentPage = startPageIndex;
+    private int startPage;
+
+    /**
+     * 请求加载的新页数
+     */
+    private int newPage;
+
+    /**
+     * 当前已加载的页数
+     */
+    private int currentPage;
+
+    /**
+     * 页数索引
+     *
+     * @param startPage 起始页, 通常是 0 或 1
+     */
+    public PageIndex(int startPage) {
+        this.startPage = startPage;
+        this.currentPage = startPage;
     }
 
     /**
-     * start page
+     * 新页数数据获取成功, 将当前页数更新未新页数
      */
-    public int startPageIndex;
-
-    /**
-     * loaded page
-     */
-    public int currentPage;
-
-    /**
-     * new page
-     */
-    public int newPage;
-
-    /**
-     * get newPage success, update currentPage with newPage
-     */
-    public void success() {
+    private void success() {
         currentPage = newPage;
     }
 
     /**
-     * to next page
-     * @return next page index
+     * 起始页
+     *
+     * @return 起始页
      */
-    public int getNext() {
+    public int startPage() {
+        newPage = startPage;
+        return newPage;
+    }
+
+    /**
+     * 下一页
+     *
+     * @return 当前页+1作为下一页
+     */
+    public int nextPage() {
         newPage = currentPage + 1;
         return newPage;
+    }
+
+    /**
+     * 当前页
+     *
+     * @return 当前页
+     */
+    public int currentPage() {
+        return currentPage;
+    }
+
+    /**
+     * 数据获取成功, 设置返回结果
+     *
+     * @param adapter
+     * @param currentList 当前已有数据
+     * @param newList 请求获取的新数据
+     * @param <T>
+     */
+    public <T> void setResponse(LoadMoreAdapter adapter, List<T> currentList, List<T> newList) {
+        // 更新当前页数
+        success();
+
+        // 如果当前页为起始页, 则清空数据
+        if(currentPage() == startPage) {
+            currentList.clear();
+        }
+
+        // 添加数据
+        currentList.addAll(newList);
+
+        // 设置是否已加载完全部数据状态
+        adapter.setStatus(newList.size() == CommonConstants.COUNT_OF_PAGE
+                ? LoadMoreAdapter.STATUS_HAVE_MORE : LoadMoreAdapter.STATUS_LOADED_ALL);
+
+        // 更新UI
+        adapter.notifyDataSetChanged();
     }
 
 }

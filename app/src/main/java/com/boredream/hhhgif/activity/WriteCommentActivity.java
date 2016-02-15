@@ -1,6 +1,5 @@
 package com.boredream.hhhgif.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -87,7 +86,7 @@ public class WriteCommentActivity extends BaseActivity {
     }
 
     private void commentSuccess() {
-        Intent intent = new Intent();
         setResult(RESULT_OK);
+        finish();
     }
 }

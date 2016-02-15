@@ -119,11 +119,12 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         }
                     })
                     .into(iv_gif);
+
         } else if(itemViewType == ITEM_VIEW_TYPE_LIST) {
             ViewHolderList viewHolderList = (ViewHolderList) holder;
             Comment data = datas.get(position);
+            User user = data.getUser();
 
-            User user = data.getUser().parseToObject(User.class);
             GlideUtils
                     .decorator(Glide.with(context).load(user.getAvatar()))
                     .placeholder(R.mipmap.ic_account_circle_grey600_24dp)

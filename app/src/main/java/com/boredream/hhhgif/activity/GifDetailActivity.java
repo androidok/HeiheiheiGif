@@ -21,7 +21,6 @@ import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.utils.TitleBuilder;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
-import com.boredream.hhhgif.utils.ViewUtils;
 import com.boredream.hhhgif.view.DividerItemDecoration;
 
 import java.util.ArrayList;
@@ -53,7 +52,8 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
         initExtras();
         initView();
 
-        loadData(pageIndex.startPageIndex);
+        showProgressDialog();
+        loadData(pageIndex.startPage());
     }
 
     private void initExtras() {
@@ -79,7 +79,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                 new LoadMoreAdapter.OnLoadMoreListener() {
                     @Override
                     public void onLoadMore() {
-                        loadData(pageIndex.getNext());
+                        loadData(pageIndex.nextPage());
                     }
                 });
         rv_gifdetail.setAdapter(adapter);
@@ -87,7 +87,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
         srl_gifdetail.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadData(1);
+                loadData(pageIndex.startPage());
             }
         });
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
@@ -104,13 +104,15 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                     @Override
                     public void call(ListResponse<Comment> gifInfos) {
                         srl_gifdetail.setRefreshing(false);
+                        dismissProgressDialog();
 
-                        ViewUtils.setResponse(adapter, pageIndex, infos, gifInfos.getResults());
+                        pageIndex.setResponse(adapter, infos, gifInfos.getResults());
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
                         srl_gifdetail.setRefreshing(false);
+                        dismissProgressDialog();
                     }
                 });
     }
@@ -156,6 +158,15 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-
+        switch (requestCode) {
+            case REQUEST_CODE_WRITE_COMMENT:
+                showProgressDialog();
+                loadData(pageIndex.startPage());
+                break;
+        }
+    }
 }

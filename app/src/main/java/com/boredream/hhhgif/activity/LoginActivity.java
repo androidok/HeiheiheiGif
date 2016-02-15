@@ -27,14 +27,22 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private TextView tv_forget_psw;
     private LinearLayout ll_regist;
 
+    private boolean checkLogin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        initExtras();
         initView();
 
         et_username.setText("18551681236");
         et_password.setText("123123");
+    }
+
+    private void initExtras() {
+        checkLogin = getIntent().getBooleanExtra("checkLogin", false);
     }
 
     private void initView() {
@@ -73,7 +81,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     public void call(User user) {
                         dismissProgressDialog();
                         UserInfoKeeper.setCurrentUser(user);
-                        intent2Activity(MainActivity.class);
+
+                        if(checkLogin) {
+                            finish();
+                        } else {
+                            intent2Activity(MainActivity.class);
+                        }
                     }
                 }, new Action1<Throwable>() {
                     @Override
