@@ -104,48 +104,6 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
         });
     }
 
-    private void uploadImage() throws Exception {
-//        URL url = new URL("https://api.bmob.cn/1/files/image2.jpg");
-//        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//        connection.setRequestMethod("POST");
-//        connection.setConnectTimeout(5000);
-//        connection.setReadTimeout(5000);
-//        connection.setDoOutput(true);
-//        connection.setDoInput(true);
-//
-//        connection.setRequestProperty(HttpRequest.APP_ID_NAME, HttpRequest.APP_ID_VALUE);
-//        connection.setRequestProperty(HttpRequest.API_KEY_NAME, HttpRequest.API_KEY_VALUE);
-//        connection.setRequestProperty("Content-Type", "image/jpeg");
-//
-//        connection.connect();
-//
-//        AssetManager manager = getAssets();
-//        InputStream open = manager.open("a.png");
-//
-//        DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-//
-//        int len;
-//        byte[] buf = new byte[1024];
-//        while ((len = open.read(buf)) != -1) {
-//            dos.write(buf, 0, len);
-//        }
-//
-//        dos.flush();
-//        dos.close();
-//
-//        int responseCode = connection.getResponseCode();
-//        if (responseCode == 200 || responseCode == 201) {
-//            StringBuffer sb = new StringBuffer();
-//            String readLine;
-//            BufferedReader responseReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-//            while ((readLine = responseReader.readLine()) != null) {
-//                sb.append(readLine).append("\n");
-//            }
-//            responseReader.close();
-//            System.out.println(sb.toString());
-//        }
-    }
-
     private void updateUserAvatar(String avatarUrl) {
         Map<String, Object> updateMap = new HashMap<>();
         updateMap.put("avatar", avatarUrl);
@@ -178,17 +136,6 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
                 ImageUtils.showImagePickDialog(this);
                 break;
             case R.id.ll_username:
-                new Thread(){
-                    @Override
-                    public void run() {
-                        super.run();
-                        try {
-                            uploadImage();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }.start();
                 break;
         }
     }
@@ -201,13 +148,19 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
             return;
         }
 
+        Uri uri;
         switch (requestCode) {
             case ImageUtils.REQUEST_CODE_FROM_ALBUM:
-                Uri uri = data.getData();
-                ImageUtils.cropImage(this, uri);
+                uri = data.getData();
+//                ImageUtils.cropImage(this, uri);
+
+                setAvatarImage(uri);
                 break;
             case ImageUtils.REQUEST_CODE_FROM_CAMERA:
-                ImageUtils.cropImage(this, ImageUtils.imageUriFromCamera);
+                uri = ImageUtils.imageUriFromCamera;
+//                ImageUtils.cropImage(this, uri);
+
+                setAvatarImage(uri);
                 break;
             case ImageUtils.REQUEST_CODE_CROP_IMAGE:
                 setAvatarImage(ImageUtils.cropImageUri);

@@ -386,7 +386,7 @@ public class HttpRequest {
 
     public static void fileUpload(final Context context, Uri uri, final Action1<FileUploadResponse> call, final Action1<Throwable> errorCall) {
         final BmobService service = getApiService();
-        final String filename = "img" + System.currentTimeMillis() + ".jpg";
+        final String filename = "avatar_" + System.currentTimeMillis() + ".jpg";
 
         // get image from local
         int size = DisplayUtils.dp2px(context, 56);
@@ -394,27 +394,8 @@ public class HttpRequest {
                 new SimpleTarget<byte[]>(size, size) {
                     @Override
                     public void onResourceReady(final byte[] resource, GlideAnimation<? super byte[]> glideAnimation) {
-                        // upload image byte[]
-                        byte[] image = Base64.encode(resource, Base64.DEFAULT);
-
-                        AssetManager manager = context.getAssets();
-
-                        try {
-                            InputStream open = manager.open("a.png");
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-                            int len;
-                            byte[] buf = new byte[1024];
-                            while ((len = open.read(buf)) != -1) {
-                                baos.write(buf, 0, len);
-                            }
-
-                            image = baos.toByteArray();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), image);
+                        // upload image
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), resource);
 
                         Observable<FileUploadResponse> observable = service.fileUpload(filename, requestBody);
                         ObservableDecorator.decorate(context, observable)
