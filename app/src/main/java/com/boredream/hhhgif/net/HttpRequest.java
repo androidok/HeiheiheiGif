@@ -1,6 +1,7 @@
 package com.boredream.hhhgif.net;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -28,12 +29,17 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.google.gson.Gson;
 import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,24 +62,24 @@ import rx.schedulers.Schedulers;
 public class HttpRequest {
 
     // Bmob
-//    private static final String HOST = "https://api.bmob.cn";
-//    public static final String FILE_HOST = "http://file.bmob.cn/";
-//
-//    private static final String APP_ID_NAME = "X-Bmob-Application-Id";
-//    private static final String APP_KEY_NAME = "X-Bmob-REST-API-Key";
-//
-//    private static final String APP_ID_VALUE = "a00013136fdecd1ae8b082d217cbdfe1";
-//    private static final String API_KEY_VALUE = "20af8ccc5c11bd1a391723bff5fb3ad3";
+    public static final String HOST = "https://api.bmob.cn";
+    public static final String FILE_HOST = "http://file.bmob.cn/";
+
+    public static final String APP_ID_NAME = "X-Bmob-Application-Id";
+    public static final String API_KEY_NAME = "X-Bmob-REST-API-Key";
+
+    public static final String APP_ID_VALUE = "a00013136fdecd1ae8b082d217cbdfe1";
+    public static final String API_KEY_VALUE = "20af8ccc5c11bd1a391723bff5fb3ad3";
 
     // LeanCloud
-    private static final String HOST = "https://api.leancloud.cn";
-    public static final String FILE_HOST = "";
-
-    private static final String APP_ID_NAME = "X-LC-Id";
-    private static final String APP_KEY_NAME = "X-LC-Key";
-
-    private static final String APP_ID_VALUE = "fiAcYdKc5P320bGboETDUOll-gzGzoHsz";
-    private static final String API_KEY_VALUE = "mBSR0LSPnj7Te4eg3Fon8af9";
+//    public static final String HOST = "https://api.leancloud.cn";
+//    public static final String FILE_HOST = "";
+//
+//    private static final String APP_ID_NAME = "X-LC-Id";
+//    private static final String API_KEY_NAME = "X-LC-Key";
+//
+//    private static final String APP_ID_VALUE = "fiAcYdKc5P320bGboETDUOll-gzGzoHsz";
+//    private static final String API_KEY_VALUE = "mBSR0LSPnj7Te4eg3Fon8af9";
 
     private static Retrofit retrofit;
     private static OkHttpClient httpClient;
@@ -93,7 +99,7 @@ public class HttpRequest {
                 // -H "Content-Type: application/json" \
                 Request request = chain.request().newBuilder()
                         .addHeader(APP_ID_NAME, APP_ID_VALUE)
-                        .addHeader(APP_KEY_NAME, API_KEY_VALUE)
+                        .addHeader(API_KEY_NAME, API_KEY_VALUE)
                         .build();
                 return chain.proceed(request);
             }
@@ -213,11 +219,10 @@ public class HttpRequest {
                 @Body Map<String, Object> updateInfo);
 
         // 上传图片接口
-        @Headers("Content-Type: image/jpeg")
         @POST("/1/files/{fileName}")
         Observable<FileUploadResponse> fileUpload(
                 @Path("fileName") String fileName,
-                @Body byte[] imageBytes);
+                @Body RequestBody image);
 
     }
 
@@ -392,7 +397,26 @@ public class HttpRequest {
                         // upload image byte[]
                         byte[] image = Base64.encode(resource, Base64.DEFAULT);
 
-                        Observable<FileUploadResponse> observable = service.fileUpload(filename, image);
+                        AssetManager manager = context.getAssets();
+
+                        try {
+                            InputStream open = manager.open("a.png");
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                            int len;
+                            byte[] buf = new byte[1024];
+                            while ((len = open.read(buf)) != -1) {
+                                baos.write(buf, 0, len);
+                            }
+
+                            image = baos.toByteArray();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), image);
+
+                        Observable<FileUploadResponse> observable = service.fileUpload(filename, requestBody);
                         ObservableDecorator.decorate(context, observable)
                                 .subscribe(call, errorCall);
                     }

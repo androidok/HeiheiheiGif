@@ -193,6 +193,10 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if(resultCode != RESULT_OK) {
+            return;
+        }
+
         switch (requestCode) {
             case REQUEST_CODE_WRITE_COMMENT:
                 showProgressDialog();
