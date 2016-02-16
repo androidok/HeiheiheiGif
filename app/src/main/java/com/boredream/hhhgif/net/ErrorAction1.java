@@ -31,11 +31,14 @@ public class ErrorAction1 implements Action1<Throwable> {
             HttpException exception = (HttpException) throwable;
             ResponseBody responseBody = exception.response().errorBody();
             MediaType type = responseBody.contentType();
+
+            // if data type is application/json
             if (type.type().equals("application") && type.subtype().equals("json")) {
                 try {
+                    // parse error response
                     ErrorResponse errorResponse = new Gson().fromJson(
                             responseBody.string(), ErrorResponse.class);
-                    // TODO custom error info
+                    // TODO custom deal error info
                     ToastUtils.showToast(context, errorResponse.getError());
                     return;
                 } catch (IOException e) {
@@ -43,6 +46,7 @@ public class ErrorAction1 implements Action1<Throwable> {
                 }
             }
         } else {
+            // TODO deal other net error
             Log.i("DDD", throwable.getMessage());
             ToastUtils.showToast(context, "网络错误");
         }

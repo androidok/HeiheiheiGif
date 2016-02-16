@@ -127,6 +127,7 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             GlideUtils.decorator(Glide.with(context).load(user.getAvatar()))
                     .placeholder(R.mipmap.ic_account_circle_grey600_24dp)
+                    .error(R.mipmap.ic_launcher)
                     .into(viewHolderList.iv_avatar);
             viewHolderList.tv_username.setText(user.getUsername());
             viewHolderList.tv_content.setText(data.getContent());

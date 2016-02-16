@@ -3,6 +3,8 @@
     package="com.boredream.hhhgif" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".base.BaseApplication"
@@ -37,6 +39,8 @@
         <activity android:name=".activity.WriteCommentActivity" >
         </activity>
         <activity android:name=".activity.AboutActivity" >
+        </activity>
+        <activity android:name=".activity.UserInfoEditActivity" >
         </activity>
     </application>
 

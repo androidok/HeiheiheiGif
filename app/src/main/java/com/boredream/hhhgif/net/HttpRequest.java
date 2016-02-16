@@ -2,9 +2,8 @@ package com.boredream.hhhgif.net;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Base64;
-import android.util.Log;
 
 import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.constants.CommonConstants;
@@ -56,6 +55,7 @@ import rx.schedulers.Schedulers;
 public class HttpRequest {
 
     private static final String HOST = "https://api.bmob.cn";
+    public static final String FILE_HOST = "http://file.bmob.cn/";
 
     private static final String BMOB_APP_ID = "a00013136fdecd1ae8b082d217cbdfe1";
     private static final String BMOB_API_KEY = "20af8ccc5c11bd1a391723bff5fb3ad3";
@@ -202,7 +202,7 @@ public class HttpRequest {
 
         // 上传图片接口
         @POST("/1/files/{fileName}")
-        @Headers("Content-Type: image/png")
+        @Headers("Content-Type: image/jpeg")
         Observable<FileUploadResponse> fileUpload(
                 @Path("fileName") String fileName,
                 @Body byte[] imageBytes);
@@ -367,45 +367,26 @@ public class HttpRequest {
         return service.getGifFavUsers(where);
     }
 
-    public static void fileUpload(final Context context, String filepath, final Action1<User> call) {
+    public static void fileUpload(final Context context, Uri uri, final Action1<FileUploadResponse> call, final Action1<Throwable> errorCall) {
         final BmobService service = getApiService();
-        String filename = "img" + System.currentTimeMillis();
-        final String encodeFilename = Base64.encodeToString(filename.getBytes(), Base64.DEFAULT);
+        final String filename = "img" + System.currentTimeMillis() + ".jpg";
 
-        final ErrorAction1 errorAction1 = new ErrorAction1(context);
-
-        // get image from file
+        // get image from local
         int size = DisplayUtils.dp2px(context, 56);
-        Glide.with(context).load(filepath).asBitmap().toBytes().into(
+        Glide.with(context).load(uri).asBitmap().toBytes().into(
                 new SimpleTarget<byte[]>(size, size) {
                     @Override
                     public void onResourceReady(final byte[] resource, GlideAnimation<? super byte[]> glideAnimation) {
                         // upload image byte[]
-                        service.fileUpload(encodeFilename, resource)
-                                .flatMap(new Func1<FileUploadResponse, Observable<User>>() {
-                                    @Override
-                                    public Observable<User> call(FileUploadResponse fileUploadResponse) {
-                                        Log.i("DDD", "upload image size = " + resource.length);
-
-                                        // update user avatar
-                                        Map<String, Object> updateMap = new HashMap<>();
-                                        updateMap.put("avatar", fileUploadResponse.getUrl());
-
-                                        User currentUser = UserInfoKeeper.getCurrentUser();
-                                        return service.updateUserById(currentUser.getObjectId(), updateMap);
-                                    }
-                                })
-                                .subscribeOn(Schedulers.newThread())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .doOnError(errorAction1)
-                                .subscribe(call);
+                        Observable<FileUploadResponse> observable = service.fileUpload(filename, resource);
+                        ObservableDecorator.decorate(context, observable)
+                                .subscribe(call, errorCall);
                     }
 
                     @Override
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
                         super.onLoadFailed(e, errorDrawable);
-                        // TODO load local file exception
-                        errorAction1.call(new Throwable("load local file exception"));
+                        errorCall.call(new Throwable("load local file exception"));
                     }
                 });
     }

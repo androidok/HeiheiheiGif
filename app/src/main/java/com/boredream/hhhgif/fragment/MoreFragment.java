@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.activity.AboutActivity;
 import com.boredream.hhhgif.activity.SettingActivity;
+import com.boredream.hhhgif.activity.UserInfoEditActivity;
 import com.boredream.hhhgif.adapter.MoreRecyclerAdapter;
 import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.entity.MoreItem;
@@ -74,6 +75,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (position) {
             case 0:
+                intent2Activity(UserInfoEditActivity.class);
                 break;
             case 1:
                 intent2Activity(AboutActivity.class);

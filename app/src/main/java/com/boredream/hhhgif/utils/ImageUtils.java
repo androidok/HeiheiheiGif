@@ -1,7 +1,6 @@
 package com.boredream.hhhgif.utils;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -16,6 +15,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 
 import java.util.HashMap;
 
@@ -41,7 +41,6 @@ public class ImageUtils {
         new AlertDialog.Builder(activity)
                 .setTitle(title)
                 .setItems(items, new DialogInterface.OnClickListener() {
-
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -57,6 +56,7 @@ public class ImageUtils {
                         }
                     }
                 })
+                .setNegativeButton("取消", null)
                 .show();
     }
 
@@ -113,7 +113,7 @@ public class ImageUtils {
 
         // return-data为true时,会直接返回bitmap数据,但是大图裁剪时会出现问题,推荐下面为false时的方式
         // return-data为false时,不会返回bitmap,但需要指定一个MediaStore.EXTRA_OUTPUT保存图片uri
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT, ImageUtils.cropImageUri);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, ImageUtils.cropImageUri);
         intent.putExtra("return-data", false);
 
         activity.startActivityForResult(intent, REQUEST_CODE_CROP_IMAGE);
