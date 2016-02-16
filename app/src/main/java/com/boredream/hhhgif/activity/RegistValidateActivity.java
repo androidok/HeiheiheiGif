@@ -103,6 +103,7 @@ public class RegistValidateActivity extends BaseActivity implements View.OnClick
         // validate success, do something
         User user = new User();
         user.setMobilePhoneNumber(phone);
+        user.setUsername(phone);
         user.setPassword(password);
         user.setSmsCode(code);
         Observable<User> observable = HttpRequest.getApiService().userRegist(user);
