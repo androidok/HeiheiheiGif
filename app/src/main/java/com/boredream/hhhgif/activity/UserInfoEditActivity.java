@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
+import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.entity.FileUploadResponse;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.GlideUtils;
@@ -85,22 +86,24 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
         });
     }
 
-    private void updateUserAvatar(String avatarUrl) {
+    private void updateUserAvatar(final String avatarUrl) {
         Map<String, Object> updateMap = new HashMap<>();
         updateMap.put("avatar", avatarUrl);
 
-        Observable<User> observable = HttpRequest.getApiService().updateUserById(
+        Observable<BaseEntity> observable = HttpRequest.getApiService().updateUserById(
                 currentUser.getObjectId(), updateMap);
         ObservableDecorator.decorate(this, observable)
-                .subscribe(new SimpleSubscriber<User>(this) {
+                .subscribe(new SimpleSubscriber<BaseEntity>(this) {
                     @Override
-                    public void onNext(User user) {
+                    public void onNext(BaseEntity entity) {
                         dismissProgressDialog();
 
                         // update currentUser and show avatar
-                        currentUser.setAvatar(user.getAvatar());
+                        currentUser.setAvatar(avatarUrl);
                         UserInfoKeeper.setCurrentUser(currentUser);
                         showUserAvatar();
+
+                        showToast("头像修改成功");
                     }
 
                     @Override
@@ -118,31 +121,7 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
                 ImageUtils.showImagePickDialog(this);
                 break;
             case R.id.ll_username:
-                // FIXME test
-                Map<String, Object> updateMap = new HashMap<>();
-                updateMap.put("avatar", "http://file.bmob.cn/M03/B0/A1/oYYBAFbNGraAfn8aAAEDGXUStq4417.jpg");
-
-                Observable<User> observable = HttpRequest.getApiService().updateUserById(
-                        currentUser.getObjectId(), updateMap);
-                ObservableDecorator.decorate(this, observable)
-                        .subscribe(new SimpleSubscriber<User>(this) {
-
-                            @Override
-                            public void onNext(User user) {
-                                dismissProgressDialog();
-
-                                // update currentUser and show avatar
-                                currentUser.setAvatar(user.getAvatar());
-                                UserInfoKeeper.setCurrentUser(currentUser);
-                                showUserAvatar();
-                            }
-
-                            @Override
-                            public void onError(Throwable throwable) {
-                                super.onError(throwable);
-                                dismissProgressDialog();
-                            }
-                        });
+                // TODO set name
                 break;
         }
     }

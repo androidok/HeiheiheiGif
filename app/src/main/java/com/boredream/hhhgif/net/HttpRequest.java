@@ -24,6 +24,7 @@ import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.facebook.stetho.common.LogUtil;
 import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.google.gson.Gson;
 import com.squareup.okhttp.Interceptor;
@@ -50,6 +51,7 @@ import retrofit.http.Query;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -65,6 +67,7 @@ public class HttpRequest {
 
     public static final String APP_ID_VALUE = "a00013136fdecd1ae8b082d217cbdfe1";
     public static final String API_KEY_VALUE = "20af8ccc5c11bd1a391723bff5fb3ad3";
+    public static String SESSION_TOKEN_VALUE = "";
 
     // LeanCloud
 //    public static final String HOST = "https://api.leancloud.cn";
@@ -95,6 +98,7 @@ public class HttpRequest {
                         .addHeader("Content-Type", "application/json")
                         .addHeader(APP_ID_NAME, APP_ID_VALUE)
                         .addHeader(API_KEY_NAME, API_KEY_VALUE)
+                        .addHeader(SESSION_TOKEN_KEY, SESSION_TOKEN_VALUE)
                         .build();
                 return chain.proceed(request);
             }
@@ -116,17 +120,9 @@ public class HttpRequest {
                 .build();
     }
 
-    public static void setToken(final String token) {
-        // 统一添加的Header
-        httpClient.networkInterceptors().add(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request().newBuilder()
-                        .addHeader(SESSION_TOKEN_KEY, token)
-                        .build();
-                return chain.proceed(request);
-            }
-        });
+    private static void setToken(final String token) {
+        LogUtil.i("DDD", "set token = " + token);
+        SESSION_TOKEN_VALUE = token;
     }
 
     public interface BmobService {
@@ -222,7 +218,7 @@ public class HttpRequest {
 
         // 修改用户详情(注意, 提交什么参数修改什么参数)
         @PUT("/1/users/{objectId}")
-        Observable<User> updateUserById(
+        Observable<BaseEntity> updateUserById(
                 @Path("objectId") String userId,
                 @Body Map<String, Object> updateInfo);
 
@@ -247,17 +243,15 @@ public class HttpRequest {
      */
     public static Observable<User> login(String username, String password) {
         BmobService service = getApiService();
-        Observable<User> login = service.login(username, password);
-        login.map(new Func1<User, User>() {
-            @Override
-            public User call(User user) {
-                // 保存登录用户数据以及token信息
-                UserInfoKeeper.setCurrentUser(user);
-                setToken(user.getSessionToken());
-                return user;
-            }
-        });
-        return login;
+        return service.login(username, password)
+                .doOnNext(new Action1<User>() {
+                    @Override
+                    public void call(User user) {
+                        // 保存登录用户数据以及token信息
+                        UserInfoKeeper.setCurrentUser(user);
+                        setToken(user.getSessionToken());
+                    }
+                });
     }
 
     /**

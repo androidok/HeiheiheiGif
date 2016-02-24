@@ -15,7 +15,6 @@ import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.net.SimpleSubscriber;
-import com.boredream.hhhgif.utils.UserInfoKeeper;
 
 import rx.Observable;
 
@@ -80,7 +79,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     @Override
                     public void onNext(User user) {
                         dismissProgressDialog();
-                        UserInfoKeeper.setCurrentUser(user);
 
                         if(checkLogin) {
                             finish();
