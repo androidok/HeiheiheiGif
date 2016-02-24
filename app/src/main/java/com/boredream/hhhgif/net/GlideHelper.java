@@ -20,7 +20,7 @@ public class GlideHelper {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.mipmap.ic_account_circle_grey600_24dp)
                 .error(R.mipmap.ic_account_circle_grey600_24dp)
-                .transform(new GlideRoundTransform(context, 999))
+                .transform(new GlideCircleTransform(context))
                 .into(iv);
     }
 

@@ -40,6 +40,11 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
         setContentView(R.layout.activity_user_info_edit);
 
         initView();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         initData();
     }
 
@@ -118,7 +123,7 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
                 ImageUtils.showImagePickDialog(this);
                 break;
             case R.id.ll_username:
-                // TODO set name
+                intent2Activity(InputActivity.class);
                 break;
         }
     }
