@@ -22,7 +22,6 @@ import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.net.SimpleSubscriber;
-import com.boredream.hhhgif.utils.TitleBuilder;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.boredream.hhhgif.view.DividerItemDecoration;
 
@@ -66,7 +65,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void initView() {
-        new TitleBuilder(this).setTitleText("动态图详情");
+        initBackTitle("动态图详情");
 
         srl_gifdetail = (SwipeRefreshLayout) findViewById(R.id.srl_gifdetail);
         rv_gifdetail = (RecyclerView) findViewById(R.id.rv_gifdetail);

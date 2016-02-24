@@ -15,7 +15,6 @@ import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.GlideHelper;
 import com.boredream.hhhgif.utils.DateUtils;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -110,9 +109,7 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             Glide.with(context)
                     .load(gifInfo.getImgUrl())
                     .asGif()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .crossFade()
-                    .fitCenter()
                     .listener(new RequestListener<String, GifDrawable>() {
                         @Override
                         public boolean onException(Exception e, String model, Target<GifDrawable> target, boolean isFirstResource) {
