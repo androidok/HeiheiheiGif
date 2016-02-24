@@ -13,6 +13,7 @@ import com.boredream.hhhgif.entity.Comment;
 import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.GlideHelper;
+import com.boredream.hhhgif.utils.DateUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
@@ -28,6 +29,11 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private Activity context;
     private Gif gifInfo;
     private List<Comment> datas;
+
+    @Override
+    public int getItemCount() {
+        return datas.size() + 1;
+    }
 
     public GifDetailAdapter(Activity context, List<Comment> datas) {
         this.context = context;
@@ -59,6 +65,7 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         public ImageView iv_avatar;
         public TextView tv_username;
+        public TextView tv_time;
         public TextView tv_content;
 
         public ViewHolderList(final View itemView) {
@@ -66,6 +73,7 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             iv_avatar = (ImageView) itemView.findViewById(R.id.iv_avatar);
             tv_username = (TextView) itemView.findViewById(R.id.tv_username);
+            tv_time = (TextView) itemView.findViewById(R.id.tv_time);
             tv_content = (TextView) itemView.findViewById(R.id.tv_content);
         }
     }
@@ -122,18 +130,14 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         } else if (itemViewType == ITEM_VIEW_TYPE_LIST) {
             ViewHolderList viewHolderList = (ViewHolderList) holder;
-            Comment data = datas.get(position);
+            Comment data = datas.get(position - 1);
             User user = data.getUser();
 
             GlideHelper.showAvatar(context, user.getAvatar(), viewHolderList.iv_avatar);
 
             viewHolderList.tv_username.setText(user.getUsername());
+            viewHolderList.tv_time.setText(DateUtils.getShortTime(data.getCreatedAt()));
             viewHolderList.tv_content.setText(data.getContent());
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return datas.size();
     }
 }

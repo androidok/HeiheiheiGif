@@ -17,7 +17,7 @@ public class DateUtils {
 	public static final long ONE_DAY_MILLIONS = 24 * ONE_HOUR_MILLIONS;
 	public static final int DAY_OF_YEAR = 365;
 
-	// 服务器日期格式为 2015-10-22 00:00:00
+	// 日期格式为 2016-02-03 17:04:58
 	public static final String PATTERN_DATE = "yyyy-MM-dd";
 	public static final String PATTERN_TIME = "HH:mm:ss";
 	public static final String PATTERN_SPLIT = " ";
