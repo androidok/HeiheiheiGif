@@ -15,10 +15,10 @@ import com.boredream.hhhgif.entity.Pointer;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
+import com.boredream.hhhgif.net.SimpleSubscriber;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 
 import rx.Observable;
-import rx.functions.Action1;
 
 public class WriteCommentActivity extends BaseActivity {
 
@@ -69,17 +69,19 @@ public class WriteCommentActivity extends BaseActivity {
         showProgressDialog();
         Observable<BaseEntity> observable = HttpRequest.addGifComment(this, comment);
         ObservableDecorator.decorate(this, observable)
-                .subscribe(new Action1<BaseEntity>() {
+                .subscribe(new SimpleSubscriber<BaseEntity>(this) {
                     @Override
-                    public void call(BaseEntity entity) {
+                    public void onNext(BaseEntity entity) {
                         dismissProgressDialog();
                         showToast("评论成功");
 
                         commentSuccess();
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
+                    public void onError(Throwable throwable) {
+                        super.onError(throwable);
+
                         dismissProgressDialog();
                     }
                 });

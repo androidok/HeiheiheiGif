@@ -12,12 +12,12 @@ import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
+import com.boredream.hhhgif.net.SimpleSubscriber;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import rx.Observable;
-import rx.functions.Action1;
 
 public class ForgetPswActivity extends BaseActivity implements View.OnClickListener {
 
@@ -57,27 +57,32 @@ public class ForgetPswActivity extends BaseActivity implements View.OnClickListe
         }
 
         // validate success, do something
+        requestSmsCode(username, password);
+
+    }
+
+    private void requestSmsCode(String username, final String password) {
         showProgressDialog();
         Map<String, Object> params = new HashMap<>();
         params.put("mobilePhoneNumber", username);
         Observable<Object> observable = HttpRequest.getApiService().requestSmsCode(params);
         ObservableDecorator.decorate(this, observable)
-                .subscribe(new Action1<Object>() {
+                .subscribe(new SimpleSubscriber<Object>(this) {
                     @Override
-                    public void call(Object o) {
+                    public void onNext(Object o) {
                         dismissProgressDialog();
 
                         Intent intent = new Intent(ForgetPswActivity.this, ForgetPswValidateActivity.class);
                         intent.putExtra("password", password);
                         startActivity(intent);
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
+                    public void onError(Throwable throwable) {
+                        super.onError(throwable);
                         dismissProgressDialog();
                     }
                 });
-
     }
 
     @Override

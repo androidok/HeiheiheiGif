@@ -19,6 +19,7 @@ import com.boredream.hhhgif.entity.ListResponse;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
+import com.boredream.hhhgif.net.SimpleSubscriber;
 import com.boredream.hhhgif.utils.DisplayUtils;
 import com.boredream.hhhgif.utils.TitleBuilder;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
@@ -28,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
-import rx.functions.Action1;
 
 public class FavFragment extends BaseFragment {
     private View view;
@@ -57,7 +57,7 @@ public class FavFragment extends BaseFragment {
         currentUser = UserInfoKeeper.getCurrentUser();
         srl_fav.setVisibility(currentUser == null ? View.GONE : View.VISIBLE);
 
-        if(currentUser != null && infos.size() == 0 && !srl_fav.isRefreshing()) {
+        if (currentUser != null && infos.size() == 0 && !srl_fav.isRefreshing()) {
             srl_fav.post(new Runnable() {
                 @Override
                 public void run() {
@@ -110,12 +110,12 @@ public class FavFragment extends BaseFragment {
     private void loadData(final int page) {
         Observable<ListResponse<Gif>> observable = HttpRequest.getFavGifs(currentUser.getObjectId(), currentPage);
         ObservableDecorator.decorate(activity, observable)
-                .subscribe(new Action1<ListResponse<Gif>>() {
+                .subscribe(new SimpleSubscriber<ListResponse<Gif>>(activity) {
                     @Override
-                    public void call(ListResponse<Gif> gifInfos) {
+                    public void onNext(ListResponse<Gif> gifInfos) {
                         srl_fav.setRefreshing(false);
 
-                        if(page == 1) {
+                        if (page == 1) {
                             infos.clear();
                         }
 
@@ -129,9 +129,10 @@ public class FavFragment extends BaseFragment {
 
                         adapter.notifyDataSetChanged();
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
+                    public void onError(Throwable throwable) {
+                        super.onError(throwable);
                         srl_fav.setRefreshing(false);
                     }
                 });

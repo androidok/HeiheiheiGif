@@ -14,10 +14,10 @@ import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
+import com.boredream.hhhgif.net.SimpleSubscriber;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 
 import rx.Observable;
-import rx.functions.Action1;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
@@ -74,11 +74,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
 
         showProgressDialog();
-        Observable<User> observable = HttpRequest.getApiService().login(username, password);
+        Observable<User> observable = HttpRequest.login(username, password);
         ObservableDecorator.decorate(this, observable)
-                .subscribe(new Action1<User>() {
+                .subscribe(new SimpleSubscriber<User>(this) {
                     @Override
-                    public void call(User user) {
+                    public void onNext(User user) {
                         dismissProgressDialog();
                         UserInfoKeeper.setCurrentUser(user);
 
@@ -88,9 +88,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                             intent2Activity(MainActivity.class);
                         }
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
+                    public void onError(Throwable throwable) {
+                        super.onError(throwable);
                         dismissProgressDialog();
                     }
                 });

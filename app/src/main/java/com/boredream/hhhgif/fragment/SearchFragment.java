@@ -153,11 +153,6 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
 
                         adapter.notifyDataSetChanged();
                     }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        // do nothing
-                    }
                 });
     }
 

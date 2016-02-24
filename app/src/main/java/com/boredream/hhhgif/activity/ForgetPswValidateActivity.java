@@ -14,13 +14,13 @@ import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
+import com.boredream.hhhgif.net.SimpleSubscriber;
 import com.boredream.hhhgif.utils.DateUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import rx.Observable;
-import rx.functions.Action1;
 
 public class ForgetPswValidateActivity extends BaseActivity implements View.OnClickListener {
 
@@ -98,25 +98,30 @@ public class ForgetPswValidateActivity extends BaseActivity implements View.OnCl
         }
 
         // validate success, do something
+        resetPswBySmsCode(code);
+
+    }
+
+    private void resetPswBySmsCode(String code) {
         Map<String, Object> params = new HashMap<>();
         params.put("password", password);
         Observable<Object> observable = HttpRequest.getApiService().resetPasswordBySmsCode(code, params);
         showProgressDialog();
         ObservableDecorator.decorate(this, observable)
-                .subscribe(new Action1<Object>() {
+                .subscribe(new SimpleSubscriber<Object>(this) {
                     @Override
-                    public void call(Object user) {
+                    public void onNext(Object user) {
                         dismissProgressDialog();
                         clearIntent2Login();
                         showToast("密码重置成功");
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
+                    public void onError(Throwable throwable) {
+                        super.onError(throwable);
                         dismissProgressDialog();
                     }
                 });
-
     }
 
     @Override

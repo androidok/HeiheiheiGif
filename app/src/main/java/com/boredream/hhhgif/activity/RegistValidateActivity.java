@@ -17,11 +17,11 @@ import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
+import com.boredream.hhhgif.net.SimpleSubscriber;
 import com.boredream.hhhgif.utils.DateUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 
 import rx.Observable;
-import rx.functions.Action1;
 
 public class RegistValidateActivity extends BaseActivity implements View.OnClickListener {
 
@@ -109,17 +109,18 @@ public class RegistValidateActivity extends BaseActivity implements View.OnClick
         Observable<User> observable = HttpRequest.getApiService().userRegist(user);
         showProgressDialog();
         ObservableDecorator.decorate(this, observable)
-                .subscribe(new Action1<User>() {
+                .subscribe(new SimpleSubscriber<User>(this) {
                     @Override
-                    public void call(User user) {
+                    public void onNext(User user) {
                         // include token
                         dismissProgressDialog();
                         UserInfoKeeper.setCurrentUser(user);
                         showRegistSuccessDialog();
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
+                    public void onError(Throwable throwable) {
+                        super.onError(throwable);
                         dismissProgressDialog();
                     }
                 });

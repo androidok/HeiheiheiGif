@@ -14,9 +14,9 @@ import rx.schedulers.Schedulers;
 public class ObservableDecorator {
 
     public static <T> Observable<T> decorate(final Context context, Observable<T> observable) {
-        return observable.subscribeOn(Schedulers.newThread())
-                .delay(1, TimeUnit.SECONDS, AndroidSchedulers.mainThread()) // FIXME temp for debug
+        return observable
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new ErrorAction1(context));
+                .delay(1, TimeUnit.SECONDS, AndroidSchedulers.mainThread());
     }
 }

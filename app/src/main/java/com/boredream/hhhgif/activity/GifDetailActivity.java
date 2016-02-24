@@ -21,6 +21,7 @@ import com.boredream.hhhgif.entity.PageIndex;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
+import com.boredream.hhhgif.net.SimpleSubscriber;
 import com.boredream.hhhgif.utils.TitleBuilder;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.boredream.hhhgif.view.DividerItemDecoration;
@@ -105,17 +106,18 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     private void loadData(final int page) {
         Observable<ListResponse<Comment>> observable = HttpRequest.getGifComments(gif.getObjectId(), page);
         ObservableDecorator.decorate(this, observable)
-                .subscribe(new Action1<ListResponse<Comment>>() {
+                .subscribe(new SimpleSubscriber<ListResponse<Comment>>(this) {
                     @Override
-                    public void call(ListResponse<Comment> gifInfos) {
+                    public void onNext(ListResponse<Comment> gifInfos) {
                         srl_gifdetail.setRefreshing(false);
                         dismissProgressDialog();
 
                         pageIndex.setResponse(adapter, infos, gifInfos.getResults());
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
+                    public void onError(Throwable throwable) {
+                        super.onError(throwable);
                         srl_gifdetail.setRefreshing(false);
                         dismissProgressDialog();
                     }
@@ -126,7 +128,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
 
-        if(UserInfoKeeper.getCurrentUser() != null) {
+        if (UserInfoKeeper.getCurrentUser() != null) {
             getFavStatus();
         }
     }
@@ -134,7 +136,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     private void getFavStatus() {
         Observable<ListResponse<User>> observable = HttpRequest.getGifFavUsers(gif.getObjectId());
         ObservableDecorator.decorate(this, observable)
-                .subscribe(new Action1<ListResponse<User>>() {
+                .subscribe(new Action1<ListResponse<User>>() { // doesn't need error handler
                     @Override
                     public void call(ListResponse<User> userListResponse) {
                         isFaved = userListResponse.getResults().contains(UserInfoKeeper.getCurrentUser());
@@ -144,7 +146,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void favGif() {
-        if(isFaved) {
+        if (isFaved) {
             showToast("已收藏过该动态图");
             return;
         }
@@ -172,14 +174,14 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ll_comment:
-                if(UserInfoKeeper.checkLogin(this)) {
+                if (UserInfoKeeper.checkLogin(this)) {
                     Intent intent = new Intent(this, WriteCommentActivity.class);
                     intent.putExtra("gif", gif);
                     startActivityForResult(intent, REQUEST_CODE_WRITE_COMMENT);
                 }
                 break;
             case R.id.ll_fav:
-                if(UserInfoKeeper.checkLogin(this)) {
+                if (UserInfoKeeper.checkLogin(this)) {
                     favGif();
                 }
                 break;
@@ -193,7 +195,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode != RESULT_OK) {
+        if (resultCode != RESULT_OK) {
             return;
         }
 

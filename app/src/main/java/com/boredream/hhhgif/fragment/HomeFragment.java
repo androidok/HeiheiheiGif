@@ -17,6 +17,7 @@ import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.ListResponse;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
+import com.boredream.hhhgif.net.SimpleSubscriber;
 import com.boredream.hhhgif.utils.DisplayUtils;
 import com.boredream.hhhgif.utils.TitleBuilder;
 import com.boredream.hhhgif.view.GridSpacingDecorator;
@@ -25,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
-import rx.functions.Action1;
 
 public class HomeFragment extends BaseFragment {
     private View view;
@@ -78,9 +78,9 @@ public class HomeFragment extends BaseFragment {
     private void loadData(final int page) {
         Observable<ListResponse<Gif>> observable = HttpRequest.getGifs(page);
         ObservableDecorator.decorate(activity, observable)
-                .subscribe(new Action1<ListResponse<Gif>>() {
+                .subscribe(new SimpleSubscriber<ListResponse<Gif>>(activity) {
                     @Override
-                    public void call(ListResponse<Gif> gifInfos) {
+                    public void onNext(ListResponse<Gif> gifInfos) {
                         srl_home.setRefreshing(false);
 
                         if(page == 1) {
@@ -100,9 +100,10 @@ public class HomeFragment extends BaseFragment {
 
                         adapter.notifyDataSetChanged();
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
+                    public void onError(Throwable throwable) {
+                        super.onError(throwable);
                         srl_home.setRefreshing(false);
                     }
                 });

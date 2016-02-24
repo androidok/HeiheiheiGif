@@ -1,11 +1,9 @@
 package com.boredream.hhhgif.net;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Base64;
 
 import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.constants.CommonConstants;
@@ -36,10 +34,7 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,14 +43,13 @@ import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
 import retrofit.http.Body;
 import retrofit.http.GET;
-import retrofit.http.Headers;
 import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Path;
 import retrofit.http.Query;
 import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -67,6 +61,7 @@ public class HttpRequest {
 
     public static final String APP_ID_NAME = "X-Bmob-Application-Id";
     public static final String API_KEY_NAME = "X-Bmob-REST-API-Key";
+    public static final String SESSION_TOKEN_KEY = "X-Bmob-Session-Token";
 
     public static final String APP_ID_VALUE = "a00013136fdecd1ae8b082d217cbdfe1";
     public static final String API_KEY_VALUE = "20af8ccc5c11bd1a391723bff5fb3ad3";
@@ -96,8 +91,8 @@ public class HttpRequest {
         httpClient.networkInterceptors().add(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
-                // -H "Content-Type: application/json" \
                 Request request = chain.request().newBuilder()
+                        .addHeader("Content-Type", "application/json")
                         .addHeader(APP_ID_NAME, APP_ID_VALUE)
                         .addHeader(API_KEY_NAME, API_KEY_VALUE)
                         .build();
@@ -119,6 +114,19 @@ public class HttpRequest {
                 .client(httpClient)
                 .callbackExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
                 .build();
+    }
+
+    public static void setToken(final String token) {
+        // 统一添加的Header
+        httpClient.networkInterceptors().add(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request().newBuilder()
+                        .addHeader(SESSION_TOKEN_KEY, token)
+                        .build();
+                return chain.proceed(request);
+            }
+        });
     }
 
     public interface BmobService {
@@ -232,6 +240,27 @@ public class HttpRequest {
     }
 
     /**
+     * 登录用户
+     *
+     * @param username 用户名
+     * @param password 密码
+     */
+    public static Observable<User> login(String username, String password) {
+        BmobService service = getApiService();
+        Observable<User> login = service.login(username, password);
+        login.map(new Func1<User, User>() {
+            @Override
+            public User call(User user) {
+                // 保存登录用户数据以及token信息
+                UserInfoKeeper.setCurrentUser(user);
+                setToken(user.getSessionToken());
+                return user;
+            }
+        });
+        return login;
+    }
+
+    /**
      * 获取动态图数据,分页(默认每页数量为CommonConstants.COUNT_OF_PAGE)
      *
      * @param page 从1开始
@@ -302,8 +331,7 @@ public class HttpRequest {
                     }
                 })
                 .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new ErrorAction1(context));
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     /**
@@ -334,8 +362,7 @@ public class HttpRequest {
                     }
                 })
                 .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new ErrorAction1(context));
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     /**
@@ -384,7 +411,7 @@ public class HttpRequest {
         return service.getGifFavUsers(where);
     }
 
-    public static void fileUpload(final Context context, Uri uri, final Action1<FileUploadResponse> call, final Action1<Throwable> errorCall) {
+    public static void fileUpload(final Context context, Uri uri, final Subscriber<FileUploadResponse> call) {
         final BmobService service = getApiService();
         final String filename = "avatar_" + System.currentTimeMillis() + ".jpg";
 
@@ -399,13 +426,13 @@ public class HttpRequest {
 
                         Observable<FileUploadResponse> observable = service.fileUpload(filename, requestBody);
                         ObservableDecorator.decorate(context, observable)
-                                .subscribe(call, errorCall);
+                                .subscribe(call);
                     }
 
                     @Override
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
                         super.onLoadFailed(e, errorDrawable);
-                        errorCall.call(new Throwable("load local file exception"));
+                        call.onError(new Throwable("load local file exception"));
                     }
                 });
     }

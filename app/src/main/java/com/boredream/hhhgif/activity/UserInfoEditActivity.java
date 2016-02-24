@@ -1,12 +1,8 @@
 package com.boredream.hhhgif.activity;
 
 import android.content.Intent;
-import android.content.res.AssetManager;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,32 +12,18 @@ import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.entity.FileUploadResponse;
 import com.boredream.hhhgif.entity.User;
-import com.boredream.hhhgif.net.ErrorAction1;
 import com.boredream.hhhgif.net.GlideUtils;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
-import com.boredream.hhhgif.utils.DisplayUtils;
+import com.boredream.hhhgif.net.SimpleSubscriber;
 import com.boredream.hhhgif.utils.ImageUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.squareup.okhttp.internal.http.HttpConnection;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
 import rx.Observable;
-import rx.functions.Action1;
 
 public class UserInfoEditActivity extends BaseActivity implements View.OnClickListener {
 
@@ -88,17 +70,16 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
     private void setAvatarImage(Uri uri) {
         showProgressDialog();
 
-        HttpRequest.fileUpload(this, uri, new Action1<FileUploadResponse>() {
+        HttpRequest.fileUpload(this, uri, new SimpleSubscriber<FileUploadResponse>(this) {
             @Override
-            public void call(FileUploadResponse fileUploadResponse) {
+            public void onNext(FileUploadResponse fileUploadResponse) {
                 // update user avatar to server
                 updateUserAvatar(HttpRequest.FILE_HOST + fileUploadResponse.getUrl());
             }
-        }, new ErrorAction1(this) {
-            @Override
-            public void call(Throwable throwable) {
-                super.call(throwable);
 
+            @Override
+            public void onError(Throwable throwable) {
+                super.onError(throwable);
                 dismissProgressDialog();
             }
         });
@@ -108,23 +89,24 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
         Map<String, Object> updateMap = new HashMap<>();
         updateMap.put("avatar", avatarUrl);
 
-        Observable<User> observable = HttpRequest.getApiService().updateUserById(currentUser.getObjectId(), updateMap);
+        Observable<User> observable = HttpRequest.getApiService().updateUserById(
+                currentUser.getObjectId(), updateMap);
         ObservableDecorator.decorate(this, observable)
-                .subscribe(new Action1<User>() {
+                .subscribe(new SimpleSubscriber<User>(this) {
                     @Override
-                    public void call(User user) {
+                    public void onNext(User user) {
                         dismissProgressDialog();
 
                         // update currentUser and show avatar
-//                        currentUser.setAvatar(user.getAvatar());
-//                        UserInfoKeeper.setCurrentUser(currentUser);
-//                        showUserAvatar();
+                        currentUser.setAvatar(user.getAvatar());
+                        UserInfoKeeper.setCurrentUser(currentUser);
+                        showUserAvatar();
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
+                    public void onError(Throwable throwable) {
+                        super.onError(throwable);
                         dismissProgressDialog();
-                        showToast("头像更新失败");
                     }
                 });
     }
@@ -136,6 +118,31 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
                 ImageUtils.showImagePickDialog(this);
                 break;
             case R.id.ll_username:
+                // FIXME test
+                Map<String, Object> updateMap = new HashMap<>();
+                updateMap.put("avatar", "http://file.bmob.cn/M03/B0/A1/oYYBAFbNGraAfn8aAAEDGXUStq4417.jpg");
+
+                Observable<User> observable = HttpRequest.getApiService().updateUserById(
+                        currentUser.getObjectId(), updateMap);
+                ObservableDecorator.decorate(this, observable)
+                        .subscribe(new SimpleSubscriber<User>(this) {
+
+                            @Override
+                            public void onNext(User user) {
+                                dismissProgressDialog();
+
+                                // update currentUser and show avatar
+                                currentUser.setAvatar(user.getAvatar());
+                                UserInfoKeeper.setCurrentUser(currentUser);
+                                showUserAvatar();
+                            }
+
+                            @Override
+                            public void onError(Throwable throwable) {
+                                super.onError(throwable);
+                                dismissProgressDialog();
+                            }
+                        });
                 break;
         }
     }
