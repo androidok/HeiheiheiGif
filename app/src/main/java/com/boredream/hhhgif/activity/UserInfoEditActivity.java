@@ -13,13 +13,12 @@ import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.entity.FileUploadResponse;
 import com.boredream.hhhgif.entity.User;
-import com.boredream.hhhgif.net.GlideUtils;
+import com.boredream.hhhgif.net.GlideHelper;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.net.SimpleSubscriber;
 import com.boredream.hhhgif.utils.ImageUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
-import com.bumptech.glide.Glide;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,9 +50,7 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void showUserAvatar() {
-        GlideUtils.decorator(Glide.with(this).load(currentUser.getAvatar()))
-                .placeholder(R.mipmap.ic_account_circle_grey600_24dp)
-                .into(iv_avatar);
+        GlideHelper.showAvatar(this, currentUser.getAvatar(), iv_avatar);
     }
 
     private void initView() {

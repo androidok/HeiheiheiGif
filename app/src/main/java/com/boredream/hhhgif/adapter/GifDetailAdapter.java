@@ -12,7 +12,7 @@ import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.entity.Comment;
 import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.User;
-import com.boredream.hhhgif.net.GlideUtils;
+import com.boredream.hhhgif.net.GlideHelper;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
@@ -125,10 +125,8 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             Comment data = datas.get(position);
             User user = data.getUser();
 
-            GlideUtils.decorator(Glide.with(context).load(user.getAvatar()))
-                    .placeholder(R.mipmap.ic_account_circle_grey600_24dp)
-                    .error(R.mipmap.ic_launcher)
-                    .into(viewHolderList.iv_avatar);
+            GlideHelper.showAvatar(context, user.getAvatar(), viewHolderList.iv_avatar);
+
             viewHolderList.tv_username.setText(user.getUsername());
             viewHolderList.tv_content.setText(data.getContent());
         }

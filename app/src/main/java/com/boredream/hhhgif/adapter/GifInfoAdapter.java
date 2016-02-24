@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.activity.GifDetailActivity;
 import com.boredream.hhhgif.entity.Gif;
-import com.bumptech.glide.Glide;
+import com.boredream.hhhgif.net.GlideHelper;
 
 import java.util.List;
 
@@ -62,11 +62,8 @@ public class GifInfoAdapter extends RecyclerView.Adapter<GifInfoAdapter.ViewHold
         holder.tv_title.setText(gifInfo.getTitle());
         holder.tv_comment_count.setText(gifInfo.getCommentCount() + "");
         holder.tv_fav_count.setText(gifInfo.getFavCount() + "");
-        Glide.with(context)
-                .load(gifInfo.getImgUrl())
-                .asBitmap()
-                .centerCrop()
-                .into(holder.iv_gif);
+
+        GlideHelper.showImage(context, gifInfo.getImgUrl(), holder.iv_gif);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
