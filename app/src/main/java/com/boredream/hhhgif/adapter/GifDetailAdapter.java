@@ -2,6 +2,7 @@ package com.boredream.hhhgif.adapter;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private Activity context;
     private Gif gifInfo;
     private List<Comment> datas;
+    public GifDrawable loadedGif;
 
     @Override
     public int getItemCount() {
@@ -106,25 +108,31 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             final ImageView iv_gif = viewHolderHeader.iv_gif;
 
-            Glide.with(context)
-                    .load(gifInfo.getImgUrl())
-                    .asGif()
-                    .crossFade()
-                    .listener(new RequestListener<String, GifDrawable>() {
-                        @Override
-                        public boolean onException(Exception e, String model, Target<GifDrawable> target, boolean isFirstResource) {
-                            return false;
-                        }
+            if(loadedGif == null) {
+                Glide.with(context)
+                        .load(gifInfo.getImgUrl())
+                        .asGif()
+                        .crossFade()
+                        .listener(new RequestListener<String, GifDrawable>() {
+                            @Override
+                            public boolean onException(Exception e, String model, Target<GifDrawable> target, boolean isFirstResource) {
+                                return false;
+                            }
 
-                        @Override
-                        public boolean onResourceReady(GifDrawable resource, String model, Target<GifDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                            float ivHeight = (float) resource.getIntrinsicHeight() / resource.getIntrinsicWidth() * iv_gif.getWidth();
-                            iv_gif.getLayoutParams().height = (int) ivHeight;
-                            return false;
-                        }
-                    })
-                    .into(iv_gif);
-
+                            @Override
+                            public boolean onResourceReady(GifDrawable resource, String model, Target<GifDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                Log.i("DDD", "gif onResourceReady");
+                                loadedGif = resource;
+                                if(onGifLoadedListener != null) {
+                                    onGifLoadedListener.onGifLoaded();
+                                }
+                                float ivHeight = (float) resource.getIntrinsicHeight() / resource.getIntrinsicWidth() * iv_gif.getWidth();
+                                iv_gif.getLayoutParams().height = (int) ivHeight;
+                                return false;
+                            }
+                        })
+                        .into(iv_gif);
+            }
         } else if (itemViewType == ITEM_VIEW_TYPE_LIST) {
             ViewHolderList viewHolderList = (ViewHolderList) holder;
             Comment data = datas.get(position - 1);
@@ -136,5 +144,15 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             viewHolderList.tv_time.setText(DateUtils.getShortTime(data.getCreatedAt()));
             viewHolderList.tv_content.setText(data.getContent());
         }
+    }
+
+    public interface OnGifLoadedListener {
+        void onGifLoaded();
+    }
+
+    private OnGifLoadedListener onGifLoadedListener;
+
+    public void setOnGifLoadedListener(OnGifLoadedListener onGifLoadedListener) {
+        this.onGifLoadedListener = onGifLoadedListener;
     }
 }

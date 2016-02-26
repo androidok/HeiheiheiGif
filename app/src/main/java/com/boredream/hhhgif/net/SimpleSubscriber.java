@@ -48,7 +48,7 @@ public class SimpleSubscriber<T> extends Subscriber<T> {
             }
         } else {
             // TODO deal other net error
-            ToastUtils.showToast(context, "网络错误");
+            ToastUtils.showToast(context, throwable.getMessage());
             LogUtil.i("DDD", throwable.getMessage());
         }
     }

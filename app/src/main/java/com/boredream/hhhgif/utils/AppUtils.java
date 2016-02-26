@@ -3,10 +3,13 @@ package com.boredream.hhhgif.utils;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+
+import java.io.File;
 
 public class AppUtils {
     public static String getAppVersionName(Context context) {
@@ -51,5 +54,19 @@ public class AppUtils {
     public static void hideSoftInput(EditText et) {
         InputMethodManager inputMethodManager = (InputMethodManager) et.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(et.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    /**
+     * 获取SD卡路径
+     *
+     * @return 如果sd卡不存在则返回null
+     */
+    public static File getSDPath() {
+        File sdDir = null;
+        boolean sdCardExist = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);   //判断sd卡是否存在
+        if (sdCardExist) {
+            sdDir = Environment.getExternalStorageDirectory();//获取跟目录
+        }
+        return sdDir;
     }
 }

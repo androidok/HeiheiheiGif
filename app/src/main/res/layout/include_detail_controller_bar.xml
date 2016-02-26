@@ -83,6 +83,7 @@
             android:src="@mipmap/ic_get_app_grey600_24dp" />
 
         <TextView
+            android:id="@+id/tv_download"
             style="@style/TextViewSubhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -19,19 +19,21 @@ import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.ListResponse;
 import com.boredream.hhhgif.entity.PageIndex;
 import com.boredream.hhhgif.entity.User;
+import com.boredream.hhhgif.net.Downloader;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.net.SimpleSubscriber;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.boredream.hhhgif.view.DividerItemDecoration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
 import rx.functions.Action1;
 
-public class GifDetailActivity extends BaseActivity implements View.OnClickListener {
+public class GifDetailActivity extends BaseActivity implements View.OnClickListener, GifDetailAdapter.OnGifLoadedListener {
 
     private static final int REQUEST_CODE_WRITE_COMMENT = 110;
 
@@ -41,7 +43,9 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     private LinearLayout ll_fav;
     private TextView tv_fav;
     private LinearLayout ll_download;
+    private TextView tv_download;
 
+    private GifDetailAdapter gifDetailAdapter;
     private LoadMoreAdapter adapter;
     private List<Comment> infos = new ArrayList<>();
     private Gif gif;
@@ -73,13 +77,16 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
         ll_fav = (LinearLayout) findViewById(R.id.ll_fav);
         tv_fav = (TextView) findViewById(R.id.tv_fav);
         ll_download = (LinearLayout) findViewById(R.id.ll_download);
+        tv_download = (TextView) findViewById(R.id.tv_download);
 
         ll_comment.setOnClickListener(this);
         ll_fav.setOnClickListener(this);
         ll_download.setOnClickListener(this);
 
-        GifDetailAdapter gifDetailAdapter = new GifDetailAdapter(this, infos);
+        gifDetailAdapter = new GifDetailAdapter(this, infos);
+        gifDetailAdapter.setOnGifLoadedListener(this);
         gifDetailAdapter.setGifInfo(gif);
+        setDownloadStatus();
         adapter = new LoadMoreAdapter(rv_gifdetail, gifDetailAdapter,
                 new LoadMoreAdapter.OnLoadMoreListener() {
                     @Override
@@ -100,6 +107,19 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
         rv_gifdetail.setLayoutManager(linearLayoutManager);
         // 每个item之间的divder线
         rv_gifdetail.addItemDecoration(new DividerItemDecoration(this));
+    }
+
+    @Override
+    public void onGifLoaded() {
+        setDownloadStatus();
+    }
+
+    private void setDownloadStatus() {
+        if (gifDetailAdapter.loadedGif == null) {
+            tv_download.setTextColor(getResources().getColor(R.color.txt_light_gray));
+        } else {
+            tv_download.setTextColor(getResources().getColor(R.color.txt_gray));
+        }
     }
 
     private void loadData(final int page) {
@@ -185,7 +205,18 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                 }
                 break;
             case R.id.ll_download:
+                if (gifDetailAdapter.loadedGif == null) {
+                    showToast("动态图尚未加载完成,暂时无法下载,请耐心等待...");
+                    return;
+                }
 
+                Downloader.saveGif(gifDetailAdapter.loadedGif,
+                        new SimpleSubscriber<File>(this) {
+                            @Override
+                            public void onNext(File file) {
+                                showToast("动态图保存成功,保存路径为 " + file.getAbsolutePath());
+                            }
+                        });
                 break;
         }
     }
@@ -205,4 +236,5 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                 break;
         }
     }
+
 }
