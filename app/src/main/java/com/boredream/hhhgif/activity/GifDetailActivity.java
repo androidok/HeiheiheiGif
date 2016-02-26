@@ -158,33 +158,62 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                 .subscribe(new Action1<ListResponse<User>>() { // doesn't need error handler
                     @Override
                     public void call(ListResponse<User> userListResponse) {
-                        isFaved = userListResponse.getResults().contains(UserInfoKeeper.getCurrentUser());
-                        tv_fav.setText(isFaved ? "已收藏" : "收藏");
+                        showFavStatus(userListResponse.getResults().contains(UserInfoKeeper.getCurrentUser()));
                     }
                 });
     }
 
-    private void favGif() {
-        if (isFaved) {
-            showToast("已收藏过该动态图");
-            return;
-        }
+    private void showFavStatus(boolean isFaved) {
+        this.isFaved = isFaved;
+        tv_fav.setText(isFaved ? "已收藏" : "收藏");
+    }
 
+    private void favGif() {
         showProgressDialog();
-        HttpRequest.favGif(this, gif.getObjectId())
+        HttpRequest.favGif(gif.getObjectId())
                 .subscribe(new Action1<BaseEntity>() {
                     @Override
                     public void call(BaseEntity entity) {
                         dismissProgressDialog();
 
                         showToast("收藏成功");
+                        showFavStatus(true);
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
                         dismissProgressDialog();
 
+                        // TODO 判断如果是重复收藏则也视为成功
+
                         showToast("收藏失败");
+                        showFavStatus(false);
+                    }
+                });
+    }
+
+    private void removeGifFav() {
+        showProgressDialog();
+        Observable<BaseEntity> observable = HttpRequest.removeFavGif(gif.getObjectId());
+        ObservableDecorator.decorate(this, observable)
+                .subscribe(new SimpleSubscriber<BaseEntity>(this) {
+                    @Override
+                    public void onNext(BaseEntity entity) {
+                        dismissProgressDialog();
+
+                        showToast("取消收藏成功");
+                        showFavStatus(false);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        super.onError(throwable);
+
+                        dismissProgressDialog();
+
+                        // TODO 判断如果是重复取消则也视为取消成功
+                        showToast("取消收藏失败");
+                        showFavStatus(true);
                     }
                 });
     }
@@ -201,7 +230,11 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.ll_fav:
                 if (UserInfoKeeper.checkLogin(this)) {
-                    favGif();
+                    if (isFaved) {
+                        removeGifFav();
+                    } else {
+                        favGif();
+                    }
                 }
                 break;
             case R.id.ll_download:

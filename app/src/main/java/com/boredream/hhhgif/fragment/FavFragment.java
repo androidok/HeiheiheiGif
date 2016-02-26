@@ -1,5 +1,6 @@
 package com.boredream.hhhgif.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.adapter.FavGifInfoAdapter;
 import com.boredream.hhhgif.adapter.LoadMoreAdapter;
+import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.constants.CommonConstants;
 import com.boredream.hhhgif.entity.Gif;
@@ -20,6 +22,7 @@ import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.net.SimpleSubscriber;
+import com.boredream.hhhgif.utils.DialogUtils;
 import com.boredream.hhhgif.utils.DisplayUtils;
 import com.boredream.hhhgif.utils.TitleBuilder;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
@@ -30,7 +33,7 @@ import java.util.List;
 
 import rx.Observable;
 
-public class FavFragment extends BaseFragment {
+public class FavFragment extends BaseFragment implements FavGifInfoAdapter.OnRemoveGifFavListener {
     private View view;
     private SwipeRefreshLayout srl_fav;
     private RecyclerView rv_fav;
@@ -87,6 +90,7 @@ public class FavFragment extends BaseFragment {
 
     private void initRecyclerView() {
         FavGifInfoAdapter gifInfoAdapter = new FavGifInfoAdapter(activity, infos);
+        gifInfoAdapter.setOnRemoveGifFavListener(this);
         adapter = new LoadMoreAdapter(rv_fav, gifInfoAdapter, new LoadMoreAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
@@ -105,6 +109,45 @@ public class FavFragment extends BaseFragment {
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         rv_fav.setLayoutManager(staggeredGridLayoutManager);
         rv_fav.addItemDecoration(new GridSpacingDecorator(DisplayUtils.dp2px(activity, 8)));
+    }
+
+    @Override
+    public void onRemoveGifFav(final int position) {
+        DialogUtils.showCommonDialog(activity, "确认删除该收藏动态图？",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeGifFav(position);
+                    }
+                });
+    }
+
+    private void removeGifFav(int position) {
+        final Gif gifInfo = infos.get(position);
+
+        showProgressDialog();
+        Observable<BaseEntity> observable = HttpRequest.removeFavGif(gifInfo.getObjectId());
+        ObservableDecorator.decorate(activity, observable)
+                .subscribe(new SimpleSubscriber<BaseEntity>(activity) {
+                    @Override
+                    public void onNext(BaseEntity entity) {
+                        dismissProgressDialog();
+
+                        infos.remove(gifInfo);
+                        adapter.notifyDataSetChanged();
+
+                        showToast("取消收藏成功");
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        super.onError(throwable);
+
+                        dismissProgressDialog();
+
+                        showToast("取消收藏失败");
+                    }
+                });
     }
 
     private void loadData(final int page) {
@@ -137,4 +180,5 @@ public class FavFragment extends BaseFragment {
                     }
                 });
     }
+
 }

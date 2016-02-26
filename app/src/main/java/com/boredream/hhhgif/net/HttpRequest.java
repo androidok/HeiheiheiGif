@@ -309,7 +309,7 @@ public class HttpRequest {
      *
      * @param comment 评论
      */
-    public static Observable<BaseEntity> addGifComment(final Context context, final Comment comment) {
+    public static Observable<BaseEntity> addGifComment(final Comment comment) {
         final BmobService service = getApiService();
         // 顺序调用,先添加评论数据
         return service.addGifComment(comment)
@@ -333,7 +333,7 @@ public class HttpRequest {
      *
      * @param gifId 动态图id
      */
-    public static Observable<BaseEntity> favGif(final Context context, final String gifId) {
+    public static Observable<BaseEntity> favGif(final String gifId) {
         final BmobService service = getApiService();
 
         User currentUser = UserInfoKeeper.getCurrentUser();
@@ -351,6 +351,38 @@ public class HttpRequest {
                         Map<String, Operation> option = new HashMap<>();
                         IncrementOption incrementOption = new IncrementOption();
                         incrementOption.setAmount(1);
+                        option.put("favCount", incrementOption);
+                        return service.updateGifWithOperation(gifId, option);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    /**
+     * 取消收藏动态图
+     *
+     * @param gifId 动态图id
+     */
+    public static Observable<BaseEntity> removeFavGif(final String gifId) {
+        final BmobService service = getApiService();
+
+        User currentUser = UserInfoKeeper.getCurrentUser();
+
+        Pointer user = new Pointer("_User", currentUser.getObjectId());
+        Relation userRelation = new Relation();
+        userRelation.remove(user);
+
+        Map<String, Relation> favUsersRelation = new HashMap<>();
+        favUsersRelation.put("favUsers", userRelation);
+
+        return service.favGif(gifId, favUsersRelation)
+                .flatMap(new Func1<BaseEntity, Observable<BaseEntity>>() {
+                    @Override
+                    public Observable<BaseEntity> call(BaseEntity entity) {
+                        Map<String, Operation> option = new HashMap<>();
+                        IncrementOption incrementOption = new IncrementOption();
+                        incrementOption.setAmount(-1);
                         option.put("favCount", incrementOption);
                         return service.updateGifWithOperation(gifId, option);
                     }

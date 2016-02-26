@@ -67,7 +67,7 @@ public class WriteCommentActivity extends BaseActivity {
         comment.setContent(content);
 
         showProgressDialog();
-        Observable<BaseEntity> observable = HttpRequest.addGifComment(this, comment);
+        Observable<BaseEntity> observable = HttpRequest.addGifComment(comment);
         ObservableDecorator.decorate(this, observable)
                 .subscribe(new SimpleSubscriber<BaseEntity>(this) {
                     @Override

@@ -27,6 +27,7 @@ public class Downloader {
                             String filename = "hhhgif_" + System.currentTimeMillis() + ".gif";
                             return saveFile(data, filename);
                         } catch (IOException e) {
+                            // 抛出runtime异常,Subscriber中的onError会捕获处理
                             throw new RuntimeException("动态图保存失败 : " + e.getMessage());
                         }
                     }
@@ -44,6 +45,7 @@ public class Downloader {
     public static File saveFile(byte[] data, String filename) throws IOException {
         File sdPath = AppUtils.getSDPath();
         if (sdPath == null) {
+            // SD卡不可用时也定义为IO异常
             throw new IOException("SD卡路径不存在");
         }
 

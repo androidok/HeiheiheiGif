@@ -1,12 +1,9 @@
 package com.boredream.hhhgif.adapter;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.View;
 
 import com.boredream.hhhgif.entity.Gif;
-import com.boredream.hhhgif.utils.DialogUtils;
-import com.boredream.hhhgif.utils.ToastUtils;
 
 import java.util.List;
 
@@ -17,26 +14,27 @@ public class FavGifInfoAdapter extends GifInfoAdapter {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         super.onBindViewHolder(holder, position);
 
-        final Gif gifInfo = datas.get(position);
         holder.iv_del_img.setVisibility(View.VISIBLE);
         holder.iv_del_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeFavGif(gifInfo);
+                if (onRemoveGifFavListener != null) {
+                    onRemoveGifFavListener.onRemoveGifFav(position);
+                }
             }
         });
     }
 
-    private void removeFavGif(Gif gifInfo) {
-        DialogUtils.showConfirmDialog(context, "确认删除该收藏动态图？",
-                new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ToastUtils.showToast(context, "remove fav");
-                    }
-                });
+    public interface OnRemoveGifFavListener {
+        void onRemoveGifFav(int position);
+    }
+
+    private OnRemoveGifFavListener onRemoveGifFavListener;
+
+    public void setOnRemoveGifFavListener(OnRemoveGifFavListener onRemoveGifFavListener) {
+        this.onRemoveGifFavListener = onRemoveGifFavListener;
     }
 }
