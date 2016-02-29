@@ -12,6 +12,7 @@ import com.boredream.hhhgif.adapter.SettingRecyclerAdapter;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.entity.MoreItem;
 import com.boredream.hhhgif.utils.AppUtils;
+import com.boredream.hhhgif.utils.UpdateUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.boredream.hhhgif.view.DividerItemDecoration;
 
@@ -64,10 +65,10 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (position) {
             case 0:
-
+                UpdateUtils.checkUpdate(this);
                 break;
             case 1:
-
+                intent2Activity(FeedBackActivity.class);
                 break;
         }
     }

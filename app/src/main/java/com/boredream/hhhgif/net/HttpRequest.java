@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.constants.CommonConstants;
 import com.boredream.hhhgif.entity.Comment;
+import com.boredream.hhhgif.entity.FeedBack;
 import com.boredream.hhhgif.entity.FileUploadResponse;
 import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.IncrementOption;
@@ -228,6 +229,10 @@ public class HttpRequest {
                 @Path("fileName") String fileName,
                 @Body RequestBody image);
 
+        // 提交意见反馈
+        @POST("/1/classes/FeedBack")
+        Observable<BaseEntity> addFeedBack(
+                @Body FeedBack feedBack);
     }
 
     public static BmobService getApiService() {

@@ -7,6 +7,7 @@ import android.widget.RadioButton;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.fragment.FragmentController;
+import com.boredream.hhhgif.utils.UpdateUtils;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
@@ -23,6 +24,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         controller = new FragmentController(this, R.id.fl_content);
         rb_home.setChecked(true);
         controller.showFragment(0);
+
+        UpdateUtils.checkUpdate(this);
     }
 
     private void initView() {

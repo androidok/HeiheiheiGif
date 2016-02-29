@@ -14,6 +14,25 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            storeFile file("boredream.keystore")
+            storePassword "58421314"
+            keyAlias "boredream"
+            keyPassword "58421314"
+        }
+    }
+
+    productFlavors {
+        common {}
+//        baidu {}
+//        qh360 {}
+//        yingyongbao {}
+        productFlavors.all { flavor ->
+            flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+        }
+    }
+
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/LICENSE'
@@ -22,9 +41,19 @@ android {
 
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            signingConfig signingConfigs.release
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
     }
 }
 
@@ -59,4 +88,6 @@ dependencies {
         exclude module: 'support-annotations'
     }
     compile files('libs/BmobSDK_V3.4.5_1111.jar')
+    compile 'com.umeng.analytics:analytics:latest.integration'
+    compile files('libs/umeng-update-v2.6.0.1.jar')
 }

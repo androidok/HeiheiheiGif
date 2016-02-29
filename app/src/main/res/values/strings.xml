@@ -7,11 +7,16 @@
         使用Glide实现图片部分,支持动态图显示\n
         \n
         开源项目, 地址为\n
-        %s\n
+        %1$s\n
         \n
         欢迎follow我以及star项目\n
         有任何应用问题可以在反馈中提出\n
         对于项目代码有任何疑问,也可以在github项目中提issue
     </string>
     <string name="github">https://github.com/boredream/HeiheiheiGif</string>
+    <string name="update_info">
+        最新版本：%1$s
+        \n新版本大小：%2$s
+        \n\n更新内容：\n%3$s
+    </string>
 </resources>

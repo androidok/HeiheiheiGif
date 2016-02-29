@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:name=".base.BaseApplication"
@@ -28,21 +31,32 @@
             android:label="@string/app_name" />
         <activity android:name=".activity.RegistActivity" />
         <activity android:name=".activity.RegistValidateActivity" />
-        <activity android:name=".activity.ForgetPswActivity" >
-        </activity>
-        <activity android:name=".activity.ForgetPswValidateActivity" >
-        </activity>
-        <activity android:name=".activity.SettingActivity" >
-        </activity>
-        <activity android:name=".activity.GifDetailActivity" >
-        </activity>
-        <activity android:name=".activity.WriteCommentActivity" >
-        </activity>
-        <activity android:name=".activity.AboutActivity" >
-        </activity>
-        <activity android:name=".activity.UserInfoEditActivity" >
-        </activity>
-        <activity android:name=".activity.InputActivity" >
+        <activity android:name=".activity.ForgetPswActivity" />
+        <activity android:name=".activity.ForgetPswValidateActivity" />
+        <activity android:name=".activity.SettingActivity" />
+        <activity android:name=".activity.GifDetailActivity" />
+        <activity android:name=".activity.WriteCommentActivity" />
+        <activity android:name=".activity.AboutActivity" />
+        <activity android:name=".activity.UserInfoEditActivity" />
+        <activity android:name=".activity.InputActivity" />
+
+        <!-- umeng star -->
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="56d3d652e0f55af911001866" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="${UMENG_CHANNEL_VALUE}" />
+
+        <service
+            android:name="com.umeng.update.net.DownloadingService"
+            android:process=":DownloadingService" />
+
+        <activity
+            android:name="com.umeng.update.UpdateDialogActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <!-- umeng end -->
+        <activity android:name=".activity.FeedBackActivity" >
         </activity>
     </application>
 

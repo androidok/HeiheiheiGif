@@ -6,6 +6,7 @@ import com.boredream.hhhgif.entity.Gif;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 public class FileUtils {
 
@@ -48,7 +49,7 @@ public class FileUtils {
      */
     public static boolean isExist(String filename) {
         File file = getFile(filename);
-        if(file == null) {
+        if (file == null) {
             return false;
         } else {
             return file.exists();
@@ -80,5 +81,30 @@ public class FileUtils {
         fos.close();
 
         return file;
+    }
+
+    /**
+     * 转换文件大小
+     *
+     * @param fileBytesSize 文件字节数长度
+     * @return
+     */
+    public static String formetFileSize(long fileBytesSize) {
+        DecimalFormat df = new DecimalFormat("#.00");
+        String fileSizeString;
+        String wrongSize = "0B";
+        if (fileBytesSize == 0) {
+            return wrongSize;
+        }
+        if (fileBytesSize < 1024) {
+            fileSizeString = df.format((double) fileBytesSize) + "B";
+        } else if (fileBytesSize < 1048576) {
+            fileSizeString = df.format((double) fileBytesSize / 1024) + "KB";
+        } else if (fileBytesSize < 1073741824) {
+            fileSizeString = df.format((double) fileBytesSize / 1048576) + "MB";
+        } else {
+            fileSizeString = df.format((double) fileBytesSize / 1073741824) + "GB";
+        }
+        return fileSizeString;
     }
 }

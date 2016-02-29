@@ -23,7 +23,7 @@ public class BaseActivity extends AppCompatActivity {
     protected String TAG;
     protected BaseApplication application;
     protected SharedPreferences sp;
-    protected Dialog progressDialog;
+    private Dialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
