@@ -41,6 +41,13 @@ public class HomeFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = View.inflate(activity, R.layout.frag_home, null);
         initView();
+
+        srl_home.post(new Runnable() {
+            @Override
+            public void run() {
+                srl_home.setRefreshing(true);
+            }
+        });
         loadData(1);
         return view;
     }

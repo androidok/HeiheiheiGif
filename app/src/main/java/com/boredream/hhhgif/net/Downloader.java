@@ -1,11 +1,13 @@
 package com.boredream.hhhgif.net;
 
-import com.boredream.hhhgif.constants.CommonConstants;
-import com.boredream.hhhgif.utils.AppUtils;
+import android.content.Context;
+
+import com.boredream.hhhgif.entity.Gif;
+import com.boredream.hhhgif.utils.FileUtils;
+import com.boredream.hhhgif.utils.ImageUtils;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import rx.Observable;
@@ -15,8 +17,17 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class Downloader {
-    public static void saveGif(GifDrawable gif, Subscriber<File> callback) {
-        Observable.just(gif)
+
+    /**
+     * 异步保存动态图文件
+     *
+     * @param gif         动态图数据实体类
+     * @param gifDrawable 动态图图片drawable对象
+     * @param callback
+     * @param context
+     */
+    public static void saveGif(final Context context, final Gif gif, GifDrawable gifDrawable, Subscriber<File> callback) {
+        Observable.just(gifDrawable)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(new Func1<GifDrawable, File>() {
@@ -24,8 +35,8 @@ public class Downloader {
                     public File call(GifDrawable gifDrawable) {
                         try {
                             byte[] data = gifDrawable.getData();
-                            String filename = "hhhgif_" + System.currentTimeMillis() + ".gif";
-                            return saveFile(data, filename);
+                            String filename = FileUtils.genGifFilename(gif);
+                            return ImageUtils.saveImageFile(context, data, filename);
                         } catch (IOException e) {
                             // 抛出runtime异常,Subscriber中的onError会捕获处理
                             throw new RuntimeException("动态图保存失败 : " + e.getMessage());
@@ -33,32 +44,5 @@ public class Downloader {
                     }
                 })
                 .subscribe(callback);
-    }
-
-    /**
-     * 保存文件, 需要放在子线程中执行
-     *
-     * @param data
-     * @param filename
-     * @return 保存成功返回文件, 失败返回null
-     */
-    public static File saveFile(byte[] data, String filename) throws IOException {
-        File sdPath = AppUtils.getSDPath();
-        if (sdPath == null) {
-            // SD卡不可用时也定义为IO异常
-            throw new IOException("SD卡路径不存在");
-        }
-
-        File dir = new File(sdPath, CommonConstants.DIR_NAME);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        File file = new File(dir, filename);
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(data);
-        fos.close();
-
-        return file;
     }
 }

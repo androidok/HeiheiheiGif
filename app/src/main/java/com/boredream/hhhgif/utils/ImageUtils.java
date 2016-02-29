@@ -17,6 +17,8 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 
@@ -132,6 +134,18 @@ public class ImageUtils {
         return uri;
     }
 
+    public static File saveImageFile(Context context, byte[] bytes, String filename) throws IOException {
+        File file = FileUtils.saveFile(bytes, filename);
+        if (file != null) {
+            // 图片保存在文件保存的基础上要添加一个提醒相册更新图片的广播
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri uri = Uri.fromFile(file);
+            intent.setData(uri);
+            context.sendBroadcast(intent);
+        }
+        return file;
+    }
+
     /**
      * 删除一条图片
      */
@@ -149,6 +163,16 @@ public class ImageUtils {
             return cursor.getString(0);
         }
         return null;
+    }
+
+    /**
+     * 用第三方应用app打开图片
+     */
+    public static void openImageByOtherApp(Context context, Uri imageUri) {
+        Intent intent = new Intent();
+        intent.setAction(android.content.Intent.ACTION_VIEW);
+        intent.setDataAndType(imageUri, "image/*");
+        context.startActivity(intent);
     }
 
     /////////////////////Android4.4以上版本特殊处理如下//////////////////////////////////////

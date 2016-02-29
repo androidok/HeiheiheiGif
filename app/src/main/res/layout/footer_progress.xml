@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#999"
     android:gravity="center"
     android:orientation="horizontal"
     android:padding="@dimen/margin_medium">
@@ -12,7 +11,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:indeterminateDrawable="@drawable/oval_progress"
-        android:indeterminateDuration="700" />
+        android:indeterminateDuration="900" />
 
     <TextView
         android:id="@+id/tv_footer_progress"

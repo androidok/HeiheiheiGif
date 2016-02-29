@@ -1,6 +1,8 @@
 package com.boredream.hhhgif.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +25,9 @@ import com.boredream.hhhgif.net.Downloader;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.net.SimpleSubscriber;
+import com.boredream.hhhgif.utils.DialogUtils;
+import com.boredream.hhhgif.utils.FileUtils;
+import com.boredream.hhhgif.utils.ImageUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.boredream.hhhgif.view.DividerItemDecoration;
 
@@ -86,7 +91,6 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
         gifDetailAdapter = new GifDetailAdapter(this, infos);
         gifDetailAdapter.setOnGifLoadedListener(this);
         gifDetailAdapter.setGifInfo(gif);
-        setDownloadStatus();
         adapter = new LoadMoreAdapter(rv_gifdetail, gifDetailAdapter,
                 new LoadMoreAdapter.OnLoadMoreListener() {
                     @Override
@@ -110,15 +114,35 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     }
 
     @Override
-    public void onGifLoaded() {
-        setDownloadStatus();
+    protected void onStart() {
+        super.onStart();
+        checkDownloadStatus();
     }
 
-    private void setDownloadStatus() {
-        if (gifDetailAdapter.loadedGif == null) {
-            tv_download.setTextColor(getResources().getColor(R.color.txt_light_gray));
-        } else {
+    @Override
+    public void onGifLoaded() {
+        checkDownloadStatus();
+    }
+
+    /**
+     * 验证下载情况
+     */
+    private void checkDownloadStatus() {
+        boolean isDownloaded = FileUtils.isExist(FileUtils.genGifFilename(gif));
+        if (isDownloaded) {
+            // 图片文件已下载
             tv_download.setTextColor(getResources().getColor(R.color.txt_gray));
+            tv_download.setText("已下载");
+        } else {
+            // 如果未下载,则判断当前图片是否已经加载
+            if (gifDetailAdapter.loadedGif == null) {
+                // 未加载图片
+                tv_download.setTextColor(getResources().getColor(R.color.txt_light_gray));
+            } else {
+                // 已加载图片
+                tv_download.setTextColor(getResources().getColor(R.color.txt_gray));
+            }
+            tv_download.setText("下载");
         }
     }
 
@@ -243,15 +267,40 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                     return;
                 }
 
-                Downloader.saveGif(gifDetailAdapter.loadedGif,
+                boolean isDownloaded = FileUtils.isExist(FileUtils.genGifFilename(gif));
+                if (isDownloaded) {
+                    // 如果已经下载,则用第三方应用打开
+                    showOpenImageByOtherAppConcirmDialog();
+                    return;
+                }
+
+                Downloader.saveGif(this, gif, gifDetailAdapter.loadedGif,
                         new SimpleSubscriber<File>(this) {
                             @Override
                             public void onNext(File file) {
                                 showToast("动态图保存成功,保存路径为 " + file.getAbsolutePath());
+                                checkDownloadStatus();
+                            }
+
+                            @Override
+                            public void onError(Throwable throwable) {
+                                super.onError(throwable);
+                                checkDownloadStatus();
                             }
                         });
                 break;
         }
+    }
+
+    private void showOpenImageByOtherAppConcirmDialog() {
+        DialogUtils.showCommonDialog(this, "该图片已经加载,是否使用其他图片软件进行浏览？",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        File file = FileUtils.getFile(FileUtils.genGifFilename(gif));
+                        ImageUtils.openImageByOtherApp(GifDetailActivity.this, Uri.fromFile(file));
+                    }
+                });
     }
 
     @Override

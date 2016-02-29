@@ -27,7 +27,7 @@
             android:layout_alignTop="@+id/iv_gif"
             android:clickable="true"
             android:padding="@dimen/margin_small"
-            android:src="@mipmap/ic_highlight_remove_grey600_24dp"
+            android:src="@mipmap/ic_cancel_grey600_24dp"
             android:visibility="gone" />
 
         <TextView
