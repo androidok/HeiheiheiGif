@@ -12,7 +12,11 @@ import com.umeng.update.UpdateStatus;
 
 public class UpdateUtils {
 
-    public static void checkUpdate(final Context context) {
+    /**
+     * 检测版本更新
+     */
+    public static void checkUpdate(final Context context, UmengUpdateListener listener) {
+        UmengUpdateAgent.setUpdateCheckConfig(false);
         UmengUpdateAgent.setUpdateAutoPopup(false);
         UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
             @Override
