@@ -51,10 +51,6 @@
         <service
             android:name="com.umeng.update.net.DownloadingService"
             android:process=":DownloadingService" />
-
-        <activity
-            android:name="com.umeng.update.UpdateDialogActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <!-- umeng end -->
         <activity android:name=".activity.FeedBackActivity" >
         </activity>

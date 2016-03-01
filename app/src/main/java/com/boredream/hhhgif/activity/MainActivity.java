@@ -25,7 +25,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         rb_home.setChecked(true);
         controller.showFragment(0);
 
-        UpdateUtils.checkUpdate(this);
+        UpdateUtils.checkUpdate(this, true, null);
     }
 
     private void initView() {

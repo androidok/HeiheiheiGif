@@ -15,6 +15,8 @@ import com.boredream.hhhgif.utils.AppUtils;
 import com.boredream.hhhgif.utils.UpdateUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.boredream.hhhgif.view.DividerItemDecoration;
+import com.umeng.update.UmengUpdateListener;
+import com.umeng.update.UpdateResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +67,13 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (position) {
             case 0:
-                UpdateUtils.checkUpdate(this);
+                showProgressDialog();
+                UpdateUtils.checkUpdate(this, false, new UmengUpdateListener() {
+                    @Override
+                    public void onUpdateReturned(int i, UpdateResponse updateResponse) {
+                        dismissProgressDialog();
+                    }
+                });
                 break;
             case 1:
                 intent2Activity(FeedBackActivity.class);

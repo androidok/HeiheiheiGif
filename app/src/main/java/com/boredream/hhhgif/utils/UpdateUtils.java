@@ -10,13 +10,22 @@ import com.umeng.update.UmengUpdateListener;
 import com.umeng.update.UpdateResponse;
 import com.umeng.update.UpdateStatus;
 
+/**
+ * umeng update utils
+ */
 public class UpdateUtils {
 
     /**
      * 检测版本更新
+     *
+     * @param context
+     * @param checkWifi 是否检测WiFi情况,true-WiFi情况下才提示更新,false-无论什么网络环境都会提示更新
+     * @param listener  代理回调,可以在其中进行进度框等相关助理
      */
-    public static void checkUpdate(final Context context, UmengUpdateListener listener) {
+    public static void checkUpdate(final Context context, boolean checkWifi, final UmengUpdateListener listener) {
+        // 自定义dialog,没有复制umeng包中的res资源文件,所以关闭其res检测
         UmengUpdateAgent.setUpdateCheckConfig(false);
+        // 自定义dialog,不需要umeng自动弹出更新对话框
         UmengUpdateAgent.setUpdateAutoPopup(false);
         UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
             @Override
@@ -29,15 +38,24 @@ public class UpdateUtils {
                         ToastUtils.showToast(context, "当前已经是最新版本");
                         break;
                     case UpdateStatus.NoneWifi: // none wifi
-                        showNoWifiConfirmDialog(context, updateInfo);
+                        showUpdateConfirmDialog(context, updateInfo);
                         break;
                     case UpdateStatus.Timeout: // time out
                         ToastUtils.showToast(context, "网络连接超时，请重新尝试");
                         break;
                 }
+
+                if (listener != null) {
+                    listener.onUpdateReturned(updateStatus, updateInfo);
+                }
             }
         });
-        UmengUpdateAgent.forceUpdate(context);
+
+        if (checkWifi) {
+            UmengUpdateAgent.update(context);
+        } else {
+            UmengUpdateAgent.forceUpdate(context);
+        }
     }
 
     /**
@@ -48,16 +66,13 @@ public class UpdateUtils {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        showUpdateConfirmDialog(context, updateInfo);
+                        startDownload(context, updateInfo);
                     }
                 });
     }
 
     /**
-     * 显示版本信息
-     *
-     * @param context
-     * @param updateInfo
+     * 显示更新对话框,包含版本相关信息
      */
     private static void showUpdateConfirmDialog(final Context context, final UpdateResponse updateInfo) {
         String size = FileUtils.formetFileSize(Long.parseLong(updateInfo.target_size));
@@ -70,11 +85,19 @@ public class UpdateUtils {
                 .setPositiveButton("立即更新", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ToastUtils.showToast(context, "开始下载安装包...");
-                        UmengUpdateAgent.startDownload(context, updateInfo);
+                        if (NetUtils.isWifi(context)) {
+                            startDownload(context, updateInfo);
+                        } else {
+                            showNoWifiConfirmDialog(context, updateInfo);
+                        }
                     }
                 })
                 .setNegativeButton("以后再说", null)
                 .show();
+    }
+
+    private static void startDownload(Context context, UpdateResponse updateInfo) {
+        ToastUtils.showToast(context, "开始下载安装包...");
+        UmengUpdateAgent.startDownload(context, updateInfo);
     }
 }
