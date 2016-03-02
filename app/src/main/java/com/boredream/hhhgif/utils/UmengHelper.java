@@ -1,19 +1,34 @@
 package com.boredream.hhhgif.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 
 import com.boredream.hhhgif.R;
+import com.umeng.socialize.PlatformConfig;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.shareboard.SnsPlatform;
+import com.umeng.socialize.utils.ShareBoardlistener;
 import com.umeng.update.UmengUpdateAgent;
 import com.umeng.update.UmengUpdateListener;
 import com.umeng.update.UpdateResponse;
 import com.umeng.update.UpdateStatus;
 
 /**
- * umeng update utils
+ * umeng
  */
-public class UpdateUtils {
+public class UmengHelper {
+
+    static {
+        PlatformConfig.setSinaWeibo("906049568", "0e00298a1093b4cc6665f455fe8da9db");
+    }
+
+    ////////////////////////////////////////    update   //////////////////////////////////////////
 
     /**
      * 检测版本更新
@@ -28,6 +43,7 @@ public class UpdateUtils {
         // 自定义dialog,不需要umeng自动弹出更新对话框
         UmengUpdateAgent.setUpdateAutoPopup(false);
         UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
+
             @Override
             public void onUpdateReturned(int updateStatus, UpdateResponse updateInfo) {
                 switch (updateStatus) {
@@ -100,4 +116,40 @@ public class UpdateUtils {
         ToastUtils.showToast(context, "开始下载安装包...");
         UmengUpdateAgent.startDownload(context, updateInfo);
     }
+
+    ////////////////////////////////////////    share   //////////////////////////////////////////
+    private static ShareAction shareAction;
+
+    public static void share(final Activity activity, String title, String content, UMImage image,
+                             final UMShareListener umShareListener) {
+        final SHARE_MEDIA[] displaylist = new SHARE_MEDIA[]{
+                SHARE_MEDIA.WEIXIN,
+                SHARE_MEDIA.WEIXIN_CIRCLE,
+                SHARE_MEDIA.SINA,
+                SHARE_MEDIA.QQ,
+                SHARE_MEDIA.QZONE};
+
+        shareAction = new ShareAction(activity).setDisplayList(displaylist)
+                .withTargetUrl("www.baidu.com")
+                .setListenerList(umShareListener, umShareListener)
+                .setShareboardclickCallback(new ShareBoardlistener() {
+                    @Override
+                    public void onclick(SnsPlatform snsPlatform, SHARE_MEDIA share_media) {
+                        shareAction.setPlatform(share_media).share();
+                    }
+                });
+
+        if (!TextUtils.isEmpty(title)) {
+            shareAction.withTitle(title);
+        }
+        if (!TextUtils.isEmpty(content)) {
+            shareAction.withText(content);
+        }
+        if (image != null) {
+            shareAction.withMedia(image);
+        }
+
+        shareAction.open();
+    }
+
 }

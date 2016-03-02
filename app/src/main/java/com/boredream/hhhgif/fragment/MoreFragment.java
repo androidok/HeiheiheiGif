@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import com.boredream.hhhgif.R;
-import com.boredream.hhhgif.activity.AboutActivity;
 import com.boredream.hhhgif.activity.SettingActivity;
 import com.boredream.hhhgif.activity.UserInfoEditActivity;
 import com.boredream.hhhgif.adapter.MoreRecyclerAdapter;
@@ -17,9 +16,13 @@ import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.entity.MoreItem;
 import com.boredream.hhhgif.utils.DisplayUtils;
 import com.boredream.hhhgif.utils.TitleBuilder;
+import com.boredream.hhhgif.utils.UmengHelper;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.boredream.hhhgif.view.DividerItemDecoration;
 import com.boredream.hhhgif.view.EmptyItemDecoration;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +81,26 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 intent2Activity(UserInfoEditActivity.class);
                 break;
             case 1:
-                intent2Activity(AboutActivity.class);
+//                intent2Activity(AboutActivity.class);
+                UMImage image = new UMImage(activity, R.drawable.umeng_socialize_sina_on);
+                UmengHelper.share(activity, "嘿嘿嘿动态图", "嘿嘿嘿动态图分享了一个有意思的动态图给你,快来看ya~", image,
+                        new UMShareListener() {
+
+                            @Override
+                            public void onResult(SHARE_MEDIA share_media) {
+                                showToast("分享成功");
+                            }
+
+                            @Override
+                            public void onError(SHARE_MEDIA share_media, Throwable throwable) {
+                                showToast("分享失败 " + throwable.getMessage());
+                            }
+
+                            @Override
+                            public void onCancel(SHARE_MEDIA share_media) {
+                                // do nothing
+                            }
+                        });
                 break;
             case 2:
                 intent2Activity(SettingActivity.class);

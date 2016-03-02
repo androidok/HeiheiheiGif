@@ -7,7 +7,7 @@ import android.widget.RadioButton;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.fragment.FragmentController;
-import com.boredream.hhhgif.utils.UpdateUtils;
+import com.boredream.hhhgif.utils.UmengHelper;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
@@ -25,7 +25,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         rb_home.setChecked(true);
         controller.showFragment(0);
 
-        UpdateUtils.checkUpdate(this, true, null);
+        UmengHelper.checkUpdate(this, true, null);
     }
 
     private void initView() {

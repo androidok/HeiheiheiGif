@@ -52,8 +52,8 @@ android {
 
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
     }
 }
 
@@ -87,7 +87,9 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-intents:2.2') {
         exclude module: 'support-annotations'
     }
+
     compile files('libs/BmobSDK_V3.4.5_1111.jar')
+    compile project(':umeng')
     compile 'com.umeng.analytics:analytics:latest.integration'
-    compile files('libs/umeng-update-v2.6.0.1.jar')
+
 }
