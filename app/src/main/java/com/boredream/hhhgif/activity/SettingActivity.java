@@ -68,7 +68,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         switch (position) {
             case 0:
                 showProgressDialog();
-                UmengHelper.checkUpdate(this, false, new UmengUpdateListener() {
+                UmengHelper.checkUpdate(this, true, new UmengUpdateListener() {
                     @Override
                     public void onUpdateReturned(int i, UpdateResponse updateResponse) {
                         dismissProgressDialog();

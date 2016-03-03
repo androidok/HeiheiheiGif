@@ -36,10 +36,10 @@ public class UmengHelper {
      * 检测版本更新
      *
      * @param context
-     * @param checkWifi 是否检测WiFi情况,true-WiFi情况下才提示更新,false-无论什么网络环境都会提示更新
-     * @param listener  代理回调,可以在其中进行进度框等相关助理
+     * @param isForceCheck 是否强制检测更新, false-WiFi情况下才提示更新,true-无论什么网络环境都会提示更新
+     * @param listener     代理回调,可以在其中进行进度框等相关助理
      */
-    public static void checkUpdate(final Context context, boolean checkWifi, final UmengUpdateListener listener) {
+    public static void checkUpdate(final Context context, final boolean isForceCheck, final UmengUpdateListener listener) {
         // 自定义dialog,没有复制umeng包中的res资源文件,所以关闭其res检测
         UmengUpdateAgent.setUpdateCheckConfig(false);
         // 自定义dialog,不需要umeng自动弹出更新对话框
@@ -53,13 +53,17 @@ public class UmengHelper {
                         showUpdateConfirmDialog(context, updateInfo);
                         break;
                     case UpdateStatus.No: // has no update
-                        ToastUtils.showToast(context, "当前已经是最新版本");
+                        if (isForceCheck) {
+                            ToastUtils.showToast(context, "当前已经是最新版本");
+                        }
                         break;
                     case UpdateStatus.NoneWifi: // none wifi
                         showUpdateConfirmDialog(context, updateInfo);
                         break;
                     case UpdateStatus.Timeout: // time out
-                        ToastUtils.showToast(context, "网络连接超时，请重新尝试");
+                        if (isForceCheck) {
+                            ToastUtils.showToast(context, "网络连接超时，请重新尝试");
+                        }
                         break;
                 }
 
@@ -69,7 +73,7 @@ public class UmengHelper {
             }
         });
 
-        if (checkWifi) {
+        if (isForceCheck) {
             UmengUpdateAgent.update(context);
         } else {
             UmengUpdateAgent.forceUpdate(context);

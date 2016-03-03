@@ -30,7 +30,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         rb_home.setChecked(true);
         controller.showFragment(0);
 
-        UmengHelper.checkUpdate(this, true, null);
+        UmengHelper.checkUpdate(this, false, null);
     }
 
     private void initView() {
