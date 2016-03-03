@@ -9,6 +9,11 @@ import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.fragment.FragmentController;
 import com.boredream.hhhgif.utils.UmengHelper;
 
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+import rx.functions.Action1;
+
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private RadioButton rb_home;
@@ -52,5 +57,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 controller.showFragment(3);
                 break;
         }
+    }
+
+    boolean doubleBackToExitPressedOnce = false;
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        doubleBackToExitPressedOnce = true;
+        showToast("再按一次返回键关闭程序");
+        Observable.just(null)
+                .delay(2, TimeUnit.SECONDS)
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object o) {
+                        doubleBackToExitPressedOnce = false;
+                    }
+                });
     }
 }

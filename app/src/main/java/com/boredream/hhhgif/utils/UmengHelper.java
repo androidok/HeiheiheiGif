@@ -25,7 +25,9 @@ import com.umeng.update.UpdateStatus;
 public class UmengHelper {
 
     static {
+        PlatformConfig.setWeixin("wx4e89f9488edf8902", "2d8a86a3852c6f92e47b6c5a7eb07724");
         PlatformConfig.setSinaWeibo("906049568", "0e00298a1093b4cc6665f455fe8da9db");
+        PlatformConfig.setQQZone("1105147805", "kXiKwc5jtxYZAQ2F");
     }
 
     ////////////////////////////////////////    update   //////////////////////////////////////////
@@ -130,7 +132,7 @@ public class UmengHelper {
                 SHARE_MEDIA.QZONE};
 
         shareAction = new ShareAction(activity).setDisplayList(displaylist)
-                .withTargetUrl("www.baidu.com")
+                .withTargetUrl("http://www.baidu.com")
                 .setListenerList(umShareListener, umShareListener)
                 .setShareboardclickCallback(new ShareBoardlistener() {
                     @Override
