@@ -6,6 +6,9 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
+import com.boredream.bdcodehelper.utils.DialogUtils;
+import com.boredream.bdcodehelper.utils.NetUtils;
+import com.boredream.bdcodehelper.utils.ToastUtils;
 import com.boredream.hhhgif.R;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.ShareAction;
@@ -25,7 +28,7 @@ import com.umeng.update.UpdateStatus;
 public class UmengHelper {
 
     static {
-        PlatformConfig.setWeixin("wx4e89f9488edf8902", "2d8a86a3852c6f92e47b6c5a7eb07724");
+        PlatformConfig.setWeixin("wx4e89f9488edf8902", "f1b32a6bf1fa8415f1464ba97a929ddd");
         PlatformConfig.setSinaWeibo("906049568", "0e00298a1093b4cc6665f455fe8da9db");
         PlatformConfig.setQQZone("1105147805", "kXiKwc5jtxYZAQ2F");
     }

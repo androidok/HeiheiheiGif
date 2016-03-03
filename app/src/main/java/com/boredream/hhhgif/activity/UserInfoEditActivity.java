@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.boredream.bdcodehelper.utils.ImageUtils;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.base.BaseEntity;
@@ -17,7 +18,6 @@ import com.boredream.hhhgif.net.GlideHelper;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.net.SimpleSubscriber;
-import com.boredream.hhhgif.utils.ImageUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 
 import java.util.HashMap;

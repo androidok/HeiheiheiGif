@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 
+import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.constants.CommonConstants;
 import com.boredream.hhhgif.entity.Comment;
@@ -20,7 +21,6 @@ import com.boredream.hhhgif.entity.RelationTo;
 import com.boredream.hhhgif.entity.UpdatePswRequest;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.entity.Where;
-import com.boredream.hhhgif.utils.DisplayUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;

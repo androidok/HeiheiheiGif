@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.boredream.bdcodehelper.utils.DisplayUtils;
+import com.boredream.bdcodehelper.view.GridSpacingDecorator;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.adapter.GifInfoAdapter;
 import com.boredream.hhhgif.adapter.LoadMoreAdapter;
@@ -20,8 +22,6 @@ import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.ListResponse;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
-import com.boredream.hhhgif.utils.DisplayUtils;
-import com.boredream.hhhgif.view.GridSpacingDecorator;
 import com.jakewharton.rxbinding.widget.RxTextView;
 
 import java.util.ArrayList;

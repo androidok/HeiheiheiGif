@@ -10,10 +10,10 @@ import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 
+import com.boredream.bdcodehelper.utils.AppUtils;
+import com.boredream.bdcodehelper.utils.StringUtils;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
-import com.boredream.hhhgif.utils.AppUtils;
-import com.boredream.hhhgif.utils.StringUtils;
 
 public class AboutActivity extends BaseActivity {
 

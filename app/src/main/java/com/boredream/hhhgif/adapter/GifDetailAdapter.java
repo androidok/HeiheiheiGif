@@ -9,12 +9,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.boredream.bdcodehelper.utils.DateUtils;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.entity.Comment;
 import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.GlideHelper;
-import com.boredream.hhhgif.utils.DateUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;

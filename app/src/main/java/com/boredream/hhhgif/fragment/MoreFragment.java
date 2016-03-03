@@ -8,21 +8,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import com.boredream.bdcodehelper.utils.DisplayUtils;
+import com.boredream.bdcodehelper.utils.TitleBuilder;
+import com.boredream.bdcodehelper.view.DividerItemDecoration;
+import com.boredream.bdcodehelper.view.EmptyItemDecoration;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.activity.SettingActivity;
 import com.boredream.hhhgif.activity.UserInfoEditActivity;
 import com.boredream.hhhgif.adapter.MoreRecyclerAdapter;
 import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.entity.MoreItem;
-import com.boredream.hhhgif.utils.DisplayUtils;
-import com.boredream.hhhgif.utils.TitleBuilder;
 import com.boredream.hhhgif.utils.UmengHelper;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
-import com.boredream.hhhgif.view.DividerItemDecoration;
-import com.boredream.hhhgif.view.EmptyItemDecoration;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
-import com.umeng.socialize.media.UMImage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,8 +81,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 break;
             case 1:
 //                intent2Activity(AboutActivity.class);
-                UMImage image = new UMImage(activity, R.drawable.umeng_socialize_sina_on);
-                UmengHelper.share(activity, "嘿嘿嘿动态图", "嘿嘿嘿动态图分享了一个有意思的动态图给你,快来看ya~", image,
+//                UMImage image = new UMImage(activity, R.drawable.umeng_socialize_sina_on);
+                UmengHelper.share(activity, "嘿嘿嘿动态图", "嘿嘿嘿动态图分享了一个有意思的动态图给你,快来看ya~", null,
                         new UMShareListener() {
 
                             @Override

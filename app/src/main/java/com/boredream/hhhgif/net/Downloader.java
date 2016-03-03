@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.utils.FileUtils;
-import com.boredream.hhhgif.utils.ImageUtils;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 
 import java.io.File;
@@ -36,7 +35,7 @@ public class Downloader {
                         try {
                             byte[] data = gifDrawable.getData();
                             String filename = FileUtils.genGifFilename(gif);
-                            return ImageUtils.saveImageFile(context, data, filename);
+                            return FileUtils.saveImageFile(context, data, filename);
                         } catch (IOException e) {
                             // 抛出runtime异常,Subscriber中的onError会捕获处理
                             throw new RuntimeException("动态图保存失败 : " + e.getMessage());

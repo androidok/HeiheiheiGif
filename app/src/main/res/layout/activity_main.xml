@@ -20,7 +20,7 @@
         android:layout_height="56dp"
         android:orientation="horizontal">
 
-        <com.boredream.hhhgif.view.DrawableRadioButton
+        <com.boredream.bdcodehelper.view.DrawableRadioButton
             android:id="@+id/rb_home"
             style="@style/RadioButtonBottomTab"
             android:drawableTop="@drawable/ic_home_grey2black_sel"
@@ -28,7 +28,7 @@
             app:drawableHeight="40dp"
             app:drawableWidth="40dp" />
 
-        <com.boredream.hhhgif.view.DrawableRadioButton
+        <com.boredream.bdcodehelper.view.DrawableRadioButton
             android:id="@+id/rb_search"
             style="@style/RadioButtonBottomTab"
             android:drawableTop="@drawable/ic_search_grey2black_sel"
@@ -36,7 +36,7 @@
             app:drawableHeight="40dp"
             app:drawableWidth="40dp" />
 
-        <com.boredream.hhhgif.view.DrawableRadioButton
+        <com.boredream.bdcodehelper.view.DrawableRadioButton
             android:id="@+id/rb_fav"
             style="@style/RadioButtonBottomTab"
             android:drawableTop="@drawable/ic_fav_grey2black_sel"
@@ -44,7 +44,7 @@
             app:drawableHeight="40dp"
             app:drawableWidth="40dp" />
 
-        <com.boredream.hhhgif.view.DrawableRadioButton
+        <com.boredream.bdcodehelper.view.DrawableRadioButton
             android:id="@+id/rb_more"
             style="@style/RadioButtonBottomTab"
             android:drawableTop="@drawable/ic_more_grey2black_sel"

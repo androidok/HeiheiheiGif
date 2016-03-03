@@ -12,13 +12,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.boredream.bdcodehelper.utils.DateUtils;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.net.SimpleSubscriber;
-import com.boredream.hhhgif.utils.DateUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 
 import rx.Observable;

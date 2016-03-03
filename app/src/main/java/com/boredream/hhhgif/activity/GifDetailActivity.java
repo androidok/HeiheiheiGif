@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.boredream.bdcodehelper.utils.DialogUtils;
+import com.boredream.bdcodehelper.utils.ImageUtils;
+import com.boredream.bdcodehelper.view.DividerItemDecoration;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.adapter.GifDetailAdapter;
 import com.boredream.hhhgif.adapter.LoadMoreAdapter;
@@ -25,11 +28,8 @@ import com.boredream.hhhgif.net.Downloader;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.net.SimpleSubscriber;
-import com.boredream.hhhgif.utils.DialogUtils;
 import com.boredream.hhhgif.utils.FileUtils;
-import com.boredream.hhhgif.utils.ImageUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
-import com.boredream.hhhgif.view.DividerItemDecoration;
 
 import java.io.File;
 import java.util.ArrayList;

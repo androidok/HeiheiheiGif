@@ -11,10 +11,10 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.boredream.bdcodehelper.utils.DialogUtils;
+import com.boredream.bdcodehelper.utils.ToastUtils;
 import com.boredream.hhhgif.activity.MainActivity;
 import com.boredream.hhhgif.constants.CommonConstants;
-import com.boredream.hhhgif.utils.DialogUtils;
-import com.boredream.hhhgif.utils.ToastUtils;
 
 public abstract class BaseFragment extends Fragment {
 

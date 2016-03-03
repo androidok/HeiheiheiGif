@@ -2,8 +2,8 @@ package com.boredream.hhhgif.net;
 
 import android.content.Context;
 
+import com.boredream.bdcodehelper.utils.ToastUtils;
 import com.boredream.hhhgif.entity.ErrorResponse;
-import com.boredream.hhhgif.utils.ToastUtils;
 import com.facebook.stetho.common.LogUtil;
 import com.google.gson.Gson;
 import com.squareup.okhttp.MediaType;

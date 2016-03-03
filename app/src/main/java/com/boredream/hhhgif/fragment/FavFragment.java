@@ -10,6 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.boredream.bdcodehelper.utils.DialogUtils;
+import com.boredream.bdcodehelper.utils.DisplayUtils;
+import com.boredream.bdcodehelper.utils.TitleBuilder;
+import com.boredream.bdcodehelper.view.GridSpacingDecorator;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.adapter.FavGifInfoAdapter;
 import com.boredream.hhhgif.adapter.LoadMoreAdapter;
@@ -22,11 +26,7 @@ import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.net.SimpleSubscriber;
-import com.boredream.hhhgif.utils.DialogUtils;
-import com.boredream.hhhgif.utils.DisplayUtils;
-import com.boredream.hhhgif.utils.TitleBuilder;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
-import com.boredream.hhhgif.view.GridSpacingDecorator;
 
 import java.util.ArrayList;
 import java.util.List;

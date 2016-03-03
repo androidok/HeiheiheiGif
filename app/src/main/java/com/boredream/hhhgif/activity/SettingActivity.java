@@ -7,14 +7,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 
+import com.boredream.bdcodehelper.utils.AppUtils;
+import com.boredream.bdcodehelper.view.DividerItemDecoration;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.adapter.SettingRecyclerAdapter;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.entity.MoreItem;
-import com.boredream.hhhgif.utils.AppUtils;
 import com.boredream.hhhgif.utils.UmengHelper;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
-import com.boredream.hhhgif.view.DividerItemDecoration;
 import com.umeng.update.UmengUpdateListener;
 import com.umeng.update.UpdateResponse;
 

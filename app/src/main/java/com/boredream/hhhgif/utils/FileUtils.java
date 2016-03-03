@@ -1,5 +1,10 @@
 package com.boredream.hhhgif.utils;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+
+import com.boredream.bdcodehelper.utils.AppUtils;
 import com.boredream.hhhgif.constants.CommonConstants;
 import com.boredream.hhhgif.entity.Gif;
 
@@ -80,6 +85,19 @@ public class FileUtils {
         fos.write(data);
         fos.close();
 
+        return file;
+    }
+
+
+    public static File saveImageFile(Context context, byte[] bytes, String filename) throws IOException {
+        File file = FileUtils.saveFile(bytes, filename);
+        if (file != null) {
+            // 图片保存在文件保存的基础上要添加一个提醒相册更新图片的广播
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri uri = Uri.fromFile(file);
+            intent.setData(uri);
+            context.sendBroadcast(intent);
+        }
         return file;
     }
 

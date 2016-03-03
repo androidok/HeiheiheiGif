@@ -11,12 +11,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.boredream.bdcodehelper.utils.DialogUtils;
+import com.boredream.bdcodehelper.utils.TitleBuilder;
+import com.boredream.bdcodehelper.utils.ToastUtils;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.activity.LoginActivity;
 import com.boredream.hhhgif.constants.CommonConstants;
-import com.boredream.hhhgif.utils.DialogUtils;
-import com.boredream.hhhgif.utils.TitleBuilder;
-import com.boredream.hhhgif.utils.ToastUtils;
 
 public class BaseActivity extends AppCompatActivity {
 
