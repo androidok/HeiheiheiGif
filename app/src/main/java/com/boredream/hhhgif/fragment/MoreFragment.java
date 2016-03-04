@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.bdcodehelper.utils.TitleBuilder;
@@ -18,10 +19,12 @@ import com.boredream.hhhgif.activity.UserInfoEditActivity;
 import com.boredream.hhhgif.adapter.MoreRecyclerAdapter;
 import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.entity.MoreItem;
-import com.boredream.hhhgif.utils.UmengHelper;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
-import com.umeng.socialize.UMShareListener;
-import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.SendMessageToWX;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
+import com.tencent.mm.sdk.openapi.WXMediaMessage;
+import com.tencent.mm.sdk.openapi.WXTextObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +33,17 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private RecyclerView rv_more;
     private MoreRecyclerAdapter adapter;
+    private IWXAPI api;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = View.inflate(activity, R.layout.frag_more, null);
         initView(view);
         initData();
+
+        api = WXAPIFactory.createWXAPI(activity, "wx4e89f9488edf8902", true);
+        api.registerApp("wx4e89f9488edf8902");
+
         return view;
     }
 
@@ -81,29 +89,35 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 break;
             case 1:
 //                intent2Activity(AboutActivity.class);
-//                UMImage image = new UMImage(activity, R.drawable.umeng_socialize_sina_on);
-                UmengHelper.share(activity, "嘿嘿嘿动态图", "嘿嘿嘿动态图分享了一个有意思的动态图给你,快来看ya~", null,
-                        new UMShareListener() {
 
-                            @Override
-                            public void onResult(SHARE_MEDIA share_media) {
-                                showToast("分享成功");
-                            }
+                // 初始化一个WXTextObject对象
+                WXTextObject textObj = new WXTextObject();
+                textObj.text = "hahaha";
 
-                            @Override
-                            public void onError(SHARE_MEDIA share_media, Throwable throwable) {
-                                showToast("分享失败 " + throwable.getMessage());
-                            }
+                // 用WXTextObject对象初始化一个WXMediaMessage对象
+                WXMediaMessage msg = new WXMediaMessage();
+                msg.mediaObject = textObj;
+                // 发送文本类型的消息时，title字段不起作用
+                // msg.title = "Will be ignored";
+                msg.description = "description";
 
-                            @Override
-                            public void onCancel(SHARE_MEDIA share_media) {
-                                // do nothing
-                            }
-                        });
+                // 构造一个Req
+                SendMessageToWX.Req req = new SendMessageToWX.Req();
+                req.transaction = buildTransaction("text"); // transaction字段用于唯一标识一个请求
+                req.message = msg;
+                req.scene = SendMessageToWX.Req.WXSceneSession;
+
+                // 调用api接口发送数据到微信
+                boolean sendReq = api.sendReq(req);
+                Toast.makeText(activity, "sendReq " + sendReq, Toast.LENGTH_SHORT).show();
                 break;
             case 2:
                 intent2Activity(SettingActivity.class);
                 break;
         }
+    }
+
+    private String buildTransaction(final String type) {
+        return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
     }
 }

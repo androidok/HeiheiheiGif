@@ -7,6 +7,7 @@ import android.widget.RadioButton;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.fragment.FragmentController;
+import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.utils.UmengHelper;
 
 import java.util.concurrent.TimeUnit;
@@ -31,6 +32,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         controller.showFragment(0);
 
         UmengHelper.checkUpdate(this, false, null);
+
+        HttpRequest.getApiService().getCurrentUser("-1");
     }
 
     private void initView() {

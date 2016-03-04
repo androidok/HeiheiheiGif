@@ -25,7 +25,6 @@ import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.facebook.stetho.common.LogUtil;
 import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.google.gson.Gson;
 import com.squareup.okhttp.Interceptor;
@@ -68,7 +67,6 @@ public class HttpRequest {
 
     public static final String APP_ID_VALUE = "a00013136fdecd1ae8b082d217cbdfe1";
     public static final String API_KEY_VALUE = "20af8ccc5c11bd1a391723bff5fb3ad3";
-    public static String SESSION_TOKEN_VALUE = "";
 
     // LeanCloud
 //    public static final String HOST = "https://api.leancloud.cn";
@@ -99,7 +97,7 @@ public class HttpRequest {
                         .addHeader("Content-Type", "application/json")
                         .addHeader(APP_ID_NAME, APP_ID_VALUE)
                         .addHeader(API_KEY_NAME, API_KEY_VALUE)
-                        .addHeader(SESSION_TOKEN_KEY, SESSION_TOKEN_VALUE)
+                        .addHeader(SESSION_TOKEN_KEY, UserInfoKeeper.getToken())
                         .build();
                 return chain.proceed(request);
             }
@@ -119,11 +117,6 @@ public class HttpRequest {
                 .client(httpClient)
                 .callbackExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
                 .build();
-    }
-
-    private static void setToken(final String token) {
-        LogUtil.i("DDD", "set token = " + token);
-        SESSION_TOKEN_VALUE = token;
     }
 
     public interface BmobService {
@@ -214,6 +207,11 @@ public class HttpRequest {
 
         // 获取用户详情
         @GET("/1/users/{objectId}")
+        Observable<User> getCurrentUser(
+                @Path("objectId") String userId);
+
+        // 获取用户详情
+        @GET("/1/users/{objectId}")
         Observable<User> getUserById(
                 @Path("objectId") String userId);
 
@@ -254,7 +252,6 @@ public class HttpRequest {
                     public void call(User user) {
                         // 保存登录用户数据以及token信息
                         UserInfoKeeper.setCurrentUser(user);
-                        setToken(user.getSessionToken());
                     }
                 });
     }

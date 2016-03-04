@@ -37,6 +37,7 @@ import java.util.List;
 
 import rx.Observable;
 import rx.functions.Action1;
+import rx.functions.Func1;
 
 public class GifDetailActivity extends BaseActivity implements View.OnClickListener, GifDetailAdapter.OnGifLoadedListener {
 
@@ -179,10 +180,17 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     private void getFavStatus() {
         Observable<ListResponse<User>> observable = HttpRequest.getGifFavUsers(gif.getObjectId());
         ObservableDecorator.decorate(this, observable)
-                .subscribe(new Action1<ListResponse<User>>() { // doesn't need error handler
+                .map(new Func1<ListResponse<User>, Boolean>() {
                     @Override
-                    public void call(ListResponse<User> userListResponse) {
-                        showFavStatus(userListResponse.getResults().contains(UserInfoKeeper.getCurrentUser()));
+                    public Boolean call(ListResponse<User> userListResponse) {
+                        User currentUser = UserInfoKeeper.getCurrentUser();
+                        return userListResponse.getResults().contains(currentUser);
+                    }
+                })
+                .subscribe(new Action1<Boolean>() { // doesn't need error handler
+                    @Override
+                    public void call(Boolean aBoolean) {
+                        showFavStatus(aBoolean);
                     }
                 });
     }
