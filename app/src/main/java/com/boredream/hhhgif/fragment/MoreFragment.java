@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Toast;
 
 import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.bdcodehelper.utils.TitleBuilder;
@@ -19,12 +18,10 @@ import com.boredream.hhhgif.activity.UserInfoEditActivity;
 import com.boredream.hhhgif.adapter.MoreRecyclerAdapter;
 import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.entity.MoreItem;
+import com.boredream.hhhgif.utils.UmengShareUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.tencent.mm.sdk.openapi.IWXAPI;
-import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
-import com.tencent.mm.sdk.openapi.WXMediaMessage;
-import com.tencent.mm.sdk.openapi.WXTextObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +38,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         initView(view);
         initData();
 
-        api = WXAPIFactory.createWXAPI(activity, "wx4e89f9488edf8902", true);
-        api.registerApp("wx4e89f9488edf8902");
+        api = WXAPIFactory.createWXAPI(activity, "wx5fe70bdd2cbf596b", true);
+        api.registerApp("wx5fe70bdd2cbf596b");
 
         return view;
     }
@@ -89,35 +86,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 break;
             case 1:
 //                intent2Activity(AboutActivity.class);
-
-                // 初始化一个WXTextObject对象
-                WXTextObject textObj = new WXTextObject();
-                textObj.text = "hahaha";
-
-                // 用WXTextObject对象初始化一个WXMediaMessage对象
-                WXMediaMessage msg = new WXMediaMessage();
-                msg.mediaObject = textObj;
-                // 发送文本类型的消息时，title字段不起作用
-                // msg.title = "Will be ignored";
-                msg.description = "description";
-
-                // 构造一个Req
-                SendMessageToWX.Req req = new SendMessageToWX.Req();
-                req.transaction = buildTransaction("text"); // transaction字段用于唯一标识一个请求
-                req.message = msg;
-                req.scene = SendMessageToWX.Req.WXSceneSession;
-
-                // 调用api接口发送数据到微信
-                boolean sendReq = api.sendReq(req);
-                Toast.makeText(activity, "sendReq " + sendReq, Toast.LENGTH_SHORT).show();
+                UmengShareUtils.share(activity);
                 break;
             case 2:
                 intent2Activity(SettingActivity.class);
                 break;
         }
-    }
-
-    private String buildTransaction(final String type) {
-        return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
     }
 }

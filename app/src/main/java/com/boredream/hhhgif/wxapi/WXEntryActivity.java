@@ -1,7 +1,8 @@
 package com.boredream.hhhgif.wxapi;
 
 
-import android.app.Activity;
+import com.umeng.socialize.weixin.view.WXCallbackActivity;
 
-public class WXEntryActivity extends Activity {
+public class WXEntryActivity extends WXCallbackActivity {
+
 }
