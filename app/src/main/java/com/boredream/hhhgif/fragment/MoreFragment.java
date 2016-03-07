@@ -86,7 +86,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 break;
             case 1:
 //                intent2Activity(AboutActivity.class);
-                UmengShareUtils.share(activity);
+                UmengShareUtils.share(activity,
+                        "嘿嘿嘿动态图分享",
+                        "嘿嘿嘿动态图给您分享了一张有意思的GIF动态图片~",
+                        null); // TODO, 动态图的截图
                 break;
             case 2:
                 intent2Activity(SettingActivity.class);

@@ -252,6 +252,30 @@ public class HttpRequest {
                     public void call(User user) {
                         // 保存登录用户数据以及token信息
                         UserInfoKeeper.setCurrentUser(user);
+                        // 保存自动登录使用的信息
+                        UserInfoKeeper.saveLoginData(user.getObjectId(), user.getSessionToken());
+                    }
+                });
+    }
+
+    /**
+     * 使用token自动登录
+     *
+     * @param loginData size为2的数组, 第一个为当前用户id, 第二个为当前用户token
+     */
+    public static Observable<User> loginByToken(final String[] loginData) {
+        BmobService service = getApiService();
+        // 这种自动登录方法其实是使用token去再次获取当前账号数据
+        return service.getUserById(loginData[0])
+                .doOnNext(new Action1<User>() {
+                    @Override
+                    public void call(User user) {
+                        // TODO 获取用户信息接口不会返回token
+                        user.setSessionToken(loginData[1]);
+                        // 保存登录用户数据以及token信息
+                        UserInfoKeeper.setCurrentUser(user);
+                        // 保存自动登录使用的信息
+                        UserInfoKeeper.saveLoginData(user.getObjectId(), user.getSessionToken());
                     }
                 });
     }
