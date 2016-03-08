@@ -14,7 +14,9 @@ import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class SplashActivity extends BaseActivity {
 
@@ -41,7 +43,7 @@ public class SplashActivity extends BaseActivity {
         final long starTime = System.currentTimeMillis();
         Observable<User> observable = HttpRequest.loginByToken(loginData);
         ObservableDecorator.decorate(this, observable)
-                // 如果接口调用耗时超过最大值,也视为登录失败
+                // 设置超时时间,如果接口调用耗时超过最大值,也视为登录失败。防止页面停留时间过长
                 .timeout(SPLASH_DUR_MAX_TIME, TimeUnit.MILLISECONDS)
                 .subscribe(new Subscriber<User>() {
                     @Override
@@ -62,7 +64,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     /**
-     * 计算接口耗时,如果不足最小时间,则继续延迟补足后再跳转到主页
+     * 计算接口耗时,如果不足最小时间,则继续延迟补足后再跳转到主页。防止页面停留时间过短
      *
      * @param starTime 接口开始调用时间
      */
@@ -77,10 +79,12 @@ public class SplashActivity extends BaseActivity {
      * 延迟跳转
      *
      * @param delayMilliseconds   延迟时间
-     * @param targetActivityClass 跳转目标页面,必须要是Activity的子类
+     * @param targetActivityClass 跳转目标页面类,必须要是Activity的子类
      */
     private void delayIntentToActivity(long delayMilliseconds, Class<? extends Activity> targetActivityClass) {
         Observable.just(targetActivityClass)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .delay(delayMilliseconds, TimeUnit.MILLISECONDS)
                 .subscribe(new Action1<Class<? extends Activity>>() {
                     @Override

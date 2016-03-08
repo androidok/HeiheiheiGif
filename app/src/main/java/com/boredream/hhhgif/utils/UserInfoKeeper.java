@@ -38,6 +38,13 @@ public class UserInfoKeeper {
         currentUser = user;
     }
 
+    public static void clearCurrentUser() {
+        currentUser = null;
+        SharedPreferences sp = BaseApplication.getInstance().getSharedPreferences(
+                CommonConstants.SP_NAME, Context.MODE_PRIVATE);
+        sp.edit().remove(SP_KEY_CURRENT_USER).apply();
+    }
+
     public static void saveLoginData(String userid, String token) {
         // 正常逻辑应该是直接用token去获取当前用户信息,不需要id,但是接口没有提供获取当前用户信息接口
         if (TextUtils.isEmpty(userid) || TextUtils.isEmpty(token)) {
@@ -48,14 +55,6 @@ public class UserInfoKeeper {
                 CommonConstants.SP_NAME, Context.MODE_PRIVATE);
         sp.edit().putString(SP_KEY_USER_ID, userid)
                 .putString(SP_KEY_TOKEN, token)
-                .apply();
-    }
-
-    public static void clearLoginData() {
-        SharedPreferences sp = BaseApplication.getInstance().getSharedPreferences(
-                CommonConstants.SP_NAME, Context.MODE_PRIVATE);
-        sp.edit().remove(SP_KEY_USER_ID)
-                .remove(SP_KEY_TOKEN)
                 .apply();
     }
 
@@ -72,6 +71,14 @@ public class UserInfoKeeper {
         return loginData;
     }
 
+    public static void clearLoginData() {
+        SharedPreferences sp = BaseApplication.getInstance().getSharedPreferences(
+                CommonConstants.SP_NAME, Context.MODE_PRIVATE);
+        sp.edit().remove(SP_KEY_USER_ID)
+                .remove(SP_KEY_TOKEN)
+                .apply();
+    }
+
     public static String getToken() {
         // header用的token,没有时用空字符串,不能为null
         String token = "";
@@ -82,7 +89,7 @@ public class UserInfoKeeper {
     }
 
     public static void logout() {
-        currentUser = null;
+        clearCurrentUser();
         clearLoginData();
     }
 
