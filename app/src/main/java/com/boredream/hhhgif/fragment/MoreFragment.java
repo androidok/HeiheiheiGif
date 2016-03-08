@@ -8,17 +8,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import com.boredream.bdcodehelper.entity.SettingItem;
 import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.bdcodehelper.utils.TitleBuilder;
 import com.boredream.bdcodehelper.view.DividerItemDecoration;
 import com.boredream.bdcodehelper.view.EmptyItemDecoration;
 import com.boredream.hhhgif.R;
+import com.boredream.hhhgif.activity.AboutActivity;
 import com.boredream.hhhgif.activity.SettingActivity;
 import com.boredream.hhhgif.activity.UserInfoEditActivity;
 import com.boredream.hhhgif.adapter.MoreRecyclerAdapter;
 import com.boredream.hhhgif.base.BaseFragment;
-import com.boredream.hhhgif.entity.MoreItem;
-import com.boredream.hhhgif.utils.UmengShareUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
@@ -60,9 +60,19 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void initData() {
         // more items
-        List<MoreItem> items = new ArrayList<>();
-        items.add(new MoreItem(R.mipmap.ic_info_grey600_24dp, "关于"));
-        items.add(new MoreItem(R.mipmap.ic_settings_grey600_24dp, "设置"));
+        List<SettingItem> items = new ArrayList<>();
+        items.add(new SettingItem(
+                R.mipmap.ic_info_grey600_24dp,
+                "关于",
+                null,
+                R.mipmap.ic_chevron_right_grey600_24dp
+        ));
+        items.add(new SettingItem(
+                R.mipmap.ic_settings_grey600_24dp,
+                "设置",
+                null,
+                R.mipmap.ic_chevron_right_grey600_24dp
+        ));
 
         adapter = new MoreRecyclerAdapter(items, this);
         rv_more.setAdapter(adapter);
@@ -81,17 +91,13 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (position) {
-            case 0:
+            case -1:
                 intent2Activity(UserInfoEditActivity.class);
                 break;
-            case 1:
-//                intent2Activity(AboutActivity.class);
-                UmengShareUtils.share(activity,
-                        "嘿嘿嘿动态图分享",
-                        "嘿嘿嘿动态图给您分享了一张有意思的GIF动态图片~",
-                        null); // TODO, 动态图的截图
+            case 0:
+                intent2Activity(AboutActivity.class);
                 break;
-            case 2:
+            case 1:
                 intent2Activity(SettingActivity.class);
                 break;
         }

@@ -7,12 +7,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 
+import com.boredream.bdcodehelper.adapter.SettingRecyclerAdapter;
+import com.boredream.bdcodehelper.entity.SettingItem;
 import com.boredream.bdcodehelper.utils.AppUtils;
 import com.boredream.bdcodehelper.view.DividerItemDecoration;
 import com.boredream.hhhgif.R;
-import com.boredream.hhhgif.adapter.SettingRecyclerAdapter;
 import com.boredream.hhhgif.base.BaseActivity;
-import com.boredream.hhhgif.entity.MoreItem;
 import com.boredream.hhhgif.utils.UmengHelper;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.umeng.update.UmengUpdateListener;
@@ -47,11 +47,20 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
     private void initData() {
         // 使用列表显示多个选项条
-        List<MoreItem> items = new ArrayList<>();
-        MoreItem item1 = new MoreItem(R.mipmap.ic_cached_grey600_24dp, "检查更新");
-        item1.rightText = AppUtils.getAppVersionName(this);
-        items.add(item1);
-        items.add(new MoreItem(R.mipmap.ic_announcement_grey600_24dp, "反馈"));
+        List<SettingItem> items = new ArrayList<>();
+
+        items.add(new SettingItem(
+                R.mipmap.ic_cached_grey600_24dp,
+                "检查更新",
+                AppUtils.getAppVersionName(this),
+                R.mipmap.ic_chevron_right_grey600_24dp
+        ));
+        items.add(new SettingItem(
+                R.mipmap.ic_announcement_grey600_24dp,
+                "反馈",
+                null,
+                R.mipmap.ic_chevron_right_grey600_24dp
+        ));
 
         adapter = new SettingRecyclerAdapter(items, this);
         rv_setting.setAdapter(adapter);

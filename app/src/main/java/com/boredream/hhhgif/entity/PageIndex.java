@@ -1,6 +1,6 @@
 package com.boredream.hhhgif.entity;
 
-import com.boredream.hhhgif.adapter.LoadMoreAdapter;
+import com.boredream.bdcodehelper.adapter.LoadMoreAdapter;
 import com.boredream.hhhgif.constants.CommonConstants;
 
 import java.util.List;

@@ -11,12 +11,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.boredream.bdcodehelper.adapter.LoadMoreAdapter;
 import com.boredream.bdcodehelper.utils.DialogUtils;
 import com.boredream.bdcodehelper.utils.ImageUtils;
 import com.boredream.bdcodehelper.view.DividerItemDecoration;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.adapter.GifDetailAdapter;
-import com.boredream.hhhgif.adapter.LoadMoreAdapter;
+import com.boredream.hhhgif.adapter.GifLoadMoreAdapter;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.entity.Comment;
@@ -29,6 +30,7 @@ import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
 import com.boredream.hhhgif.net.SimpleSubscriber;
 import com.boredream.hhhgif.utils.FileUtils;
+import com.boredream.hhhgif.utils.UmengShareUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 
 import java.io.File;
@@ -52,7 +54,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     private TextView tv_download;
 
     private GifDetailAdapter gifDetailAdapter;
-    private LoadMoreAdapter adapter;
+    private GifLoadMoreAdapter adapter;
     private List<Comment> infos = new ArrayList<>();
     private Gif gif;
     private boolean isFaved;
@@ -74,7 +76,14 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void initView() {
-        initBackTitle("动态图详情");
+        initBackTitle("动态图详情")
+                .setRightText("share")
+                .setRightOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        shareGif();
+                    }
+                });
 
         srl_gifdetail = (SwipeRefreshLayout) findViewById(R.id.srl_gifdetail);
         rv_gifdetail = (RecyclerView) findViewById(R.id.rv_gifdetail);
@@ -91,7 +100,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
         gifDetailAdapter = new GifDetailAdapter(this, infos);
         gifDetailAdapter.setOnGifLoadedListener(this);
         gifDetailAdapter.setGifInfo(gif);
-        adapter = new LoadMoreAdapter(rv_gifdetail, gifDetailAdapter,
+        adapter = new GifLoadMoreAdapter(rv_gifdetail, gifDetailAdapter,
                 new LoadMoreAdapter.OnLoadMoreListener() {
                     @Override
                     public void onLoadMore() {
@@ -136,6 +145,13 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     public void onGifLoaded() {
         // 动态图已经加载成功,更新状态提示可以下载
         checkDownloadStatus();
+    }
+
+    private void shareGif() {
+        UmengShareUtils.share(GifDetailActivity.this,
+                "嘿嘿嘿动态图分享",
+                "嘿嘿嘿动态图给您分享了一张有意思的GIF动态图片~",
+                null);
     }
 
     /**

@@ -10,13 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.boredream.bdcodehelper.adapter.LoadMoreAdapter;
 import com.boredream.bdcodehelper.utils.DialogUtils;
 import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.bdcodehelper.utils.TitleBuilder;
 import com.boredream.bdcodehelper.view.GridSpacingDecorator;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.adapter.FavGifInfoAdapter;
-import com.boredream.hhhgif.adapter.LoadMoreAdapter;
+import com.boredream.hhhgif.adapter.GifLoadMoreAdapter;
 import com.boredream.hhhgif.base.BaseEntity;
 import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.constants.CommonConstants;
@@ -40,7 +41,7 @@ public class FavFragment extends BaseFragment implements FavGifInfoAdapter.OnRem
     private View ll_no_login;
     private Button btn_login;
 
-    private LoadMoreAdapter adapter;
+    private GifLoadMoreAdapter adapter;
     private List<Gif> infos = new ArrayList<>();
 
     private int currentPage = 1;
@@ -91,7 +92,7 @@ public class FavFragment extends BaseFragment implements FavGifInfoAdapter.OnRem
     private void initRecyclerView() {
         FavGifInfoAdapter gifInfoAdapter = new FavGifInfoAdapter(activity, infos);
         gifInfoAdapter.setOnRemoveGifFavListener(this);
-        adapter = new LoadMoreAdapter(rv_fav, gifInfoAdapter, new LoadMoreAdapter.OnLoadMoreListener() {
+        adapter = new GifLoadMoreAdapter(rv_fav, gifInfoAdapter, new LoadMoreAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
                 loadData(currentPage + 1);

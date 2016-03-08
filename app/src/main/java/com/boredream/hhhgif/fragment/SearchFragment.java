@@ -11,11 +11,12 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.boredream.bdcodehelper.adapter.LoadMoreAdapter;
 import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.bdcodehelper.view.GridSpacingDecorator;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.adapter.GifInfoAdapter;
-import com.boredream.hhhgif.adapter.LoadMoreAdapter;
+import com.boredream.hhhgif.adapter.GifLoadMoreAdapter;
 import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.constants.CommonConstants;
 import com.boredream.hhhgif.entity.Gif;
@@ -40,7 +41,7 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
     private ImageView iv_clear;
     private RecyclerView rv_search_his;
 
-    private LoadMoreAdapter adapter;
+    private GifLoadMoreAdapter adapter;
     private List<Gif> infos = new ArrayList<>();
 
     private String searchKey;
@@ -64,7 +65,7 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
 
         initRecyclerView();
         GifInfoAdapter gifInfoAdapter = new GifInfoAdapter(activity, infos);
-        adapter = new LoadMoreAdapter(rv_search_his, gifInfoAdapter, new LoadMoreAdapter.OnLoadMoreListener() {
+        adapter = new GifLoadMoreAdapter(rv_search_his, gifInfoAdapter, new LoadMoreAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
                 loadData(currentPage + 1);

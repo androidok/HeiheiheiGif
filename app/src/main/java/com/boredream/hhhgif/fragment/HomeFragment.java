@@ -8,12 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.boredream.bdcodehelper.adapter.LoadMoreAdapter;
 import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.bdcodehelper.utils.TitleBuilder;
 import com.boredream.bdcodehelper.view.GridSpacingDecorator;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.adapter.GifInfoAdapter;
-import com.boredream.hhhgif.adapter.LoadMoreAdapter;
+import com.boredream.hhhgif.adapter.GifLoadMoreAdapter;
 import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.constants.CommonConstants;
 import com.boredream.hhhgif.entity.Gif;
@@ -32,7 +33,7 @@ public class HomeFragment extends BaseFragment {
     private SwipeRefreshLayout srl_home;
     private RecyclerView rv_home;
 
-    private LoadMoreAdapter adapter;
+    private GifLoadMoreAdapter adapter;
     private List<Gif> infos = new ArrayList<>();
 
     private int currentPage = 1;
@@ -59,7 +60,7 @@ public class HomeFragment extends BaseFragment {
         rv_home = (RecyclerView) view.findViewById(R.id.rv_home);
         initRecyclerView();
         GifInfoAdapter gifInfoAdapter = new GifInfoAdapter(activity, infos);
-        adapter = new LoadMoreAdapter(rv_home, gifInfoAdapter,
+        adapter = new GifLoadMoreAdapter(rv_home, gifInfoAdapter,
                 new LoadMoreAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {

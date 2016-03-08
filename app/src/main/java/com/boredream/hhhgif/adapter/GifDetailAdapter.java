@@ -37,14 +37,14 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private List<Comment> datas;
     public GifDrawable loadedGif;
 
-    @Override
-    public int getItemCount() {
-        return datas.size() + 1;
-    }
-
     public GifDetailAdapter(Activity context, List<Comment> datas) {
         this.context = context;
         this.datas = datas;
+    }
+
+    @Override
+    public int getItemCount() {
+        return datas.size() + 1;
     }
 
     public void setGifInfo(Gif gifInfo) {

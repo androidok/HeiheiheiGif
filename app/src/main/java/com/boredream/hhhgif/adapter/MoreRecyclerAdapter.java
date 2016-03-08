@@ -2,7 +2,6 @@ package com.boredream.hhhgif.adapter;
 
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +10,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.boredream.bdcodehelper.adapter.SettingRecyclerAdapter;
+import com.boredream.bdcodehelper.entity.SettingItem;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.activity.LoginActivity;
-import com.boredream.hhhgif.entity.MoreItem;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.GlideHelper;
 
@@ -23,20 +23,27 @@ import java.util.List;
  * 更多选项列表适配器
  * <p>
  * 第一个位置为HEADER类型,对应用户信息<br/>
- * 其他位置为LIST类型,对应更多选项item
+ * 其他位置为LIST类型,对应选项item
  */
-public class MoreRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MoreRecyclerAdapter extends SettingRecyclerAdapter {
 
     private static final int ITEM_VIEW_TYPE_HEADER = 0;
-    private static final int ITEM_VIEW_TYPE_LIST = 1;
 
     private User user;
-    private List<MoreItem> datas;
-    private OnItemClickListener mOnItemClickListener;
 
-    public MoreRecyclerAdapter(List<MoreItem> datas, OnItemClickListener listener) {
-        this.datas = datas;
-        mOnItemClickListener = listener;
+    public MoreRecyclerAdapter(List<SettingItem> datas, OnItemClickListener listener) {
+        super(datas, listener);
+    }
+
+    @Override
+    public int getItemCount() {
+        // header + 1
+        return datas.size() + 1;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position == 0 ? ITEM_VIEW_TYPE_HEADER : super.getItemViewType(position);
     }
 
     public void setUser(User user) {
@@ -63,40 +70,21 @@ public class MoreRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    public static class ViewHolderList extends RecyclerView.ViewHolder {
-
-        public ImageView iv_left;
-        public TextView tv_mid;
-
-        public ViewHolderList(final View itemView) {
-            super(itemView);
-
-            iv_left = (ImageView) itemView.findViewById(R.id.iv_left);
-            tv_mid = (TextView) itemView.findViewById(R.id.tv_mid);
-        }
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return position == 0 ? ITEM_VIEW_TYPE_HEADER : ITEM_VIEW_TYPE_LIST;
-    }
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == ITEM_VIEW_TYPE_HEADER) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_more_header, parent, false);
             return new ViewHolderUserHeader(v);
         } else {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_more, parent, false);
-            return new ViewHolderList(v);
+            return super.onCreateViewHolder(parent, viewType);
         }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         int itemViewType = getItemViewType(position);
-
         if (itemViewType == ITEM_VIEW_TYPE_HEADER) {
+            // header
             ViewHolderUserHeader viewHolderHeader = (ViewHolderUserHeader) holder;
             if (user != null) {
                 // 如果已登录,用户数据非空,则显示用户信息
@@ -109,9 +97,9 @@ public class MoreRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 viewHolderHeader.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Log.i("RecyclerAdapter", "position = " + position);
                         if (mOnItemClickListener != null) {
-                            mOnItemClickListener.onItemClick(null, view, position, -1);
+                            // header使用特殊的position -1
+                            mOnItemClickListener.onItemClick(null, view, -1, -1);
                         }
                     }
                 });
@@ -129,29 +117,10 @@ public class MoreRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 });
             }
         } else {
-            ViewHolderList viewHolderList = (ViewHolderList) holder;
-            viewHolderList.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.i("RecyclerAdapter", "position = " + position);
-                    if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onItemClick(null, view, position, -1);
-                    }
-                }
-            });
-
-            // 第一个位置多了个HEADER,所以列表的position和数据列表索引相差1
-            MoreItem data = datas.get(position - 1);
-
-            viewHolderList.iv_left.setImageResource(data.leftImgRes);
-            viewHolderList.tv_mid.setText(data.midText);
+            // setting item
+            // 第一个位置多了个HEADER,所以position差1
+            super.onBindViewHolder(holder, position - 1);
         }
-
     }
 
-    @Override
-    public int getItemCount() {
-        // header + 1
-        return datas.size() + 1;
-    }
 }
