@@ -123,7 +123,7 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
                 ImageUtils.showImagePickDialog(this);
                 break;
             case R.id.ll_username:
-                intent2Activity(InputActivity.class);
+                intent2Activity(UsernameModifyActivity.class);
                 break;
         }
     }

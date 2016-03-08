@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.boredream.hhhgif.activity.InputActivity">
+    tools:context="com.boredream.hhhgif.activity.UsernameModifyActivity">
 
     <include layout="@layout/include_titlebar" />
 

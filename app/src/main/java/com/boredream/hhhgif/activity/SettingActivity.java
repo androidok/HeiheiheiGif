@@ -46,7 +46,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void initData() {
-        // more items
+        // 使用列表显示多个选项条
         List<MoreItem> items = new ArrayList<>();
         MoreItem item1 = new MoreItem(R.mipmap.ic_cached_grey600_24dp, "检查更新");
         item1.rightText = AppUtils.getAppVersionName(this);
@@ -59,7 +59,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
                 this, LinearLayoutManager.VERTICAL, false);
         rv_setting.setLayoutManager(linearLayoutManager);
-        // 每个item之间的divder线
+        // 每个item之间的间隔线
         rv_setting.addItemDecoration(new DividerItemDecoration(this));
     }
 
@@ -68,6 +68,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         switch (position) {
             case 0:
                 showProgressDialog();
+                // 检查更行
                 UmengHelper.checkUpdate(this, true, new UmengUpdateListener() {
                     @Override
                     public void onUpdateReturned(int i, UpdateResponse updateResponse) {

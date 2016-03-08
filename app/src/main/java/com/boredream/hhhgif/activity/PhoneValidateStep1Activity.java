@@ -19,21 +19,36 @@ import java.util.Map;
 
 import rx.Observable;
 
-public class RegistActivity extends BaseActivity implements View.OnClickListener {
+/**
+ * 短信验证页面步骤一,用于注册和忘记密码的发送短信和信息填写
+ */
+public class PhoneValidateStep1Activity extends BaseActivity implements View.OnClickListener {
 
     private EditText et_username;
     private EditText et_password;
     private Button btn_next;
 
+    /**
+     * 0-注册 1-忘记密码
+     */
+    private int type;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_regist);
+        setContentView(R.layout.activity_phone_validate_step1);
+
+        getExtras();
         initView();
     }
 
+    private void getExtras() {
+        Intent intent = getIntent();
+        type = intent.getIntExtra("type", 0);
+    }
+
     private void initView() {
-        initBackTitle("手机号注册");
+        initBackTitle(type == 1 ? "重置密码" : "注册");
 
         et_username = (EditText) findViewById(R.id.et_username);
         et_password = (EditText) findViewById(R.id.et_password);
@@ -44,8 +59,8 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
 
     private void next() {
         // validate
-        final String username = et_username.getText().toString().trim();
-        if (TextUtils.isEmpty(username)) {
+        final String phone = et_username.getText().toString().trim();
+        if (TextUtils.isEmpty(phone)) {
             Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -57,9 +72,20 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
         }
 
         // validate success, do something
+        requestSmsCode(phone, password);
+
+    }
+
+    /**
+     * 发送短信验证码
+     *
+     * @param phone
+     * @param password
+     */
+    private void requestSmsCode(final String phone, final String password) {
         showProgressDialog();
         Map<String, Object> params = new HashMap<>();
-        params.put("mobilePhoneNumber", username);
+        params.put("mobilePhoneNumber", phone);
         Observable<Object> observable = HttpRequest.getApiService().requestSmsCode(params);
         ObservableDecorator.decorate(this, observable)
                 .subscribe(new SimpleSubscriber<Object>(this) {
@@ -67,8 +93,10 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
                     public void onNext(Object o) {
                         dismissProgressDialog();
 
-                        Intent intent = new Intent(RegistActivity.this, RegistValidateActivity.class);
-                        intent.putExtra("phone", username);
+                        // 短信验证码发送成功后,跳转到短信验证页
+                        Intent intent = new Intent(PhoneValidateStep1Activity.this, PhoneValidateStep2Activity.class);
+                        intent.putExtra("type", type);
+                        intent.putExtra("phone", phone);
                         intent.putExtra("password", password);
                         startActivity(intent);
                     }
@@ -79,7 +107,6 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
                         dismissProgressDialog();
                     }
                 });
-
     }
 
     @Override

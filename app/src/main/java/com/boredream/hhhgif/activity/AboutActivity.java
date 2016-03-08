@@ -45,6 +45,7 @@ public class AboutActivity extends BaseActivity {
         final String githubLink = getString(R.string.github);
         String format = String.format(getString(R.string.about), githubLink);
         SpannableString ss = new SpannableString(format);
+        // 网址部分可点击,跳转到网页
         StringUtils.PrimaryClickableSpan span = new StringUtils.PrimaryClickableSpan(this) {
             @Override
             public void onClick(View widget) {

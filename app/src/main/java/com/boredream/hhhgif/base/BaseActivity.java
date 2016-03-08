@@ -16,6 +16,8 @@ import com.boredream.bdcodehelper.utils.TitleBuilder;
 import com.boredream.bdcodehelper.utils.ToastUtils;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.activity.LoginActivity;
+import com.boredream.hhhgif.activity.MainActivity;
+import com.boredream.hhhgif.activity.SplashActivity;
 import com.boredream.hhhgif.constants.CommonConstants;
 
 public class BaseActivity extends AppCompatActivity {
@@ -89,5 +91,12 @@ public class BaseActivity extends AppCompatActivity {
 
     protected void dismissProgressDialog() {
         progressDialog.dismiss();
+    }
+
+    protected void exit() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("exit", true);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

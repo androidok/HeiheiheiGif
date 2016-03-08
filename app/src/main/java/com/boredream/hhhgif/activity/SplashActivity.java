@@ -90,7 +90,6 @@ public class SplashActivity extends BaseActivity {
                     @Override
                     public void call(Class<? extends Activity> aClass) {
                         intent2Activity(aClass);
-                        finish();
                     }
                 });
     }

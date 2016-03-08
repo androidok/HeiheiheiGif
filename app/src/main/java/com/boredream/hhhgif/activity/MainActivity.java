@@ -7,7 +7,6 @@ import android.widget.RadioButton;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.fragment.FragmentController;
-import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.utils.UmengHelper;
 
 import java.util.concurrent.TimeUnit;
@@ -18,30 +17,42 @@ import rx.functions.Action1;
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private RadioButton rb_home;
-
     private FragmentController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // 如果是退出应用flag,则直接关闭当前页面,不加载UI
+        boolean exit = getIntent().getBooleanExtra("exit", false);
+        if (exit) {
+            finish();
+            return;
+        }
+
         initView();
-
-        controller = new FragmentController(this, R.id.fl_content);
-        rb_home.setChecked(true);
-        controller.showFragment(0);
-
-        UmengHelper.checkUpdate(this, false, null);
-
-        HttpRequest.getApiService().getCurrentUser("-1");
+        initData();
     }
 
     private void initView() {
         rb_home = (RadioButton) findViewById(R.id.rb_home);
         rb_home.setOnClickListener(this);
+
+        // FIXME 这里我自定义了RadioButton控件,但是checked监听失效了,所以使用OnClick监听代替
         findViewById(R.id.rb_search).setOnClickListener(this);
         findViewById(R.id.rb_fav).setOnClickListener(this);
         findViewById(R.id.rb_more).setOnClickListener(this);
+    }
+
+    private void initData() {
+        controller = new FragmentController(this, R.id.fl_content);
+        // 默认选择第一个首页fragment
+        rb_home.setChecked(true);
+        controller.showFragment(0);
+
+        // 非强制检测更新,有wifi时提示,不需要额外回调处理
+        UmengHelper.checkUpdate(this, false, null);
     }
 
     @Override
@@ -63,11 +74,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     boolean doubleBackToExitPressedOnce = false;
-
     @Override
     public void onBackPressed() {
+        // 双击返回键关闭程序
+        // 如果两秒重置时间内再次点击返回,则退出程序
         if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
+            exit();
             return;
         }
 
@@ -78,6 +90,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
+                        // 延迟两秒后重置标志位为false
                         doubleBackToExitPressedOnce = false;
                     }
                 });

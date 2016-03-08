@@ -20,7 +20,10 @@ import java.util.Map;
 
 import rx.Observable;
 
-public class InputActivity extends BaseActivity {
+/**
+ * 修改用户名输入框页面
+ */
+public class UsernameModifyActivity extends BaseActivity {
 
     private EditText et;
     private User currentUser;
@@ -30,9 +33,8 @@ public class InputActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input);
 
-        currentUser = UserInfoKeeper.getCurrentUser();
-
         initView();
+        initData();
     }
 
     private void initView() {
@@ -45,6 +47,10 @@ public class InputActivity extends BaseActivity {
                     }
                 });
         et = (EditText) findViewById(R.id.et);
+    }
+
+    private void initData() {
+        currentUser = UserInfoKeeper.getCurrentUser();
         et.setText(currentUser.getUsername());
     }
 
@@ -56,19 +62,20 @@ public class InputActivity extends BaseActivity {
             return;
         }
 
+        // 修改用户的username
         Map<String, Object> updateMap = new HashMap<>();
         updateMap.put("username", username);
 
         showProgressDialog();
-        Observable<BaseEntity> observable = HttpRequest.getApiService().updateUserById(
-                currentUser.getObjectId(), updateMap);
+        Observable<BaseEntity> observable = HttpRequest.getApiService()
+                .updateUserById(currentUser.getObjectId(), updateMap);
         ObservableDecorator.decorate(this, observable)
                 .subscribe(new SimpleSubscriber<BaseEntity>(this) {
                     @Override
                     public void onNext(BaseEntity entity) {
                         dismissProgressDialog();
 
-                        // update currentUser and show avatar
+                        // 修改成功后更新当前用户的昵称
                         currentUser.setUsername(username);
                         UserInfoKeeper.setCurrentUser(currentUser);
 

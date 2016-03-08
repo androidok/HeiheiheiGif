@@ -1,5 +1,6 @@
 package com.boredream.hhhgif.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -26,6 +27,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private TextView tv_forget_psw;
     private LinearLayout ll_regist;
 
+    /**
+     * 是否为验证登录,true-登录成功后,直接finish返回到来源页 false-登录成功后跳转到主页
+     */
     private boolean checkLogin;
 
     @Override
@@ -80,9 +84,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     public void onNext(User user) {
                         dismissProgressDialog();
 
-                        if(checkLogin) {
+                        if (checkLogin) {
+                            // 是验证登录,登录成功后,直接finish返回到来源页
                             finish();
                         } else {
+                            // 不是验证登录,登录成功后跳转到主页
                             intent2Activity(MainActivity.class);
                         }
                     }
@@ -97,15 +103,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
+        Intent intent = new Intent(this, PhoneValidateStep1Activity.class);
         switch (v.getId()) {
             case R.id.btn_login:
                 login();
                 break;
             case R.id.tv_forget_psw:
-                intent2Activity(ForgetPswActivity.class);
+                intent.putExtra("type", 1);
+                startActivity(intent);
                 break;
             case R.id.ll_regist:
-                intent2Activity(RegistActivity.class);
+                intent.putExtra("type", 0);
+                startActivity(intent);
                 break;
         }
     }

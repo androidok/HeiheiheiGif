@@ -59,6 +59,7 @@ public class FeedBackActivity extends BaseActivity {
             return;
         }
 
+        // 使用自定义对象存至云平台,作为简易版的反馈意见收集
         FeedBack fb = new FeedBack();
         fb.setContent(content);
         fb.setEmail(email);
