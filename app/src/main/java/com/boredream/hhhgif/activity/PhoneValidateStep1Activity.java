@@ -38,11 +38,11 @@ public class PhoneValidateStep1Activity extends BaseActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phone_validate_step1);
 
-        getExtras();
+        initExtras();
         initView();
     }
 
-    private void getExtras() {
+    private void initExtras() {
         Intent intent = getIntent();
         type = intent.getIntExtra("type", 0);
     }
@@ -78,9 +78,6 @@ public class PhoneValidateStep1Activity extends BaseActivity implements View.OnC
 
     /**
      * 发送短信验证码
-     *
-     * @param phone
-     * @param password
      */
     private void requestSmsCode(final String phone, final String password) {
         showProgressDialog();
@@ -93,7 +90,7 @@ public class PhoneValidateStep1Activity extends BaseActivity implements View.OnC
                     public void onNext(Object o) {
                         dismissProgressDialog();
 
-                        // 短信验证码发送成功后,跳转到短信验证页
+                        // 短信验证码发送成功后,跳转到短信验证页,同时传递所需数据
                         Intent intent = new Intent(PhoneValidateStep1Activity.this, PhoneValidateStep2Activity.class);
                         intent.putExtra("type", type);
                         intent.putExtra("phone", phone);

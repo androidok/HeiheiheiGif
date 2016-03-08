@@ -63,11 +63,10 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gif_detail);
+
         initExtras();
         initView();
-
-        showProgressDialog();
-        loadData(pageIndex.startPage());
+        initData();
     }
 
     private void initExtras() {
@@ -96,6 +95,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                 new LoadMoreAdapter.OnLoadMoreListener() {
                     @Override
                     public void onLoadMore() {
+                        // 列表拉到底部时,加载下一页
                         loadData(pageIndex.nextPage());
                     }
                 });
@@ -104,24 +104,37 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
         srl_gifdetail.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                // 下拉刷新时,重新加载起始页
                 loadData(pageIndex.startPage());
             }
         });
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
                 this, LinearLayoutManager.VERTICAL, false);
         rv_gifdetail.setLayoutManager(linearLayoutManager);
-        // 每个item之间的divder线
+        // 每个item之间的分割线
         rv_gifdetail.addItemDecoration(new DividerItemDecoration(this));
+    }
+
+    private void initData() {
+        showProgressDialog();
+        loadData(pageIndex.startPage());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        // 有可能切换出应用,然后从文件管理软件中删除了该动态图,则再次返回时应该更新下载状态
         checkDownloadStatus();
+
+        // 如果未登录进入本页面,然后跳转登录页面成功后返回,此时应该再次更新收藏状态
+        if (UserInfoKeeper.getCurrentUser() != null) {
+            getFavStatus();
+        }
     }
 
     @Override
     public void onGifLoaded() {
+        // 动态图已经加载成功,更新状态提示可以下载
         checkDownloadStatus();
     }
 
@@ -135,7 +148,8 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
             tv_download.setTextColor(getResources().getColor(R.color.txt_gray));
             tv_download.setText("已下载");
         } else {
-            // 如果未下载,则判断当前图片是否已经加载
+            // 如果未下载
+            // 再判断当前图片是否已经加载
             if (gifDetailAdapter.loadedGif == null) {
                 // 未加载图片
                 tv_download.setTextColor(getResources().getColor(R.color.txt_light_gray));
@@ -147,6 +161,11 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * 加载评论列表
+     *
+     * @param page 页数
+     */
     private void loadData(final int page) {
         Observable<ListResponse<Comment>> observable = HttpRequest.getGifComments(gif.getObjectId(), page);
         ObservableDecorator.decorate(this, observable)
@@ -156,6 +175,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                         srl_gifdetail.setRefreshing(false);
                         dismissProgressDialog();
 
+                        // 加载成功后更新数据
                         pageIndex.setResponse(adapter, infos, gifInfos.getResults());
                     }
 
@@ -168,21 +188,17 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                 });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (UserInfoKeeper.getCurrentUser() != null) {
-            getFavStatus();
-        }
-    }
-
+    /**
+     * 获取收藏状态
+     */
     private void getFavStatus() {
+        // FIXME 获取是否收藏状态应该有更好的方法,需要改进,每次都获取收藏列表数据量过大
         Observable<ListResponse<User>> observable = HttpRequest.getGifFavUsers(gif.getObjectId());
         ObservableDecorator.decorate(this, observable)
                 .map(new Func1<ListResponse<User>, Boolean>() {
                     @Override
                     public Boolean call(ListResponse<User> userListResponse) {
+                        // 先判断当前用户收藏列表中是否包含该动态图
                         User currentUser = UserInfoKeeper.getCurrentUser();
                         return userListResponse.getResults().contains(currentUser);
                     }
@@ -190,30 +206,37 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                 .subscribe(new Action1<Boolean>() { // doesn't need error handler
                     @Override
                     public void call(Boolean aBoolean) {
+                        // 根据是否收藏状态更新UI
                         showFavStatus(aBoolean);
                     }
                 });
     }
 
+    /**
+     * 显示收藏状态
+     */
     private void showFavStatus(boolean isFaved) {
         this.isFaved = isFaved;
         tv_fav.setText(isFaved ? "已收藏" : "收藏");
     }
 
+    /**
+     * 收藏动态图
+     */
     private void favGif() {
         showProgressDialog();
         HttpRequest.favGif(gif.getObjectId())
-                .subscribe(new Action1<BaseEntity>() {
+                .subscribe(new SimpleSubscriber<BaseEntity>(this) {
                     @Override
-                    public void call(BaseEntity entity) {
+                    public void onNext(BaseEntity entity) {
                         dismissProgressDialog();
 
                         showToast("收藏成功");
                         showFavStatus(true);
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
+                    public void onError(Throwable throwable) {
                         dismissProgressDialog();
 
                         // TODO 判断如果是重复收藏则也视为成功
@@ -224,6 +247,9 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                 });
     }
 
+    /**
+     * 取消移除收藏
+     */
     private void removeGifFav() {
         showProgressDialog();
         Observable<BaseEntity> observable = HttpRequest.removeFavGif(gif.getObjectId());
@@ -270,18 +296,21 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                 }
                 break;
             case R.id.ll_download:
+                // 未加载图片时不能下载
                 if (gifDetailAdapter.loadedGif == null) {
                     showToast("动态图尚未加载完成,暂时无法下载,请耐心等待...");
                     return;
                 }
 
+                // 判断是否已加载该动态图
                 boolean isDownloaded = FileUtils.isExist(FileUtils.genGifFilename(gif));
                 if (isDownloaded) {
                     // 如果已经下载,则用第三方应用打开
-                    showOpenImageByOtherAppConcirmDialog();
+                    showOpenImageByOtherAppConfirmDialog();
                     return;
                 }
 
+                // 下载动态图文件
                 Downloader.saveGif(this, gif, gifDetailAdapter.loadedGif,
                         new SimpleSubscriber<File>(this) {
                             @Override
@@ -300,12 +329,16 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    private void showOpenImageByOtherAppConcirmDialog() {
+    /**
+     * 打开已下载动态图确认框
+     */
+    private void showOpenImageByOtherAppConfirmDialog() {
         DialogUtils.showCommonDialog(this, "该图片已经加载,是否使用其他图片软件进行浏览？",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         File file = FileUtils.getFile(FileUtils.genGifFilename(gif));
+                        // 使用第三方软件打开
                         ImageUtils.openImageByOtherApp(GifDetailActivity.this, Uri.fromFile(file));
                     }
                 });
@@ -321,8 +354,8 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
 
         switch (requestCode) {
             case REQUEST_CODE_WRITE_COMMENT:
-                showProgressDialog();
-                loadData(pageIndex.startPage());
+                // 评论成功后重新加载评论列表
+                initData();
                 break;
         }
     }

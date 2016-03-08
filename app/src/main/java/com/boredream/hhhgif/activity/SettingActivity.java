@@ -59,7 +59,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
                 this, LinearLayoutManager.VERTICAL, false);
         rv_setting.setLayoutManager(linearLayoutManager);
-        // 每个item之间的间隔线
+        // 每个item之间的分割线
         rv_setting.addItemDecoration(new DividerItemDecoration(this));
     }
 
@@ -68,7 +68,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         switch (position) {
             case 0:
                 showProgressDialog();
-                // 检查更行
+                // 强制检查更新,并添加额外回调用于处理进度框
                 UmengHelper.checkUpdate(this, true, new UmengUpdateListener() {
                     @Override
                     public void onUpdateReturned(int i, UpdateResponse updateResponse) {
@@ -86,6 +86,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_logout:
+                // 登出,清理用户数据同时跳转到登录页
                 UserInfoKeeper.logout();
                 clearIntent2Login();
                 break;

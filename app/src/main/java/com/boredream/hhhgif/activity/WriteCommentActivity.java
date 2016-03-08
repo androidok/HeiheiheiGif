@@ -58,6 +58,7 @@ public class WriteCommentActivity extends BaseActivity {
             return;
         }
 
+        // 新建评论对象
         User currentUser = UserInfoKeeper.getCurrentUser();
         Pointer userPointer = new Pointer("_User", currentUser.getObjectId());
 
@@ -66,6 +67,7 @@ public class WriteCommentActivity extends BaseActivity {
         comment.setUser(userPointer);
         comment.setContent(content);
 
+        // 提交新建的评论对象至服务器
         showProgressDialog();
         Observable<BaseEntity> observable = HttpRequest.addGifComment(comment);
         ObservableDecorator.decorate(this, observable)
@@ -87,7 +89,11 @@ public class WriteCommentActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * 评论成功
+     */
     private void commentSuccess() {
+        // 设置成功结果同时关闭页面
         setResult(RESULT_OK);
         finish();
     }

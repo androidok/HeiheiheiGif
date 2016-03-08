@@ -22,6 +22,12 @@ import com.bumptech.glide.request.target.Target;
 
 import java.util.List;
 
+/**
+ * 动态图详情适配器
+ * <p>
+ * 第一个位置为HEADER类型,对应动态图图片<br/>
+ * 其他位置为LIST类型,对应评论item
+ */
 public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM_VIEW_TYPE_HEADER = 0;
     private static final int ITEM_VIEW_TYPE_LIST = 1;
@@ -108,7 +114,7 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             final ImageView iv_gif = viewHolderHeader.iv_gif;
 
-            if(loadedGif == null) {
+            if (loadedGif == null) {
                 Glide.with(context)
                         .load(gifInfo.getImgUrl())
                         .asGif()
@@ -123,7 +129,7 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             public boolean onResourceReady(GifDrawable resource, String model, Target<GifDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                                 Log.i("DDD", "gif onResourceReady");
                                 loadedGif = resource;
-                                if(onGifLoadedListener != null) {
+                                if (onGifLoadedListener != null) {
                                     onGifLoadedListener.onGifLoaded();
                                 }
                                 float ivHeight = (float) resource.getIntrinsicHeight() / resource.getIntrinsicWidth() * iv_gif.getWidth();

@@ -16,6 +16,9 @@ import com.boredream.hhhgif.net.GlideHelper;
 
 import java.util.List;
 
+/**
+ * 动态图网格适配器
+ */
 public class GifInfoAdapter extends RecyclerView.Adapter<GifInfoAdapter.ViewHolder> {
 
     protected Context context;
@@ -68,9 +71,9 @@ public class GifInfoAdapter extends RecyclerView.Adapter<GifInfoAdapter.ViewHold
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), GifDetailActivity.class);
+                Intent intent = new Intent(context, GifDetailActivity.class);
                 intent.putExtra("gif", gifInfo);
-                v.getContext().startActivity(intent);
+                context.startActivity(intent);
             }
         });
     }

@@ -3,7 +3,6 @@ package com.boredream.hhhgif.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -40,7 +39,6 @@ public class AboutActivity extends BaseActivity {
         tv_about.setText(ss);
     }
 
-    @NonNull
     private SpannableString getAboutString() {
         final String githubLink = getString(R.string.github);
         String format = String.format(getString(R.string.about), githubLink);

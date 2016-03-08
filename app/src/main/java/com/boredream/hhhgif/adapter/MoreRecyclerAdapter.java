@@ -19,6 +19,12 @@ import com.boredream.hhhgif.net.GlideHelper;
 
 import java.util.List;
 
+/**
+ * 更多选项列表适配器
+ * <p>
+ * 第一个位置为HEADER类型,对应用户信息<br/>
+ * 其他位置为LIST类型,对应更多选项item
+ */
 public class MoreRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int ITEM_VIEW_TYPE_HEADER = 0;
@@ -93,6 +99,7 @@ public class MoreRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (itemViewType == ITEM_VIEW_TYPE_HEADER) {
             ViewHolderUserHeader viewHolderHeader = (ViewHolderUserHeader) holder;
             if (user != null) {
+                // 如果已登录,用户数据非空,则显示用户信息
                 viewHolderHeader.include_more_header.setVisibility(View.VISIBLE);
                 viewHolderHeader.include_more_no_header.setVisibility(View.GONE);
 
@@ -109,6 +116,7 @@ public class MoreRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     }
                 });
             } else {
+                // 未登录,提供登录按钮,点击进入登录页
                 viewHolderHeader.include_more_header.setVisibility(View.GONE);
                 viewHolderHeader.include_more_no_header.setVisibility(View.VISIBLE);
 
@@ -131,6 +139,8 @@ public class MoreRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     }
                 }
             });
+
+            // 第一个位置多了个HEADER,所以列表的position和数据列表索引相差1
             MoreItem data = datas.get(position - 1);
 
             viewHolderList.iv_left.setImageResource(data.leftImgRes);

@@ -70,9 +70,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
                 activity, LinearLayoutManager.VERTICAL, false);
         rv_more.setLayoutManager(linearLayoutManager);
-        // 每个item之间的divder线
+        // 每个item之间的分割线
         rv_more.addItemDecoration(new DividerItemDecoration(activity));
-        // 每组item之间的分割
+        // 每组item之间的分割间隔
         rv_more.addItemDecoration(new EmptyItemDecoration(
                 new Integer[]{0, 1}, DisplayUtils.dp2px(activity, 16)));
 

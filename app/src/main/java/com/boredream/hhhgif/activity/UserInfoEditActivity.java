@@ -45,6 +45,7 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onStart() {
         super.onStart();
+        // 如果跳转到二级页面修改了用户信息,则再次返回到该页面时显示最新的用户数据
         initData();
     }
 
@@ -70,14 +71,20 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
         ll_username.setOnClickListener(this);
     }
 
-    private void setAvatarImage(Uri uri) {
+    /**
+     * 上传用户头像图片
+     *
+     * @param uri 头像图片uri
+     */
+    private void uploadUserAvatarImage(Uri uri) {
         showProgressDialog();
 
+        // 第一步,上传头像文件到服务器
         HttpRequest.fileUpload(this, uri, new SimpleSubscriber<FileUploadResponse>(this) {
             @Override
             public void onNext(FileUploadResponse fileUploadResponse) {
-                // update user avatar to server
-                updateUserAvatar(HttpRequest.FILE_HOST + fileUploadResponse.getUrl());
+                // 第二步,将上传图片返回的url地址更新至用户对象中
+                uploadUserAvatarImage(HttpRequest.FILE_HOST + fileUploadResponse.getUrl());
             }
 
             @Override
@@ -88,7 +95,12 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
         });
     }
 
-    private void updateUserAvatar(final String avatarUrl) {
+    /**
+     * 更新用户头像
+     *
+     * @param avatarUrl 头像图片地址
+     */
+    private void uploadUserAvatarImage(final String avatarUrl) {
         Map<String, Object> updateMap = new HashMap<>();
         updateMap.put("avatar", avatarUrl);
 
@@ -100,7 +112,7 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
                     public void onNext(BaseEntity entity) {
                         dismissProgressDialog();
 
-                        // update currentUser and show avatar
+                        // 成功后更新当前用户的头像数据
                         currentUser.setAvatar(avatarUrl);
                         UserInfoKeeper.setCurrentUser(currentUser);
                         showUserAvatar();
@@ -139,19 +151,18 @@ public class UserInfoEditActivity extends BaseActivity implements View.OnClickLi
         Uri uri;
         switch (requestCode) {
             case ImageUtils.REQUEST_CODE_FROM_ALBUM:
+                // 从相册选择
                 uri = data.getData();
-//                ImageUtils.cropImage(this, uri);
-
-                setAvatarImage(uri);
+                ImageUtils.cropImage(this, uri);
                 break;
             case ImageUtils.REQUEST_CODE_FROM_CAMERA:
+                // 相机拍照
                 uri = ImageUtils.imageUriFromCamera;
-//                ImageUtils.cropImage(this, uri);
-
-                setAvatarImage(uri);
+                ImageUtils.cropImage(this, uri);
                 break;
             case ImageUtils.REQUEST_CODE_CROP_IMAGE:
-                setAvatarImage(ImageUtils.cropImageUri);
+                // 头像图片都要进行裁剪处理
+                uploadUserAvatarImage(ImageUtils.cropImageUri);
                 break;
         }
     }

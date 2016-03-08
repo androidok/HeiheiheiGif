@@ -7,6 +7,11 @@ import com.boredream.hhhgif.entity.Gif;
 
 import java.util.List;
 
+/**
+ * 收藏动态图列表适配器
+ * <p>
+ * 样式基本基于动态图网格列表,多了一个删除按钮
+ */
 public class FavGifInfoAdapter extends GifInfoAdapter {
 
     public FavGifInfoAdapter(Context context, List<Gif> datas) {
@@ -28,6 +33,7 @@ public class FavGifInfoAdapter extends GifInfoAdapter {
         });
     }
 
+    // 删除回调
     public interface OnRemoveGifFavListener {
         void onRemoveGifFav(int position);
     }

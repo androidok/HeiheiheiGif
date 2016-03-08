@@ -51,12 +51,12 @@ public class PhoneValidateStep2Activity extends BaseActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phone_validate_step2);
 
-        getExtras();
+        initExtras();
         initView();
         initData();
     }
 
-    private void getExtras() {
+    private void initExtras() {
         Intent intent = getIntent();
         type = intent.getIntExtra("type", 0);
         phone = intent.getStringExtra("phone");
