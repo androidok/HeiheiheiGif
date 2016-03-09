@@ -24,7 +24,6 @@
         android:id="@+id/ll_no_login"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_white2gray_sel"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingLeft="@dimen/margin_medium"

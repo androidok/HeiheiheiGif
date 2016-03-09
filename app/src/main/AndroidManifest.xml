@@ -26,8 +26,6 @@
             android:name=".activity.MainActivity"
             android:launchMode="singleTask" />
         <activity android:name=".activity.LoginActivity" />
-        <activity android:name=".activity.RegistActivity" />
-        <activity android:name=".activity.RegistValidateActivity" />
         <activity android:name=".activity.PhoneValidateStep1Activity" />
         <activity android:name=".activity.PhoneValidateStep2Activity" />
         <activity android:name=".activity.SettingActivity" />
