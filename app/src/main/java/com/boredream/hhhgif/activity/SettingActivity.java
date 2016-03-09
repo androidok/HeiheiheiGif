@@ -13,7 +13,7 @@ import com.boredream.bdcodehelper.utils.AppUtils;
 import com.boredream.bdcodehelper.view.DividerItemDecoration;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
-import com.boredream.hhhgif.utils.UmengHelper;
+import com.boredream.hhhgif.utils.UmengUpdateUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
 import com.umeng.update.UmengUpdateListener;
 import com.umeng.update.UpdateResponse;
@@ -78,7 +78,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             case 0:
                 showProgressDialog();
                 // 强制检查更新,并添加额外回调用于处理进度框
-                UmengHelper.checkUpdate(this, true, new UmengUpdateListener() {
+                UmengUpdateUtils.checkUpdate(this, true, new UmengUpdateListener() {
                     @Override
                     public void onUpdateReturned(int i, UpdateResponse updateResponse) {
                         dismissProgressDialog();

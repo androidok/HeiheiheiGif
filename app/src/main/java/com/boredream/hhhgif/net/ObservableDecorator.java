@@ -17,6 +17,6 @@ public class ObservableDecorator {
         return observable
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .delay(1, TimeUnit.SECONDS, AndroidSchedulers.mainThread());
+                .delay(1, TimeUnit.SECONDS, AndroidSchedulers.mainThread()); // FIXME 模拟延迟,用于观察加载框等效果
     }
 }

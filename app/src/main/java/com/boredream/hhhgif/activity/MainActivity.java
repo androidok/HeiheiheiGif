@@ -1,14 +1,20 @@
 package com.boredream.hhhgif.activity;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.RadioButton;
 
+import com.boredream.bdcodehelper.fragment.FragmentController;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.base.BaseActivity;
-import com.boredream.hhhgif.fragment.FragmentController;
-import com.boredream.hhhgif.utils.UmengHelper;
+import com.boredream.hhhgif.fragment.FavFragment;
+import com.boredream.hhhgif.fragment.HomeFragment;
+import com.boredream.hhhgif.fragment.MoreFragment;
+import com.boredream.hhhgif.fragment.SearchFragment;
+import com.boredream.hhhgif.utils.UmengUpdateUtils;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -46,13 +52,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initData() {
-        controller = new FragmentController(this, R.id.fl_content);
+        ArrayList<Fragment> fragments = new ArrayList<Fragment>();
+        fragments.add(new HomeFragment());
+        fragments.add(new SearchFragment());
+        fragments.add(new FavFragment());
+        fragments.add(new MoreFragment());
+        controller = new FragmentController(this, R.id.fl_content, fragments);
         // 默认选择第一个首页fragment
         rb_home.setChecked(true);
         controller.showFragment(0);
 
         // 非强制检测更新,有wifi时提示,不需要额外回调处理
-        UmengHelper.checkUpdate(this, false, null);
+        UmengUpdateUtils.checkUpdate(this, false, null);
     }
 
     @Override
@@ -74,6 +85,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     boolean doubleBackToExitPressedOnce = false;
+
     @Override
     public void onBackPressed() {
         // 双击返回键关闭程序

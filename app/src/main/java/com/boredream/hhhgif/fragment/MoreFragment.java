@@ -20,8 +20,6 @@ import com.boredream.hhhgif.activity.UserInfoEditActivity;
 import com.boredream.hhhgif.adapter.MoreRecyclerAdapter;
 import com.boredream.hhhgif.base.BaseFragment;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
-import com.tencent.mm.sdk.openapi.IWXAPI;
-import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,17 +28,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private RecyclerView rv_more;
     private MoreRecyclerAdapter adapter;
-    private IWXAPI api;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = View.inflate(activity, R.layout.frag_more, null);
         initView(view);
         initData();
-
-        api = WXAPIFactory.createWXAPI(activity, "wx5fe70bdd2cbf596b", true);
-        api.registerApp("wx5fe70bdd2cbf596b");
-
         return view;
     }
 
@@ -48,6 +41,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onStart() {
         super.onStart();
 
+        // 如果未登录进入本页面,然后跳转登录页面成功后返回,此时应该再次更新用户信息
         adapter.setUser(UserInfoKeeper.getCurrentUser());
         adapter.notifyDataSetChanged();
     }
@@ -92,6 +86,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (position) {
             case -1:
+                // 给特殊的用户信息header位置设为了position=-1的item click事件
                 intent2Activity(UserInfoEditActivity.class);
                 break;
             case 0:

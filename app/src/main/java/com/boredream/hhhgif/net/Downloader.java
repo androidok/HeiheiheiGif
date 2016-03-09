@@ -26,6 +26,7 @@ public class Downloader {
      * @param context
      */
     public static void saveGif(final Context context, final Gif gif, GifDrawable gifDrawable, Subscriber<File> callback) {
+        // 将数据发送到新的子线程中处理耗时工作,完成后在主线程中回调更新UI
         Observable.just(gifDrawable)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -78,7 +78,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
 
     private void initView() {
         initBackTitle("动态图详情")
-                .setRightText("share")
+                .setRightText("分享")
                 .setRightOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -106,7 +106,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
                     @Override
                     public void onLoadMore() {
                         // 列表拉到底部时,加载下一页
-                        loadData(pageIndex.nextPage());
+                        loadData(pageIndex.toNextPage());
                     }
                 });
         rv_gifdetail.setAdapter(adapter);
@@ -115,7 +115,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onRefresh() {
                 // 下拉刷新时,重新加载起始页
-                loadData(pageIndex.startPage());
+                loadData(pageIndex.toStartPage());
             }
         });
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
@@ -127,7 +127,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
 
     private void initData() {
         showProgressDialog();
-        loadData(pageIndex.startPage());
+        loadData(pageIndex.toStartPage());
     }
 
     @Override
@@ -151,7 +151,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     private void shareGif() {
         UmengShareUtils.share(GifDetailActivity.this,
                 "嘿嘿嘿动态图分享",
-                "嘿嘿嘿动态图给您分享了一张有意思的GIF动态图片~",
+                "你的好友给你分享了一张有意思的GIF动态图片(" + gif.getImgUrl() + ")。下载<嘿嘿嘿动态图>软件可以查看更多有♂趣的动态图哟~",
                 null);
     }
 

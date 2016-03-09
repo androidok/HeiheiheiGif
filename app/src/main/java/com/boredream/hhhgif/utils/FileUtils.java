@@ -16,12 +16,10 @@ import java.text.DecimalFormat;
 public class FileUtils {
 
     /**
-     * 生成动态图文件名,根据id生成,保证唯一以及可追踪性
-     *
-     * @return
+     * 生成动态图文件名,根据id生成,保证唯一以及可追踪性(固定前缀+对象唯一id)
      */
     public static String genGifFilename(Gif gif) {
-        return "HHHGIF_gif_" + gif.getObjectId() + ".gif";
+        return CommonConstants.GIF_FILENAME_PRE + gif.getObjectId() + ".gif";
     }
 
     /**
@@ -88,7 +86,9 @@ public class FileUtils {
         return file;
     }
 
-
+    /**
+     * 保存图片文件, 在保存文件的基础上增加一个广播通知手机相册更新
+     */
     public static File saveImageFile(Context context, byte[] bytes, String filename) throws IOException {
         File file = FileUtils.saveFile(bytes, filename);
         if (file != null) {
@@ -105,7 +105,7 @@ public class FileUtils {
      * 转换文件大小
      *
      * @param fileBytesSize 文件字节数长度
-     * @return
+     * @return 大小缩写
      */
     public static String formetFileSize(long fileBytesSize) {
         DecimalFormat df = new DecimalFormat("#.00");

@@ -16,9 +16,12 @@ import com.umeng.socialize.media.UMusic;
 import com.umeng.socialize.shareboard.SnsPlatform;
 import com.umeng.socialize.utils.ShareBoardlistener;
 
+/**
+ * umeng 分享工具类
+ */
 public class UmengShareUtils {
 
-    //各个平台的配置
+    // 各个平台的配置
     static {
         //微信
         PlatformConfig.setWeixin("wx5fe70bdd2cbf596b", "f6ad3323507935428b399bfc3524f85c");
@@ -57,7 +60,11 @@ public class UmengShareUtils {
         ShareBoardlistener shareBoardlistener = new ShareBoardlistener() {
             @Override
             public void onclick(SnsPlatform snsPlatform, SHARE_MEDIA share_media) {
-                ShareAction shareAction = new ShareAction(context).setPlatform(share_media).setCallback(umShareListener);
+                ShareAction shareAction = new ShareAction(context)
+                        .setPlatform(share_media)
+                        .setCallback(umShareListener)
+                                // TODO 设置下载地址
+                        .withTargetUrl("www.xiazaidizhi.com");
                 if (!TextUtils.isEmpty(title)) {
                     shareAction.withTitle(title);
                 }

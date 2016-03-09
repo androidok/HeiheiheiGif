@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.boredream.bdcodehelper.adapter.LoadMoreAdapter;
+import com.boredream.bdcodehelper.entity.PageIndex;
 import com.boredream.bdcodehelper.utils.DialogUtils;
 import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.bdcodehelper.utils.TitleBuilder;
@@ -38,14 +39,13 @@ public class FavFragment extends BaseFragment implements FavGifInfoAdapter.OnRem
     private View view;
     private SwipeRefreshLayout srl_fav;
     private RecyclerView rv_fav;
-    private View ll_no_login;
     private Button btn_login;
 
     private GifLoadMoreAdapter adapter;
     private List<Gif> infos = new ArrayList<>();
 
-    private int currentPage = 1;
     private User currentUser;
+    private PageIndex pageIndex = new PageIndex(1, CommonConstants.COUNT_OF_PAGE);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,20 +55,23 @@ public class FavFragment extends BaseFragment implements FavGifInfoAdapter.OnRem
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
 
+        // 如果未登录进入本页面,然后跳转登录页面成功后返回,此时应该再次更新收藏列表
         currentUser = UserInfoKeeper.getCurrentUser();
         srl_fav.setVisibility(currentUser == null ? View.GONE : View.VISIBLE);
 
+        // 如果已经登录并且未加载到数据过,同时不在加载中,则去请求起始页数据
         if (currentUser != null && infos.size() == 0 && !srl_fav.isRefreshing()) {
+            // 手动调用下拉刷新
             srl_fav.post(new Runnable() {
                 @Override
                 public void run() {
                     srl_fav.setRefreshing(true);
                 }
             });
-            loadData(1);
+            loadData(pageIndex.toStartPage());
         }
     }
 
@@ -77,11 +80,11 @@ public class FavFragment extends BaseFragment implements FavGifInfoAdapter.OnRem
 
         srl_fav = (SwipeRefreshLayout) view.findViewById(R.id.srl_fav);
         rv_fav = (RecyclerView) view.findViewById(R.id.rv_fav);
-        ll_no_login = view.findViewById(R.id.ll_no_login);
         btn_login = (Button) view.findViewById(R.id.btn_login);
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 利用已有的方法直接跳转到登录页
                 UserInfoKeeper.checkLogin(activity);
             }
         });
@@ -95,20 +98,24 @@ public class FavFragment extends BaseFragment implements FavGifInfoAdapter.OnRem
         adapter = new GifLoadMoreAdapter(rv_fav, gifInfoAdapter, new LoadMoreAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                loadData(currentPage + 1);
+                // 列表拉到底部时,加载下一页
+                loadData(pageIndex.toNextPage());
             }
         });
         rv_fav.setAdapter(adapter);
         srl_fav.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadData(1);
+                // 下拉刷新时,重新加载起始页
+                loadData(pageIndex.toStartPage());
             }
         });
 
+        // 瀑布流布局
         final StaggeredGridLayoutManager staggeredGridLayoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         rv_fav.setLayoutManager(staggeredGridLayoutManager);
+        // 网格间隔为8dp
         rv_fav.addItemDecoration(new GridSpacingDecorator(DisplayUtils.dp2px(activity, 8)));
     }
 
@@ -123,6 +130,11 @@ public class FavFragment extends BaseFragment implements FavGifInfoAdapter.OnRem
                 });
     }
 
+    /**
+     * 删除动态图
+     *
+     * @param position 列表位置
+     */
     private void removeGifFav(int position) {
         final Gif gifInfo = infos.get(position);
 
@@ -134,6 +146,7 @@ public class FavFragment extends BaseFragment implements FavGifInfoAdapter.OnRem
                     public void onNext(BaseEntity entity) {
                         dismissProgressDialog();
 
+                        // 删除成功后更新UI移除对应图片
                         infos.remove(gifInfo);
                         adapter.notifyDataSetChanged();
 
@@ -151,27 +164,21 @@ public class FavFragment extends BaseFragment implements FavGifInfoAdapter.OnRem
                 });
     }
 
+    /**
+     * 加载收藏动态图列表
+     *
+     * @param page 页数
+     */
     private void loadData(final int page) {
-        Observable<ListResponse<Gif>> observable = HttpRequest.getFavGifs(currentUser.getObjectId(), currentPage);
+        Observable<ListResponse<Gif>> observable = HttpRequest.getFavGifs(currentUser.getObjectId(), page);
         ObservableDecorator.decorate(activity, observable)
                 .subscribe(new SimpleSubscriber<ListResponse<Gif>>(activity) {
                     @Override
                     public void onNext(ListResponse<Gif> gifInfos) {
                         srl_fav.setRefreshing(false);
 
-                        if (page == 1) {
-                            infos.clear();
-                        }
-
-                        if (gifInfos.getResults().size() > 0) {
-                            currentPage = page;
-                            infos.addAll(gifInfos.getResults());
-                        }
-
-                        adapter.setStatus(gifInfos.getResults().size() == CommonConstants.COUNT_OF_PAGE
-                                ? LoadMoreAdapter.STATUS_HAVE_MORE : LoadMoreAdapter.STATUS_LOADED_ALL);
-
-                        adapter.notifyDataSetChanged();
+                        // 加载成功后更新数据
+                        pageIndex.setResponse(adapter, infos, gifInfos.getResults());
                     }
 
                     @Override

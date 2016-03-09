@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.boredream.bdcodehelper.adapter.LoadMoreAdapter;
+import com.boredream.bdcodehelper.entity.PageIndex;
 import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.bdcodehelper.utils.TitleBuilder;
 import com.boredream.bdcodehelper.view.GridSpacingDecorator;
@@ -28,6 +29,9 @@ import java.util.List;
 
 import rx.Observable;
 
+/**
+ * 首页全部动态图列表
+ */
 public class HomeFragment extends BaseFragment {
     private View view;
     private SwipeRefreshLayout srl_home;
@@ -36,20 +40,13 @@ public class HomeFragment extends BaseFragment {
     private GifLoadMoreAdapter adapter;
     private List<Gif> infos = new ArrayList<>();
 
-    private int currentPage = 1;
+    private PageIndex pageIndex = new PageIndex(1, CommonConstants.COUNT_OF_PAGE);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = View.inflate(activity, R.layout.frag_home, null);
         initView();
-
-        srl_home.post(new Runnable() {
-            @Override
-            public void run() {
-                srl_home.setRefreshing(true);
-            }
-        });
-        loadData(1);
+        initData();
         return view;
     }
 
@@ -60,20 +57,31 @@ public class HomeFragment extends BaseFragment {
         rv_home = (RecyclerView) view.findViewById(R.id.rv_home);
         initRecyclerView();
         GifInfoAdapter gifInfoAdapter = new GifInfoAdapter(activity, infos);
-        adapter = new GifLoadMoreAdapter(rv_home, gifInfoAdapter,
-                new LoadMoreAdapter.OnLoadMoreListener() {
+        adapter = new GifLoadMoreAdapter(rv_home, gifInfoAdapter, new LoadMoreAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                loadData(currentPage + 1);
+                // 列表拉到底部时,加载下一页
+                loadData(pageIndex.toNextPage());
             }
         });
         rv_home.setAdapter(adapter);
         srl_home.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadData(1);
+                // 下拉刷新时,重新加载起始页
+                loadData(pageIndex.toStartPage());
             }
         });
+    }
+
+    private void initData() {
+        srl_home.post(new Runnable() {
+            @Override
+            public void run() {
+                srl_home.setRefreshing(true);
+            }
+        });
+        loadData(pageIndex.toStartPage());
     }
 
     private void initRecyclerView() {
@@ -83,6 +91,11 @@ public class HomeFragment extends BaseFragment {
         rv_home.addItemDecoration(new GridSpacingDecorator(DisplayUtils.dp2px(activity, 8)));
     }
 
+    /**
+     * 加载动态图列表
+     *
+     * @param page 页数
+     */
     private void loadData(final int page) {
         Observable<ListResponse<Gif>> observable = HttpRequest.getGifs(page);
         ObservableDecorator.decorate(activity, observable)
@@ -91,22 +104,8 @@ public class HomeFragment extends BaseFragment {
                     public void onNext(ListResponse<Gif> gifInfos) {
                         srl_home.setRefreshing(false);
 
-                        if(page == 1) {
-                            infos.clear();
-                        }
-
-                        if (gifInfos.getResults().size() > 0) {
-                            currentPage = page;
-                            infos.addAll(gifInfos.getResults());
-                        }
-
-                        adapter.setStatus(gifInfos.getResults().size() == CommonConstants.COUNT_OF_PAGE
-                                ? LoadMoreAdapter.STATUS_HAVE_MORE : LoadMoreAdapter.STATUS_LOADED_ALL);
-                        if(infos.size() == 0) {
-                            adapter.setStatus(LoadMoreAdapter.STATUS_NONE);
-                        }
-
-                        adapter.notifyDataSetChanged();
+                        // 加载成功后更新数据
+                        pageIndex.setResponse(adapter, infos, gifInfos.getResults());
                     }
 
                     @Override

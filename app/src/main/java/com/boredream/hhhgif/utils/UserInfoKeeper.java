@@ -11,6 +11,9 @@ import com.boredream.hhhgif.constants.CommonConstants;
 import com.boredream.hhhgif.entity.User;
 import com.google.gson.Gson;
 
+/**
+ * 用户信息保存工具
+ */
 public class UserInfoKeeper {
     private static final String SP_KEY_CURRENT_USER = "current_user";
     private static final String SP_KEY_USER_ID = "user_id";
@@ -18,6 +21,9 @@ public class UserInfoKeeper {
 
     private static User currentUser;
 
+    /**
+     * 获取当前登录用户,先从缓存中获取,获取不到时从sp中获取
+     */
     public static User getCurrentUser() {
         SharedPreferences sp = BaseApplication.getInstance().getSharedPreferences(
                 CommonConstants.SP_NAME, Context.MODE_PRIVATE);
@@ -28,6 +34,9 @@ public class UserInfoKeeper {
         return currentUser;
     }
 
+    /**
+     * 保存设置当前登录用户,缓存和sp中都进行保存
+     */
     public static void setCurrentUser(User user) {
         if (user != null) {
             SharedPreferences sp = BaseApplication.getInstance().getSharedPreferences(
@@ -38,6 +47,9 @@ public class UserInfoKeeper {
         currentUser = user;
     }
 
+    /**
+     * 清空当前登录用户,同时清空缓存和sp中信息
+     */
     public static void clearCurrentUser() {
         currentUser = null;
         SharedPreferences sp = BaseApplication.getInstance().getSharedPreferences(
@@ -45,12 +57,19 @@ public class UserInfoKeeper {
         sp.edit().remove(SP_KEY_CURRENT_USER).apply();
     }
 
+    /**
+     * 保存当前用户的登录信息,用于自动登录
+     *
+     * @param userid 用户id
+     * @param token  用户口令
+     */
     public static void saveLoginData(String userid, String token) {
-        // 正常逻辑应该是直接用token去获取当前用户信息,不需要id,但是接口没有提供获取当前用户信息接口
+        // 正常逻辑应该是直接用token去获取当前用户信息,不需要id,但是接口没有提供获取当前登录用户信息接口
         if (TextUtils.isEmpty(userid) || TextUtils.isEmpty(token)) {
             return;
         }
 
+        // 保存在sp中,不像是账号密码敏感信息,无需加密
         SharedPreferences sp = BaseApplication.getInstance().getSharedPreferences(
                 CommonConstants.SP_NAME, Context.MODE_PRIVATE);
         sp.edit().putString(SP_KEY_USER_ID, userid)
@@ -58,6 +77,11 @@ public class UserInfoKeeper {
                 .apply();
     }
 
+    /**
+     * 获取当前用户的登录信息,用于自动登录
+     *
+     * @return [0]-用户userid [1]-用户口令token, 未保存或只保存一者时都返回null
+     */
     public static String[] getLoginData() {
         SharedPreferences sp = BaseApplication.getInstance().getSharedPreferences(
                 CommonConstants.SP_NAME, Context.MODE_PRIVATE);
@@ -71,6 +95,9 @@ public class UserInfoKeeper {
         return loginData;
     }
 
+    /**
+     * 清空登录信息
+     */
     public static void clearLoginData() {
         SharedPreferences sp = BaseApplication.getInstance().getSharedPreferences(
                 CommonConstants.SP_NAME, Context.MODE_PRIVATE);
@@ -80,7 +107,7 @@ public class UserInfoKeeper {
     }
 
     public static String getToken() {
-        // header用的token,没有时用空字符串,不能为null
+        // 统一Header配置时用的token,没有的话要用空字符串,不能为null
         String token = "";
         if (currentUser != null && currentUser.getSessionToken() != null) {
             token = currentUser.getSessionToken();
@@ -88,11 +115,19 @@ public class UserInfoKeeper {
         return token;
     }
 
+    /**
+     * 登出,同时清空用户信息和登录信息
+     */
     public static void logout() {
         clearCurrentUser();
         clearLoginData();
     }
 
+    /**
+     * 检测登录状态
+     *
+     * @return true-已登录 false-未登录,会自动跳转至登录页
+     */
     public static boolean checkLogin(Context context) {
         if (currentUser == null) {
             Intent intent = new Intent(context, LoginActivity.class);

@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.boredream.bdcodehelper.adapter.LoadMoreAdapter;
+import com.boredream.bdcodehelper.entity.PageIndex;
 import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.bdcodehelper.view.GridSpacingDecorator;
 import com.boredream.hhhgif.R;
@@ -45,7 +45,7 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
     private List<Gif> infos = new ArrayList<>();
 
     private String searchKey;
-    private int currentPage = 1;
+    private PageIndex pageIndex = new PageIndex(1, CommonConstants.COUNT_OF_PAGE);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,76 +59,10 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
         iv_clear = (ImageView) view.findViewById(R.id.iv_clear);
         rv_search_his = (RecyclerView) view.findViewById(R.id.rv_search_his);
 
-        initTextChangeListener();
-
         iv_clear.setOnClickListener(this);
 
         initRecyclerView();
-        GifInfoAdapter gifInfoAdapter = new GifInfoAdapter(activity, infos);
-        adapter = new GifLoadMoreAdapter(rv_search_his, gifInfoAdapter, new LoadMoreAdapter.OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                loadData(currentPage + 1);
-            }
-        });
-        rv_search_his.setAdapter(adapter);
-    }
-
-    private Subscription subscription;
-    private void sendSearchRequest(final String s) {
-        searchKey = s;
-
-        // send request
-        Observable<ListResponse<Gif>> observable = HttpRequest.getGifByTitle(searchKey, currentPage);
-        subscription = ObservableDecorator.decorate(activity, observable)
-                .subscribe(new Action1<ListResponse<Gif>>() {
-                    @Override
-                    public void call(ListResponse<Gif> gifInfoListResponse) {
-                        Log.i("DDD", "gifInfoListResponse " + gifInfoListResponse.getResults().size());
-
-                        // receive response, set data
-                        infos.addAll(gifInfoListResponse.getResults());
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-    }
-
-    private void initTextChangeListener() {
-        RxTextView.textChanges(et_search)
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(new Func1<CharSequence, String>() {
-                    @Override
-                    public String call(CharSequence charSequence) {
-                        // clear after modify
-                        infos.clear();
-                        adapter.notifyDataSetChanged();
-
-                        // cancel last request
-                        if (subscription != null) {
-                            subscription.unsubscribe();
-                        }
-
-                        // init search info
-                        currentPage = 1;
-                        String key = et_search.getText().toString().trim();
-                        return key;
-                    }
-                })
-                .filter(new Func1<String, Boolean>() {
-                    @Override
-                    public Boolean call(String s) {
-                        // validate empty
-                        return !TextUtils.isEmpty(s);
-                    }
-                })
-                .debounce(500, TimeUnit.MILLISECONDS)
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        sendSearchRequest(s);
-                    }
-                });
-
+        initTextChangeListener();
     }
 
     private void initRecyclerView() {
@@ -136,23 +70,83 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         rv_search_his.setLayoutManager(staggeredGridLayoutManager);
         rv_search_his.addItemDecoration(new GridSpacingDecorator(DisplayUtils.dp2px(activity, 8)));
+
+        // 没有下拉刷新,只有一个加载更多
+        GifInfoAdapter gifInfoAdapter = new GifInfoAdapter(activity, infos);
+        adapter = new GifLoadMoreAdapter(rv_search_his, gifInfoAdapter, new LoadMoreAdapter.OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                loadData(searchKey, pageIndex.toNextPage());
+            }
+        });
+        rv_search_his.setAdapter(adapter);
     }
 
-    private void loadData(final int page) {
-        Observable<ListResponse<Gif>> observable = HttpRequest.getGifByTitle(searchKey, currentPage);
-        ObservableDecorator.decorate(activity, observable)
-                .subscribe(new Action1<ListResponse<Gif>>() {
+    /**
+     * 初始化搜索监听,设置搜索规则
+     */
+    private void initTextChangeListener() {
+        // 监听输入框文字变化
+        RxTextView.textChanges(et_search)
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(new Func1<CharSequence, String>() { // 调用接口前先对数据进行预先处理
                     @Override
-                    public void call(ListResponse<Gif> gifInfos) {
-                        if (gifInfos.getResults().size() > 0) {
-                            currentPage = page;
-                            infos.addAll(gifInfos.getResults());
+                    public String call(CharSequence charSequence) {
+                        // 每次变化时,先清空当前列表
+                        infos.clear();
+
+                        // 利用加载更多已有的几种状态优化搜索显示效果
+                        adapter.setStatus(TextUtils.isEmpty(charSequence)
+                                ? LoadMoreAdapter.STATUS_NONE  // 如果文字为空,不做任何显示
+                                : LoadMoreAdapter.STATUS_HAVE_MORE);  // 非空,会继续搜索,显示加载更多进度框
+                        adapter.notifyDataSetChanged();
+
+                        // 取消订阅上一次的请求回调,防止输入新的内容后显示之前文字对应接口返回的数据
+                        if (searchSubscription != null) {
+                            searchSubscription.unsubscribe();
                         }
 
-                        adapter.setStatus(gifInfos.getResults().size() == CommonConstants.COUNT_OF_PAGE
-                                ? LoadMoreAdapter.STATUS_HAVE_MORE : LoadMoreAdapter.STATUS_LOADED_ALL);
+                        // 重置页数信息
+                        pageIndex.init();
 
-                        adapter.notifyDataSetChanged();
+                        // 获取输入框内文字,返回
+                        String key = charSequence.toString().trim();
+                        return key;
+                    }
+                })
+                .debounce(500, TimeUnit.MILLISECONDS) // * 防止连续快速输入时造成的多次调用接口
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        // 调用搜索接口
+                        loadData(s, pageIndex.toStartPage());
+                    }
+                });
+    }
+
+    private Subscription searchSubscription;
+
+    /**
+     * 发起搜索接口请求
+     *
+     * @param key  搜索关键字
+     * @param page 页数
+     */
+    private void loadData(final String key, final int page) {
+        searchKey = key;
+
+        // 关键字为空时,不做搜索
+        if (TextUtils.isEmpty(key)) {
+            return;
+        }
+
+        Observable<ListResponse<Gif>> observable = HttpRequest.getGifByTitle(searchKey, page);
+        searchSubscription = ObservableDecorator.decorate(activity, observable)
+                .subscribe(new Action1<ListResponse<Gif>>() {
+                    @Override
+                    public void call(ListResponse<Gif> gifInfoListResponse) {
+                        // 加载成功后更新数据
+                        pageIndex.setResponse(adapter, infos, gifInfoListResponse.getResults());
                     }
                 });
     }

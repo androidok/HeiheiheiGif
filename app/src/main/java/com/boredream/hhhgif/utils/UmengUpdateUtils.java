@@ -14,17 +14,9 @@ import com.umeng.update.UpdateResponse;
 import com.umeng.update.UpdateStatus;
 
 /**
- * umeng
+ * umeng 检查更新工具类
  */
-public class UmengHelper {
-
-//    static {
-//        PlatformConfig.setWeixin("wx4e89f9488edf8902", "f1b32a6bf1fa8415f1464ba97a929ddd");
-//        PlatformConfig.setSinaWeibo("906049568", "0e00298a1093b4cc6665f455fe8da9db");
-//        PlatformConfig.setQQZone("1105147805", "kXiKwc5jtxYZAQ2F");
-//    }
-
-    ////////////////////////////////////////    update   //////////////////////////////////////////
+public class UmengUpdateUtils {
 
     /**
      * 检测版本更新
@@ -116,40 +108,5 @@ public class UmengHelper {
         ToastUtils.showToast(context, "开始下载安装包...");
         UmengUpdateAgent.startDownload(context, updateInfo);
     }
-
-    ////////////////////////////////////////    share   //////////////////////////////////////////
-//    private static ShareAction shareAction;
-//
-//    public static void share(final Activity activity, String title, String content, UMImage image,
-//                             final UMShareListener umShareListener) {
-//        final SHARE_MEDIA[] displaylist = new SHARE_MEDIA[]{
-//                SHARE_MEDIA.WEIXIN,
-//                SHARE_MEDIA.WEIXIN_CIRCLE,
-//                SHARE_MEDIA.SINA,
-//                SHARE_MEDIA.QQ,
-//                SHARE_MEDIA.QZONE};
-//
-//        shareAction = new ShareAction(activity).setDisplayList(displaylist)
-//                .withTargetUrl("http://www.baidu.com")
-//                .setListenerList(umShareListener, umShareListener)
-//                .setShareboardclickCallback(new ShareBoardlistener() {
-//                    @Override
-//                    public void onclick(SnsPlatform snsPlatform, SHARE_MEDIA share_media) {
-//                        shareAction.setPlatform(share_media).share();
-//                    }
-//                });
-//
-//        if (!TextUtils.isEmpty(title)) {
-//            shareAction.withTitle(title);
-//        }
-//        if (!TextUtils.isEmpty(content)) {
-//            shareAction.withText(content);
-//        }
-//        if (image != null) {
-//            shareAction.withMedia(image);
-//        }
-//
-//        shareAction.open();
-//    }
 
 }
