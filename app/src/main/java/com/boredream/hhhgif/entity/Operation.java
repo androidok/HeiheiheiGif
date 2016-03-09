@@ -11,11 +11,6 @@ public class Operation {
     public static final String OP_INCREMENT = "Increment";
 
     /**
-     * 添加多对多Relation关系
-     */
-    public static final String OP_ADD_RELATION = "AddRelation";
-
-    /**
      * 计算类型
      */
     private String __op;

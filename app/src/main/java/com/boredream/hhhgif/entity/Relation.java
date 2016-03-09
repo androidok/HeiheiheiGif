@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Relation implements Serializable {
-    private static final long serialVersionUID = 7419229244419967901L;
     private String __op = "AddRelation";
     private List<Pointer> objects = new ArrayList();
 

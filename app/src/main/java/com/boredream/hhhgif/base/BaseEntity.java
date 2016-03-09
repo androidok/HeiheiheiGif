@@ -1,13 +1,19 @@
 package com.boredream.hhhgif.base;
 
-import java.io.Serializable;
+import com.boredream.hhhgif.entity.Pointer;
 
-public class BaseEntity implements Serializable {
+/**
+ * 数据实体基类
+ * <p>
+ * 之所以继承Pointer对象,是因为接口用法的限制,具体可以参考Bmob/LeanCloud/Parse的相关文档<br/>
+ * 这样的接口可以让对象在提交创建和获取的时候都更加方便<br/>
+ * 提交时只要添加Pointer的type和className等所需字段即可,获取时基本不用做任何额外处理
+ */
+public class BaseEntity extends Pointer {
 
     // 添加新数据时,返回为objectId + createdAt
     // 更新数据时,返回为updateAt
 
-    private String objectId;
     private String createdAt;
     private String updatedAt;
 
@@ -27,17 +33,9 @@ public class BaseEntity implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public String getObjectId() {
-        return objectId;
-    }
-
-    public void setObjectId(String objectId) {
-        this.objectId = objectId;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if(o instanceof BaseEntity) {
+        if (o instanceof BaseEntity) {
             BaseEntity oEntity = (BaseEntity) o;
             return this.objectId.equals(oEntity.objectId);
         }

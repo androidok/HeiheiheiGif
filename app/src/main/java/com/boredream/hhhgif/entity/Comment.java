@@ -1,7 +1,6 @@
 package com.boredream.hhhgif.entity;
 
 import com.boredream.hhhgif.base.BaseEntity;
-import com.google.gson.Gson;
 
 public class Comment extends BaseEntity {
     /**
@@ -12,7 +11,7 @@ public class Comment extends BaseEntity {
     /**
      * 发送用户, Pointer or User
      */
-    private Object user;
+    private User user;
 
     /**
      * 评论内容
@@ -28,14 +27,10 @@ public class Comment extends BaseEntity {
     }
 
     public User getUser() {
-        // 发送时作为Pointer,而获取时,则可以解析为目标对象.注意必须要包含include才能获取完整参数
-        Gson gson = new Gson();
-        String json = gson.toJson(user);
-        User user = gson.fromJson(json, User.class);
         return user;
     }
 
-    public void setUser(Object user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

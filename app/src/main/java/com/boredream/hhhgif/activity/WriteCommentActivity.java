@@ -60,11 +60,12 @@ public class WriteCommentActivity extends BaseActivity {
 
         // 新建评论对象
         User currentUser = UserInfoKeeper.getCurrentUser();
-        Pointer userPointer = new Pointer("_User", currentUser.getObjectId());
+        currentUser.set__type(Pointer.TYPE);
+        currentUser.setClassName("_User");
 
         Comment comment = new Comment();
         comment.setGifId(gif.getObjectId());
-        comment.setUser(userPointer);
+        comment.setUser(currentUser);
         comment.setContent(content);
 
         // 提交新建的评论对象至服务器

@@ -5,17 +5,27 @@ import com.google.gson.Gson;
 import java.io.Serializable;
 
 public class Pointer implements Serializable {
-    private static final long serialVersionUID = -2906907910428442090L;
-    private String __type = "Pointer";
-    private String className;
-    private String objectId;
+    public static final String TYPE = "Pointer";
+
+    protected String __type;
+    protected String className;
+    protected String objectId;
 
     public Pointer() {
     }
 
     public Pointer(String className, String objectId) {
+        this.__type = TYPE;
         this.setClassName(className);
         this.setObjectId(objectId);
+    }
+
+    public String get__type() {
+        return __type;
+    }
+
+    public void set__type(String __type) {
+        this.__type = __type;
     }
 
     public String getClassName() {

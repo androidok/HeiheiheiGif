@@ -17,14 +17,13 @@ import com.boredream.bdcodehelper.utils.ToastUtils;
 import com.boredream.hhhgif.R;
 import com.boredream.hhhgif.activity.LoginActivity;
 import com.boredream.hhhgif.activity.MainActivity;
-import com.boredream.hhhgif.activity.SplashActivity;
 import com.boredream.hhhgif.constants.CommonConstants;
 
 public class BaseActivity extends AppCompatActivity {
 
     protected String TAG;
-    protected BaseApplication application;
-    protected SharedPreferences sp;
+    public BaseApplication application;
+    public SharedPreferences sp;
     private Dialog progressDialog;
 
     @Override
@@ -44,8 +43,7 @@ public class BaseActivity extends AppCompatActivity {
 
     /**
      * 左侧有返回键的标题栏
-     * <p/>
-     * <p>如果在此基础上还要加其他内容,比如右侧有文字按钮,可以获取该方法返回值继续设置其他内容</p>
+     * <p>如果在此基础上还要加其他内容,比如右侧有文字按钮,可以获取该方法返回值继续设置其他内容
      *
      * @param title 标题
      */
@@ -71,6 +69,9 @@ public class BaseActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * 清空任务栈跳转至登录页
+     */
     protected void clearIntent2Login() {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -93,7 +94,13 @@ public class BaseActivity extends AppCompatActivity {
         progressDialog.dismiss();
     }
 
+    /**
+     * 退出程序
+     */
     protected void exit() {
+        // 退出程序方法有多种
+        // 这里使用clear + new task的方式清空整个任务栈,只保留新打开的Main页面
+        // 然后Main页面接收到退出的标志位exit=true,finish自己,这样就关闭了全部页面
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("exit", true);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

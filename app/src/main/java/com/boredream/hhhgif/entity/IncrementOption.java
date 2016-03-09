@@ -1,5 +1,8 @@
 package com.boredream.hhhgif.entity;
 
+/**
+ * 递增原子计算请求
+ */
 public class IncrementOption extends Operation {
 
     public IncrementOption() {

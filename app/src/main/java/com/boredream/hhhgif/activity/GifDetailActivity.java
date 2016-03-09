@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.boredream.bdcodehelper.adapter.LoadMoreAdapter;
+import com.boredream.bdcodehelper.entity.PageIndex;
 import com.boredream.bdcodehelper.utils.DialogUtils;
 import com.boredream.bdcodehelper.utils.ImageUtils;
 import com.boredream.bdcodehelper.view.DividerItemDecoration;
@@ -20,10 +21,10 @@ import com.boredream.hhhgif.adapter.GifDetailAdapter;
 import com.boredream.hhhgif.adapter.GifLoadMoreAdapter;
 import com.boredream.hhhgif.base.BaseActivity;
 import com.boredream.hhhgif.base.BaseEntity;
+import com.boredream.hhhgif.constants.CommonConstants;
 import com.boredream.hhhgif.entity.Comment;
 import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.ListResponse;
-import com.boredream.hhhgif.entity.PageIndex;
 import com.boredream.hhhgif.entity.User;
 import com.boredream.hhhgif.net.Downloader;
 import com.boredream.hhhgif.net.HttpRequest;
@@ -59,7 +60,7 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     private Gif gif;
     private boolean isFaved;
 
-    private PageIndex pageIndex = new PageIndex(1);
+    private PageIndex pageIndex = new PageIndex(1, CommonConstants.COUNT_OF_PAGE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
