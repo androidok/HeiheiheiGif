@@ -33,6 +33,7 @@ import com.boredream.hhhgif.net.SimpleSubscriber;
 import com.boredream.hhhgif.utils.FileUtils;
 import com.boredream.hhhgif.utils.UmengShareUtils;
 import com.boredream.hhhgif.utils.UserInfoKeeper;
+import com.umeng.socialize.media.UMImage;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -149,10 +150,11 @@ public class GifDetailActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void shareGif() {
+        UMImage image = new UMImage(this, gif.getImgUrl());
         UmengShareUtils.share(GifDetailActivity.this,
                 "嘿嘿嘿动态图分享",
-                "你的好友给你分享了一张有意思的GIF动态图片(" + gif.getImgUrl() + ")。下载<嘿嘿嘿动态图>软件可以查看更多有♂趣的动态图哟~",
-                null);
+                "你的好友给你分享了一张有意思的GIF动态图片。下载<嘿嘿嘿动态图>软件可以查看更多有♂趣的动态图哟~",
+                image);
     }
 
     /**

@@ -64,7 +64,7 @@ public class UmengShareUtils {
                         .setPlatform(share_media)
                         .setCallback(umShareListener)
                                 // TODO 设置下载地址
-                        .withTargetUrl("www.xiazaidizhi.com");
+                        .withTargetUrl("http://www.baidu.com");
                 if (!TextUtils.isEmpty(title)) {
                     shareAction.withTitle(title);
                 }
