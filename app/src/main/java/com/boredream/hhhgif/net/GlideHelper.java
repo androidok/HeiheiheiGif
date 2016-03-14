@@ -21,6 +21,7 @@ public class GlideHelper {
                 .placeholder(R.mipmap.ic_account_circle_grey600_24dp)
                 .error(R.mipmap.ic_account_circle_grey600_24dp)
                 .transform(new GlideCircleTransform(context))
+                .crossFade()
                 .into(iv);
     }
 
@@ -28,6 +29,7 @@ public class GlideHelper {
         BitmapRequestBuilder<String, Bitmap> requestBuilder = Glide.with(context)
                 .load(imageUrl)
                 .asBitmap()
+                .animate(android.R.anim.fade_in)
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
 
         if (iv.getScaleType() == ImageView.ScaleType.CENTER_CROP) {

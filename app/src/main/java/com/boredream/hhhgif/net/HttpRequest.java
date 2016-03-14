@@ -463,17 +463,24 @@ public class HttpRequest {
         return service.getGifFavUsers(where);
     }
 
+    /**
+     * 上传图片
+     *
+     * @param context
+     * @param uri     图片uri
+     * @param call    上传成功回调
+     */
     public static void fileUpload(final Context context, Uri uri, final Subscriber<FileUploadResponse> call) {
         final BmobService service = getApiService();
         final String filename = "avatar_" + System.currentTimeMillis() + ".jpg";
 
-        // get image from local
+        // 先从本地获取图片,利用Glide压缩图片后获取byte[]
         int size = DisplayUtils.dp2px(context, 56);
         Glide.with(context).load(uri).asBitmap().toBytes().into(
                 new SimpleTarget<byte[]>(size, size) {
                     @Override
                     public void onResourceReady(final byte[] resource, GlideAnimation<? super byte[]> glideAnimation) {
-                        // upload image
+                        // 上传图片
                         RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), resource);
 
                         Observable<FileUploadResponse> observable = service.fileUpload(filename, requestBody);
@@ -484,7 +491,7 @@ public class HttpRequest {
                     @Override
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
                         super.onLoadFailed(e, errorDrawable);
-                        call.onError(new Throwable("load local file exception"));
+                        call.onError(new Throwable("图片解析失败"));
                     }
                 });
     }
