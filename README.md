@@ -1,6 +1,8 @@
 # HeiheiheiGif
 > 动态图播放社区 - 独立开发项目
 
+#### 注意，代码中的常用模块比如style、下拉刷新等功能全部抽取到了[代码助手Model](https://github.com/boredream/bdcodehelper)中，代码助手可以任何项目都导入Model使用，因此单独作为一个Github Repo库，所以使用本项目时要连同代码助手一起下载并添加为依赖Model。
+
 ---
 
 #设计
