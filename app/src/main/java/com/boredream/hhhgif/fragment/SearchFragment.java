@@ -23,6 +23,7 @@ import com.boredream.hhhgif.entity.Gif;
 import com.boredream.hhhgif.entity.ListResponse;
 import com.boredream.hhhgif.net.HttpRequest;
 import com.boredream.hhhgif.net.ObservableDecorator;
+import com.boredream.hhhgif.net.SimpleSubscriber;
 import com.jakewharton.rxbinding.widget.RxTextView;
 
 import java.util.ArrayList;
@@ -115,9 +116,9 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
                     }
                 })
                 .debounce(500, TimeUnit.MILLISECONDS) // * 防止连续快速输入时造成的多次调用接口
-                .subscribe(new Action1<String>() {
+                .subscribe(new SimpleSubscriber<String>(activity) {
                     @Override
-                    public void call(String s) {
+                    public void onNext(String s) {
                         // 调用搜索接口
                         loadData(s, pageIndex.toStartPage());
                     }
@@ -142,11 +143,18 @@ public class SearchFragment extends BaseFragment implements View.OnClickListener
 
         Observable<ListResponse<Gif>> observable = HttpRequest.getGifByTitle(searchKey, page);
         searchSubscription = ObservableDecorator.decorate(activity, observable)
-                .subscribe(new Action1<ListResponse<Gif>>() {
+                .subscribe(new SimpleSubscriber<ListResponse<Gif>>(activity) {
                     @Override
-                    public void call(ListResponse<Gif> gifInfoListResponse) {
+                    public void onNext(ListResponse<Gif> gifInfoListResponse) {
                         // 加载成功后更新数据
                         pageIndex.setResponse(adapter, infos, gifInfoListResponse.getResults());
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        super.onError(throwable);
+                        // 错误时视为未加载到数据
+                        pageIndex.setResponse(adapter, infos, null);
                     }
                 });
     }

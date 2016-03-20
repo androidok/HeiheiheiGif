@@ -127,7 +127,7 @@ public class GifDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                             @Override
                             public boolean onResourceReady(GifDrawable resource, String model, Target<GifDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                                Log.i("DDD", "gif onResourceReady");
+                                Log.i("DDD", "gif onResourceReady, size = " + resource.getIntrinsicWidth() + ":" + resource.getIntrinsicHeight());
                                 loadedGif = resource;
                                 if (onGifLoadedListener != null) {
                                     onGifLoadedListener.onGifLoaded();

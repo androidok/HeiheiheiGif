@@ -1,6 +1,7 @@
 package com.boredream.hhhgif.fragment;
 
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -75,13 +76,17 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void initData() {
+        setRefreshing(true);
+        loadData(pageIndex.toStartPage());
+    }
+
+    private void setRefreshing(final boolean refreshing) {
         srl_home.post(new Runnable() {
             @Override
             public void run() {
-                srl_home.setRefreshing(true);
+                srl_home.setRefreshing(refreshing);
             }
         });
-        loadData(pageIndex.toStartPage());
     }
 
     private void initRecyclerView() {
@@ -102,7 +107,7 @@ public class HomeFragment extends BaseFragment {
                 .subscribe(new SimpleSubscriber<ListResponse<Gif>>(activity) {
                     @Override
                     public void onNext(ListResponse<Gif> gifInfos) {
-                        srl_home.setRefreshing(false);
+                        setRefreshing(false);
 
                         // 加载成功后更新数据
                         pageIndex.setResponse(adapter, infos, gifInfos.getResults());
@@ -111,7 +116,7 @@ public class HomeFragment extends BaseFragment {
                     @Override
                     public void onError(Throwable throwable) {
                         super.onError(throwable);
-                        srl_home.setRefreshing(false);
+                        setRefreshing(false);
                     }
                 });
     }

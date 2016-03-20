@@ -8,6 +8,8 @@ import com.google.gson.Gson;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.ResponseBody;
 
+import java.net.UnknownHostException;
+
 import retrofit.HttpException;
 import rx.Subscriber;
 
@@ -38,8 +40,7 @@ public class SimpleSubscriber<T> extends Subscriber<T> {
             // 如果是application/json类型数据,则解析返回内容
             if (type.type().equals("application") && type.subtype().equals("json")) {
                 try {
-                    // 这里的返回内容是bmob/AVOS/Parse等RestFul api文档中的错误代码和信息对象
-                    // 如果是自己搭建服务器,则这里的错误对象可以替换
+                    // 这里的返回内容是Bmob/AVOS/Parse等RestFul API文档中的错误代码和错误信息对象
                     ErrorResponse errorResponse = new Gson().fromJson(
                             responseBody.string(), ErrorResponse.class);
                     // TODO 统一处理错误,可以根据不同code进行特殊处理,我这里只简单的显示了Toast
@@ -50,7 +51,11 @@ public class SimpleSubscriber<T> extends Subscriber<T> {
             }
         } else {
             // TODO 统一处理其他类型错误
-            ToastUtils.showToast(context, throwable.getMessage());
+            if(throwable instanceof UnknownHostException) {
+                ToastUtils.showToast(context, "无法连接到服务器");
+            } else {
+                ToastUtils.showToast(context, throwable.getMessage());
+            }
         }
     }
 
